@@ -36,6 +36,8 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 			$this->col = [];
 			$this->col[] = ["label"=>"Fecha","name"=>"date"];
 			$this->col[] = ["label"=>"Tipo","name"=>"type","callback_php"=>'$cb_getEntryType($row->entry_type)'];
+			$this->col[] = ["label"=>"Categoría","name"=>"category_id","join"=>"app_categories,category"];
+			$this->col[] = ["label"=>"Área","name"=>"area_id","join"=>"app_areas,area"];
 			$this->col[] = ["label"=>"Concepto","name"=>"concept"];
 			$this->col[] = ["label"=>"Moneda","name"=>"currency"];
 			$this->col[] = ["label"=>"Monto real","name"=>"real_amount"];
