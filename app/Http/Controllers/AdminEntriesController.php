@@ -33,15 +33,15 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
-		$this->col = [];
-		$this->col[] = ["label" => "Fecha", "name" => "date"];
-		$this->col[] = ["label" => "Tipo","name"=>"type","callback_php"=>'$this->getEntryType($row->entry_type)'];
-		$this->col[] = ["label" => "Concepto", "name" => "concept"];
-		$this->col[] = ["label" => "Moneda", "name" => "currency"];
-		$this->col[] = ["label" => "Monto real", "name" => "real_amount"];
-		$this->col[] = ["label" => "Afecta capital?", "name" => "affect_capital", "callback_php" => '($row->affect_capital ==1)?"si" : "no"'];
-		$this->col[] = ["label" => "Es extraordinario?", "name" => "is_extraordinary", "callback_php" => '($row->is_extraordinary ==1)?"si" : "no"'];
-		# END COLUMNS DO NOT REMOVE THIS LINE
+			$this->col = [];
+			$this->col[] = ["label"=>"Fecha","name"=>"date"];
+			$this->col[] = ["label"=>"Tipo","name"=>"type","callback_php"=>'$cb_getEntryType($row->entry_type)'];
+			$this->col[] = ["label"=>"Concepto","name"=>"concept"];
+			$this->col[] = ["label"=>"Moneda","name"=>"currency"];
+			$this->col[] = ["label"=>"Monto real","name"=>"real_amount"];
+			$this->col[] = ["label"=>"Afecta capital?","name"=>"affect_capital","callback_php"=>'($row->affect_capital ==1)?"si" : "no"'];
+			$this->col[] = ["label"=>"Es extraordinario?","name"=>"is_extraordinary","callback_php"=>'($row->is_extraordinary ==1)?"si" : "no"'];
+			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
