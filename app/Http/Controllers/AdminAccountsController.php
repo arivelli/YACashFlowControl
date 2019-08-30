@@ -32,9 +32,9 @@
 			$this->col = [];
 			$this->col[] = ["label"=>"Nombre","name"=>"name"];
 			$this->col[] = ["label"=>"Banco","name"=>"bank"];
-			$this->col[] = ["label"=>"Tipo","name"=>"type"];
+			$this->col[] = ["label"=>"Tipo","name"=>"type","callback_php"=>'$this->getAccountType($row->type)'];
 			$this->col[] = ["label"=>"Moneda","name"=>"currency"];
-			$this->col[] = ["label"=>"Activo?","name"=>"is_active"];
+			$this->col[] = ["label"=>"Activo","name"=>"is_active","callback_php"=>'($row->is_active ==1)?"si" : "no"'];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
@@ -337,4 +337,28 @@
 	    //By the way, you can still create your own method in here... :) 
 
 
+		public function getAccountType($type){
+			switch ($type) { 
+				case 1 : 
+					$res = "Caja de ahorro"; 
+					break; 
+				case 2 : 
+					$res = "Cuenta corriente"; 
+					break; 
+				case 3 : 
+					$res = "Efectivo"; 
+					break; 
+				case 4 : 
+					$res = "Tarjeta"; 
+					break; 
+				case 5 : 
+					$res = "Pasivo"; 
+					break; 
+				default : 
+					$res = ""; 
+					break; 
+			}
+				return $res;
+		}
 	}
+

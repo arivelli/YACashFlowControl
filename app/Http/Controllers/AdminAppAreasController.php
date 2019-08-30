@@ -31,14 +31,14 @@
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
 			$this->col[] = ["label"=>"Area","name"=>"area"];
-			$this->col[] = ["label"=>"Active","name"=>"active"];
+			$this->col[] = ["label"=>"Activo","name"=>"is_active","callback_php"=>'($row->is_active ==1)?"si" : "no"'];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
 			$this->form[] = ['label'=>'Area','name'=>'area','type'=>'text','validation'=>'required|min:1|max:50','width'=>'col-sm-4'];
 			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'wysiwyg','width'=>'col-sm-4'];
-			$this->form[] = ['label'=>'Activa?','name'=>'active','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-1'];
+			$this->form[] = ['label'=>'Activa?','name'=>'active','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-1','dataenum'=>'1|si;0|no'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM

@@ -1,13 +1,17 @@
-<?php namespace App\Http\Controllers;
+<?php
 
-	use Session;
-	use Request;
-	use DB;
-	use CRUDBooster;
+namespace App\Http\Controllers;
 
-	class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBController {
+use Session;
+use Request;
+use DB;
+use CRUDBooster;
 
-	    public function cbInit() {
+class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBController
+{
+
+	public function cbInit()
+	{
 
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
 			$this->title_field = "id";
@@ -29,18 +33,22 @@
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
-			$this->col = [];
-			$this->col[] = ["label"=>"Fecha","name"=>"date"];
-			$this->col[] = ["label"=>"Concepto","name"=>"concept"];
-			$this->col[] = ["label"=>"Moneda","name"=>"currency"];
-			$this->col[] = ["label"=>"Monto real","name"=>"real_amount"];
-			$this->col[] = ["label"=>"Afecta capital?","name"=>"affect_capital"];
-			$this->col[] = ["label"=>"Es extraordinario?","name"=>"is_extraordinary"];
-			# END COLUMNS DO NOT REMOVE THIS LINE
+		$this->col = [];
+		$this->col[] = ["label" => "Fecha", "name" => "date"];
+		$this->col[] = ["label" => "Tipo","name"=>"type","callback_php"=>'$this->getEntryType($row->entry_type)'];
+		$this->col[] = ["label" => "Concepto", "name" => "concept"];
+		$this->col[] = ["label" => "Moneda", "name" => "currency"];
+		$this->col[] = ["label" => "Monto real", "name" => "real_amount"];
+		$this->col[] = ["label" => "Afecta capital?", "name" => "affect_capital", "callback_php" => '($row->affect_capital ==1)?"si" : "no"'];
+		$this->col[] = ["label" => "Es extraordinario?", "name" => "is_extraordinary", "callback_php" => '($row->is_extraordinary ==1)?"si" : "no"'];
+		# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
 			$this->form[] = ['label'=>'Fecha','name'=>'date','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Tipo','name'=>'entry_type','type'=>'select','validation'=>'required','width'=>'col-sm-10','dataenum'=>'1|Ingreso;2|Egreso;3|Pasivo;4|Movimiento','default'=>'-- Tipo --'];
+			$this->form[] = ['label'=>'Categoría','name'=>'category_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'app_categories,category','datatable_where'=>'is_active=1','default'=>'-- Categoría --'];
+			$this->form[] = ['label'=>'Área','name'=>'area_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'app_areas,area','datatable_where'=>'is_active=1','default'=>'-- Área --'];
 			$this->form[] = ['label'=>'Concepto','name'=>'concept','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Moneda','name'=>'currency','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'$;U$S','default'=>'$'];
 			$this->form[] = ['label'=>'Monto real','name'=>'real_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
@@ -48,42 +56,42 @@
 			$this->form[] = ['label'=>'Cotización dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Afecta capital?','name'=>'increase_capital','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
 			$this->form[] = ['label'=>'Es Extraordinario','name'=>'is_extraordinary','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			$this->form[] = ['label'=>'Hecho?','name'=>'is_paid','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Notes','name'=>'notes','type'=>'text','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Hecho?','name'=>'is_paid','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
+			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','width'=>'col-sm-5'];
 			$this->form[] = ['label'=>'Plan','name'=>'plan','type'=>'json','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
 			//$this->form = [];
-			//$this->form[] = ['label'=>'Fecha','name'=>'date','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Concepto','name'=>'concept','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Moneda','name'=>'currency','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'$;U$S','default'=>'$'];
-			//$this->form[] = ['label'=>'Real Amount','name'=>'real_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'One Pay Amount','name'=>'one_pay_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Cotización dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Afecta capital?','name'=>'increase_capital','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			//$this->form[] = ['label'=>'Es Extraordinario','name'=>'is_extraordinary','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			//$this->form[] = ['label'=>'Hecho?','name'=>'is_paid','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Notes','name'=>'notes','type'=>'text','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Plan','name'=>'plan','type'=>'json','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			//$this->form[] = ['label' => 'Fecha', 'name' => 'date', 'type' => 'datetime', 'validation' => 'required|date_format:Y-m-d H:i:s', 'width' => 'col-sm-10'];
+			//$this->form[] = ['label' => 'Concepto', 'name' => 'concept', 'type' => 'text', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10'];
+			//$this->form[] = ['label' => 'Moneda', 'name' => 'currency', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'default' => '$'];
+			//$this->form[] = ['label' => 'Monto real', 'name' => 'real_amount', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
+			//$this->form[] = ['label' => 'Monto en un pago', 'name' => 'one_pay_amount', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
+			//$this->form[] = ['label' => 'Cotización dolar', 'name' => 'dollar_value', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
+			//$this->form[] = ['label' => 'Afecta capital?', 'name' => 'increase_capital', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
+			//$this->form[] = ['label' => 'Es Extraordinario', 'name' => 'is_extraordinary', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
+			//$this->form[] = ['label' => 'Hecho?', 'name' => 'is_paid', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
+			//$this->form[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'text', 'width' => 'col-sm-10'];
+			//$this->form[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'json', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10'];
 			# OLD END FORM
 
-			/* 
-	        | ---------------------------------------------------------------------- 
-	        | Sub Module
-	        | ----------------------------------------------------------------------     
-			| @label          = Label of action 
-			| @path           = Path of sub module
-			| @foreign_key 	  = foreign key of sub table/module
-			| @button_color   = Bootstrap Class (primary,success,warning,danger)
-			| @button_icon    = Font Awesome Class  
-			| @parent_columns = Sparate with comma, e.g : name,created_at
-	        | 
-	        */
-	        $this->sub_module = array();
+			$this->form[9]['value'] = 0;
+			$this->form[10]['value'] = 1;
+			$this->form[11]['value'] = 0;
+
+			$data_in = "http://ws.geeklab.com.ar/dolar/get-dolar-json.php";
+			$data_json = @file_get_contents($data_in);
+			if (strlen($data_json) > 0) {
+				$data_out = json_decode($data_json, true);
+				$this->form[8]['value'] = $data_out['libre']*1000;
+			}
+
+	
+		$this->sub_module = array();
 
 
-	        /* 
+		/* 
 	        | ---------------------------------------------------------------------- 
 	        | Add More Action Button / Menu
 	        | ----------------------------------------------------------------------     
@@ -94,10 +102,10 @@
 	        | @showIf 	   = If condition when action show. Use field alias. e.g : [id] == 1
 	        | 
 	        */
-	        $this->addaction = array();
+		$this->addaction = array();
 
 
-	        /* 
+		/* 
 	        | ---------------------------------------------------------------------- 
 	        | Add More Button Selected
 	        | ----------------------------------------------------------------------     
@@ -107,10 +115,10 @@
 	        | Then about the action, you should code at actionButtonSelected method 
 	        | 
 	        */
-	        $this->button_selected = array();
+		$this->button_selected = array();
 
-	                
-	        /* 
+
+		/* 
 	        | ---------------------------------------------------------------------- 
 	        | Add alert message to this module at overheader
 	        | ----------------------------------------------------------------------     
@@ -118,11 +126,11 @@
 	        | @type    = warning,success,danger,info        
 	        | 
 	        */
-	        $this->alert        = array();
-	                
+		$this->alert        = array();
 
-	        
-	        /* 
+
+
+		/* 
 	        | ---------------------------------------------------------------------- 
 	        | Add more button to header button 
 	        | ----------------------------------------------------------------------     
@@ -131,11 +139,11 @@
 	        | @icon  = Icon from Awesome.
 	        | 
 	        */
-	        $this->index_button = array();
+		$this->index_button = array();
 
 
 
-	        /* 
+		/* 
 	        | ---------------------------------------------------------------------- 
 	        | Customize Table Row Color
 	        | ----------------------------------------------------------------------     
@@ -143,21 +151,21 @@
 	        | @color = Default is none. You can use bootstrap success,info,warning,danger,primary.        
 	        | 
 	        */
-	        $this->table_row_color = array();     	          
+		$this->table_row_color = array();
 
-	        
-	        /*
+
+		/*
 	        | ---------------------------------------------------------------------- 
 	        | You may use this bellow array to add statistic at dashboard 
 	        | ---------------------------------------------------------------------- 
 	        | @label, @count, @icon, @color 
 	        |
 	        */
-	        $this->index_statistic = array();
+		$this->index_statistic = array();
 
 
 
-	        /*
+		/*
 	        | ---------------------------------------------------------------------- 
 	        | Add javascript at body 
 	        | ---------------------------------------------------------------------- 
@@ -165,10 +173,10 @@
 	        | $this->script_js = "function() { ... }";
 	        |
 	        */
-	        $this->script_js = NULL;
+		$this->script_js = NULL;
 
 
-            /*
+		/*
 	        | ---------------------------------------------------------------------- 
 	        | Include HTML Code before index table 
 	        | ---------------------------------------------------------------------- 
@@ -176,11 +184,11 @@
 	        | $this->pre_index_html = "<p>test</p>";
 	        |
 	        */
-	        $this->pre_index_html = null;
-	        
-	        
-	        
-	        /*
+		$this->pre_index_html = null;
+
+
+
+		/*
 	        | ---------------------------------------------------------------------- 
 	        | Include HTML Code after index table 
 	        | ---------------------------------------------------------------------- 
@@ -188,11 +196,11 @@
 	        | $this->post_index_html = "<p>test</p>";
 	        |
 	        */
-	        $this->post_index_html = null;
-	        
-	        
-	        
-	        /*
+		$this->post_index_html = null;
+
+
+
+		/*
 	        | ---------------------------------------------------------------------- 
 	        | Include Javascript File 
 	        | ---------------------------------------------------------------------- 
@@ -200,11 +208,11 @@
 	        | $this->load_js[] = asset("myfile.js");
 	        |
 	        */
-	        $this->load_js = array();
-	        
-	        
-	        
-	        /*
+		$this->load_js = array();
+
+
+
+		/*
 	        | ---------------------------------------------------------------------- 
 	        | Add css style at body 
 	        | ---------------------------------------------------------------------- 
@@ -212,11 +220,11 @@
 	        | $this->style_css = ".style{....}";
 	        |
 	        */
-	        $this->style_css = NULL;
-	        
-	        
-	        
-	        /*
+		$this->style_css = NULL;
+
+
+
+		/*
 	        | ---------------------------------------------------------------------- 
 	        | Include css File 
 	        | ---------------------------------------------------------------------- 
@@ -224,13 +232,11 @@
 	        | $this->load_css[] = asset("myfile.css");
 	        |
 	        */
-	        $this->load_css = array();
-	        
-	        
-	    }
+		$this->load_css = array();
+	}
 
 
-	    /*
+	/*
 	    | ---------------------------------------------------------------------- 
 	    | Hook for button selected
 	    | ---------------------------------------------------------------------- 
@@ -238,59 +244,64 @@
 	    | @button_name = the name of button
 	    |
 	    */
-	    public function actionButtonSelected($id_selected,$button_name) {
-	        //Your code here
-	            
-	    }
+	public function actionButtonSelected($id_selected, $button_name)
+	{
+		//Your code here
+
+	}
 
 
-	    /*
+	/*
 	    | ---------------------------------------------------------------------- 
 	    | Hook for manipulate query of index result 
 	    | ---------------------------------------------------------------------- 
 	    | @query = current sql query 
 	    |
 	    */
-	    public function hook_query_index(&$query) {
-	        //Your code here
-	            
-	    }
+	public function hook_query_index(&$query)
+	{
+		//Your code here
 
-	    /*
+	}
+
+	/*
 	    | ---------------------------------------------------------------------- 
 	    | Hook for manipulate row of index table html 
 	    | ---------------------------------------------------------------------- 
 	    |
-	    */    
-	    public function hook_row_index($column_index,&$column_value) {	        
-	    	//Your code here
-	    }
+	    */
+	public function hook_row_index($column_index, &$column_value)
+	{
+		//Your code here
+	}
 
-	    /*
+	/*
 	    | ---------------------------------------------------------------------- 
 	    | Hook for manipulate data input before add data is execute
 	    | ---------------------------------------------------------------------- 
 	    | @arr
 	    |
 	    */
-	    public function hook_before_add(&$postdata) {        
-	        //Your code here
+	public function hook_before_add(&$postdata)
+	{
+		//Your code here
 
-	    }
+	}
 
-	    /* 
+	/* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for execute command after add public static function called 
 	    | ---------------------------------------------------------------------- 
 	    | @id = last insert id
 	    | 
 	    */
-	    public function hook_after_add($id) {        
-	        //Your code here
+	public function hook_after_add($id)
+	{
+		//Your code here
 
-	    }
+	}
 
-	    /* 
+	/* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for manipulate data input before update data is execute
 	    | ---------------------------------------------------------------------- 
@@ -298,50 +309,73 @@
 	    | @id       = current id 
 	    | 
 	    */
-	    public function hook_before_edit(&$postdata,$id) {        
-	        //Your code here
+	public function hook_before_edit(&$postdata, $id)
+	{
+		//Your code here
 
-	    }
+	}
 
-	    /* 
+	/* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for execute command after edit public static function called
 	    | ----------------------------------------------------------------------     
 	    | @id       = current id 
 	    | 
 	    */
-	    public function hook_after_edit($id) {
-	        //Your code here 
+	public function hook_after_edit($id)
+	{
+		//Your code here 
 
-	    }
+	}
 
-	    /* 
+	/* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for execute command before delete public static function called
 	    | ----------------------------------------------------------------------     
 	    | @id       = current id 
 	    | 
 	    */
-	    public function hook_before_delete($id) {
-	        //Your code here
+	public function hook_before_delete($id)
+	{
+		//Your code here
 
-	    }
+	}
 
-	    /* 
+	/* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for execute command after delete public static function called
 	    | ----------------------------------------------------------------------     
 	    | @id       = current id 
 	    | 
 	    */
-	    public function hook_after_delete($id) {
-	        //Your code here
-
-	    }
-
-
-
-	    //By the way, you can still create your own method in here... :) 
-
+	public function hook_after_delete($id)
+	{
+		//Your code here
 
 	}
+
+
+
+	//By the way, you can still create your own method in here... :) 
+
+	public function getEntryType($type){
+		switch ($type) { 
+			case 1 : 
+				$res = "Ingreso"; 
+				break; 
+			case 2 : 
+				$res = "Egreso"; 
+				break; 
+			case 3 : 
+				$res = "Pasivo"; 
+				break; 
+			case 4 : 
+				$res = "Movimiento"; 
+				break; 
+			default : 
+				$res = "Error"; 
+				break; 
+		}
+			return $res;
+	}
+}

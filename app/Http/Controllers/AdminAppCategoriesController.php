@@ -31,18 +31,18 @@
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
 			$this->col[] = ["label"=>"Categoría","name"=>"category"];
-			$this->col[] = ["label"=>"Afecta capital","name"=>"affect_capital"];
-			$this->col[] = ["label"=>"Es Extraordinario","name"=>"is_extraordinary"];
-			$this->col[] = ["label"=>"Active","name"=>"active"];
+			$this->col[] = ["label"=>"Afecta capital","name"=>"affect_capital","callback_php"=>'($row->affect_capital ==1)?"si" : "no"'];
+			$this->col[] = ["label"=>"Es Extraordinario","name"=>"is_extraordinary","callback_php"=>'($row->is_extraordinary ==1)?"si" : "no"'];
+			$this->col[] = ["label"=>"Activo","name"=>"is_active","callback_php"=>'($row->is_active ==1)?"si" : "no"'];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
 			$this->form[] = ['label'=>'Categoría','name'=>'category','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Afecta capital','name'=>'increase_capital','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Es extraordinaria','name'=>'is_extraordinary','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Afecta capital','name'=>'increase_capital','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
+			$this->form[] = ['label'=>'Es extraordinaria','name'=>'is_extraordinary','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
 			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'wysiwyg','width'=>'col-sm-10','dataenum'=>'Array'];
-			$this->form[] = ['label'=>'Activa','name'=>'active','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Activa','name'=>'active','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
