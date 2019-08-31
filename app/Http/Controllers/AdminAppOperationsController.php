@@ -1,17 +1,13 @@
-<?php
+<?php namespace App\Http\Controllers;
 
-namespace App\Http\Controllers;
+	use Session;
+	use Request;
+	use DB;
+	use CRUDBooster;
 
-use Session;
-use Request;
-use DB;
-use CRUDBooster;
+	class AdminAppOperationsController extends \crocodicstudio\crudbooster\controllers\CBController {
 
-class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBController
-{
-
-	public function cbInit()
-	{
+	    public function cbInit() {
 
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
 			$this->title_field = "id";
@@ -29,78 +25,62 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 			$this->button_filter = true;
 			$this->button_import = false;
 			$this->button_export = false;
-			$this->table = "app_entries";
+			$this->table = "app_operations";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
-			$this->col[] = ["label"=>"Fecha","name"=>"date"];
-			$this->col[] = ["label"=>"Tipo","name"=>"entry_type","callback_php"=>'$this->getEntryType($row->entry_type)'];
-			$this->col[] = ["label"=>"Categoría","name"=>"category_id","join"=>"app_categories,category"];
-			$this->col[] = ["label"=>"Área","name"=>"area_id","join"=>"app_areas,area"];
-			$this->col[] = ["label"=>"Concepto","name"=>"concept"];
-			$this->col[] = ["label"=>"Moneda","name"=>"currency"];
-			$this->col[] = ["label"=>"Monto real","name"=>"real_amount", "callback_php"=>'$row->real_amount/100'];
-			$this->col[] = ["label"=>"Afecta capital?","name"=>"affect_capital","callback_php"=>'($row->affect_capital ==1)?"si" : "no"'];
-			$this->col[] = ["label"=>"Es extraordinario?","name"=>"is_extraordinary","callback_php"=>'($row->is_extraordinary ==1)?"si" : "no"'];
+			$this->col[] = ["label"=>"Cuenta","name"=>"account_id","join"=>"app_accounts,name"];
+			$this->col[] = ["label"=>"Entrada","name"=>"entries_id","join"=>"app_entries,concept"];
+			$this->col[] = ["label"=>"Detalle","name"=>"detail"];
+			$this->col[] = ["label"=>"Monto","name"=>"amount"];
 			$this->col[] = ["label"=>"Hecho?","name"=>"is_done","callback_php"=>'($row->is_done ==1)?"si" : "no"'];
 			# END COLUMNS DO NOT REMOVE THIS LINE
-			$this->col[1]['callback_php'] = '$this->getEntryType($row->entry_type)';
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Fecha','name'=>'date','type'=>'date','validation'=>'required|date_format:Y-m-d','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Tipo','name'=>'entry_type','type'=>'select','validation'=>'required','width'=>'col-sm-10','dataenum'=>'1|Ingreso;2|Egreso;3|Pasivo;4|Movimiento','default'=>'-- Tipo --'];
-			$this->form[] = ['label'=>'Categoría','name'=>'category_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'app_categories,category','datatable_where'=>'is_active=1','default'=>'-- Categoría --'];
-			$this->form[] = ['label'=>'Área','name'=>'area_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'app_areas,area','datatable_where'=>'is_active=1','default'=>'-- Área --'];
-			$this->form[] = ['label'=>'Concepto','name'=>'concept','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Moneda','name'=>'currency','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'$;U$S','default'=>'$'];
-			$this->form[] = ['label'=>'Monto real','name'=>'real_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
-			$this->form[] = ['label'=>'Monto en un pago','name'=>'one_pay_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
-			$this->form[] = ['label'=>'Cotización dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
-			$this->form[] = ['label'=>'Afecta capital?','name'=>'affect_capital','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			$this->form[] = ['label'=>'Es Extraordinario','name'=>'is_extraordinary','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','width'=>'col-sm-5'];
-			$this->form[] = ['label'=>'Plan','name'=>'plan','type'=>'json','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'app_account,name','datatable_where'=>'is_active=1'];
+			$this->form[] = ['label'=>'Entrada','name'=>'entries_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Detalle','name'=>'detail','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Fecha','name'=>'operation_date','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Monto','name'=>'amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'Array'];
+			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Plan','name'=>'plan_ref','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Periodo cubierto','name'=>'settlement_date','type'=>'text','validation'=>'integer|min:0','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
 			//$this->form = [];
-			//$this->form[] = ['label'=>'Fecha','name'=>'date','type'=>'date','validation'=>'required|date_format:Y-m-d','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Tipo','name'=>'entry_type','type'=>'select','validation'=>'required','width'=>'col-sm-10','dataenum'=>'1|Ingreso;2|Egreso;3|Pasivo;4|Movimiento','default'=>'-- Tipo --'];
-			//$this->form[] = ['label'=>'Categoría','name'=>'category_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'app_categories,category','datatable_where'=>'is_active=1','default'=>'-- Categoría --'];
-			//$this->form[] = ['label'=>'Área','name'=>'area_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'app_areas,area','datatable_where'=>'is_active=1','default'=>'-- Área --'];
-			//$this->form[] = ['label'=>'Concepto','name'=>'concept','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Moneda','name'=>'currency','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'$;U$S','default'=>'$'];
-			//$this->form[] = ['label'=>'Monto real','name'=>'real_amount','type'=>'money','validation'=>'required|double|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
-			//$this->form[] = ['label'=>'Monto en un pago','name'=>'one_pay_amount','type'=>'money','validation'=>'required|double|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
-			//$this->form[] = ['label'=>'Cotización dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|double|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
-			//$this->form[] = ['label'=>'Afecta capital?','name'=>'affect_capital','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			//$this->form[] = ['label'=>'Es Extraordinario','name'=>'is_extraordinary','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			//$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			//$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','width'=>'col-sm-5'];
-			//$this->form[] = ['label'=>'Plan','name'=>'plan','type'=>'json','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'app_account,name','datatable_where'=>'is_active=1'];
+			//$this->form[] = ['label'=>'Entrada','name'=>'entries_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Detail','name'=>'detail','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Fecha','name'=>'operation_date','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Monto','name'=>'amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Hecho?','name'=>'is_paid','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'Array'];
+			//$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Plan','name'=>'plan_ref','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Settlement Date','name'=>'settlement_date','type'=>'text','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			# OLD END FORM
 
-			$now = date_create();
-			$this->form[0]['value'] = date_format($now,'Y-m-d');
-			$this->form[9]['value'] = 0;
-			$this->form[10]['value'] = 1;
-			$this->form[11]['value'] = 0;
-
-			$data_in = "http://ws.geeklab.com.ar/dolar/get-dolar-json.php";
-			$data_json = @file_get_contents($data_in);
-			if (strlen($data_json) > 0) {
-				$data_out = json_decode($data_json, true);
-				$this->form[8]['value'] = $data_out['libre']*100;
-			}
-
-	
-		$this->sub_module = array();
+			/* 
+	        | ---------------------------------------------------------------------- 
+	        | Sub Module
+	        | ----------------------------------------------------------------------     
+			| @label          = Label of action 
+			| @path           = Path of sub module
+			| @foreign_key 	  = foreign key of sub table/module
+			| @button_color   = Bootstrap Class (primary,success,warning,danger)
+			| @button_icon    = Font Awesome Class  
+			| @parent_columns = Sparate with comma, e.g : name,created_at
+	        | 
+	        */
+	        $this->sub_module = array();
 
 
-		/* 
+	        /* 
 	        | ---------------------------------------------------------------------- 
 	        | Add More Action Button / Menu
 	        | ----------------------------------------------------------------------     
@@ -111,10 +91,10 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	        | @showIf 	   = If condition when action show. Use field alias. e.g : [id] == 1
 	        | 
 	        */
-		$this->addaction = array();
+	        $this->addaction = array();
 
 
-		/* 
+	        /* 
 	        | ---------------------------------------------------------------------- 
 	        | Add More Button Selected
 	        | ----------------------------------------------------------------------     
@@ -124,10 +104,10 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	        | Then about the action, you should code at actionButtonSelected method 
 	        | 
 	        */
-		$this->button_selected = array();
+	        $this->button_selected = array();
 
-
-		/* 
+	                
+	        /* 
 	        | ---------------------------------------------------------------------- 
 	        | Add alert message to this module at overheader
 	        | ----------------------------------------------------------------------     
@@ -135,11 +115,11 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	        | @type    = warning,success,danger,info        
 	        | 
 	        */
-		$this->alert        = array();
+	        $this->alert        = array();
+	                
 
-
-
-		/* 
+	        
+	        /* 
 	        | ---------------------------------------------------------------------- 
 	        | Add more button to header button 
 	        | ----------------------------------------------------------------------     
@@ -148,11 +128,11 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	        | @icon  = Icon from Awesome.
 	        | 
 	        */
-		$this->index_button = array();
+	        $this->index_button = array();
 
 
 
-		/* 
+	        /* 
 	        | ---------------------------------------------------------------------- 
 	        | Customize Table Row Color
 	        | ----------------------------------------------------------------------     
@@ -160,21 +140,21 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	        | @color = Default is none. You can use bootstrap success,info,warning,danger,primary.        
 	        | 
 	        */
-		$this->table_row_color = array();
+	        $this->table_row_color = array();     	          
 
-
-		/*
+	        
+	        /*
 	        | ---------------------------------------------------------------------- 
 	        | You may use this bellow array to add statistic at dashboard 
 	        | ---------------------------------------------------------------------- 
 	        | @label, @count, @icon, @color 
 	        |
 	        */
-		$this->index_statistic = array();
+	        $this->index_statistic = array();
 
 
 
-		/*
+	        /*
 	        | ---------------------------------------------------------------------- 
 	        | Add javascript at body 
 	        | ---------------------------------------------------------------------- 
@@ -182,10 +162,10 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	        | $this->script_js = "function() { ... }";
 	        |
 	        */
-		$this->script_js = NULL;
+	        $this->script_js = NULL;
 
 
-		/*
+            /*
 	        | ---------------------------------------------------------------------- 
 	        | Include HTML Code before index table 
 	        | ---------------------------------------------------------------------- 
@@ -193,11 +173,11 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	        | $this->pre_index_html = "<p>test</p>";
 	        |
 	        */
-		$this->pre_index_html = null;
-
-
-
-		/*
+	        $this->pre_index_html = null;
+	        
+	        
+	        
+	        /*
 	        | ---------------------------------------------------------------------- 
 	        | Include HTML Code after index table 
 	        | ---------------------------------------------------------------------- 
@@ -205,11 +185,11 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	        | $this->post_index_html = "<p>test</p>";
 	        |
 	        */
-		$this->post_index_html = null;
-
-
-
-		/*
+	        $this->post_index_html = null;
+	        
+	        
+	        
+	        /*
 	        | ---------------------------------------------------------------------- 
 	        | Include Javascript File 
 	        | ---------------------------------------------------------------------- 
@@ -217,11 +197,11 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	        | $this->load_js[] = asset("myfile.js");
 	        |
 	        */
-		$this->load_js = array();
-
-
-
-		/*
+	        $this->load_js = array();
+	        
+	        
+	        
+	        /*
 	        | ---------------------------------------------------------------------- 
 	        | Add css style at body 
 	        | ---------------------------------------------------------------------- 
@@ -229,11 +209,11 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	        | $this->style_css = ".style{....}";
 	        |
 	        */
-		$this->style_css = NULL;
-
-
-
-		/*
+	        $this->style_css = NULL;
+	        
+	        
+	        
+	        /*
 	        | ---------------------------------------------------------------------- 
 	        | Include css File 
 	        | ---------------------------------------------------------------------- 
@@ -241,11 +221,13 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	        | $this->load_css[] = asset("myfile.css");
 	        |
 	        */
-		$this->load_css = array();
-	}
+	        $this->load_css = array();
+	        
+	        
+	    }
 
 
-	/*
+	    /*
 	    | ---------------------------------------------------------------------- 
 	    | Hook for button selected
 	    | ---------------------------------------------------------------------- 
@@ -253,64 +235,59 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	    | @button_name = the name of button
 	    |
 	    */
-	public function actionButtonSelected($id_selected, $button_name)
-	{
-		//Your code here
+	    public function actionButtonSelected($id_selected,$button_name) {
+	        //Your code here
+	            
+	    }
 
-	}
 
-
-	/*
+	    /*
 	    | ---------------------------------------------------------------------- 
 	    | Hook for manipulate query of index result 
 	    | ---------------------------------------------------------------------- 
 	    | @query = current sql query 
 	    |
 	    */
-	public function hook_query_index(&$query)
-	{
-		//Your code here
+	    public function hook_query_index(&$query) {
+	        //Your code here
+	            
+	    }
 
-	}
-
-	/*
+	    /*
 	    | ---------------------------------------------------------------------- 
 	    | Hook for manipulate row of index table html 
 	    | ---------------------------------------------------------------------- 
 	    |
-	    */
-	public function hook_row_index($column_index, &$column_value)
-	{
-		//Your code here
-	}
+	    */    
+	    public function hook_row_index($column_index,&$column_value) {	        
+	    	//Your code here
+	    }
 
-	/*
+	    /*
 	    | ---------------------------------------------------------------------- 
 	    | Hook for manipulate data input before add data is execute
 	    | ---------------------------------------------------------------------- 
 	    | @arr
 	    |
 	    */
-	public function hook_before_add(&$postdata)
-	{
-		//Your code here
+	    public function hook_before_add(&$postdata) {        
+	        //Your code here
 
-	}
+	    }
 
-	/* 
+	    /* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for execute command after add public static function called 
 	    | ---------------------------------------------------------------------- 
 	    | @id = last insert id
 	    | 
 	    */
-	public function hook_after_add($id)
-	{
-		//Your code here
+	    public function hook_after_add($id) {        
+	        //Your code here
 
-	}
+	    }
 
-	/* 
+	    /* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for manipulate data input before update data is execute
 	    | ---------------------------------------------------------------------- 
@@ -318,73 +295,50 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	    | @id       = current id 
 	    | 
 	    */
-	public function hook_before_edit(&$postdata, $id)
-	{
-		//Your code here
+	    public function hook_before_edit(&$postdata,$id) {        
+	        //Your code here
 
-	}
+	    }
 
-	/* 
+	    /* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for execute command after edit public static function called
 	    | ----------------------------------------------------------------------     
 	    | @id       = current id 
 	    | 
 	    */
-	public function hook_after_edit($id)
-	{
-		//Your code here 
+	    public function hook_after_edit($id) {
+	        //Your code here 
 
-	}
+	    }
 
-	/* 
+	    /* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for execute command before delete public static function called
 	    | ----------------------------------------------------------------------     
 	    | @id       = current id 
 	    | 
 	    */
-	public function hook_before_delete($id)
-	{
-		//Your code here
+	    public function hook_before_delete($id) {
+	        //Your code here
 
-	}
+	    }
 
-	/* 
+	    /* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for execute command after delete public static function called
 	    | ----------------------------------------------------------------------     
 	    | @id       = current id 
 	    | 
 	    */
-	public function hook_after_delete($id)
-	{
-		//Your code here
+	    public function hook_after_delete($id) {
+	        //Your code here
+
+	    }
+
+
+
+	    //By the way, you can still create your own method in here... :) 
+
 
 	}
-
-
-
-	//By the way, you can still create your own method in here... :) 
-
-	public function getEntryType($type){
-		switch ($type) { 
-			case 1 : 
-				$res = "Ingreso"; 
-				break; 
-			case 2 : 
-				$res = "Egreso"; 
-				break; 
-			case 3 : 
-				$res = "Pasivo"; 
-				break; 
-			case 4 : 
-				$res = "Movimiento"; 
-				break; 
-			default : 
-				$res = "Error"; 
-				break; 
-		}
-			return $res;
-	}
-}
