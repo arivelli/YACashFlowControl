@@ -47,6 +47,15 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 			# END COLUMNS DO NOT REMOVE THIS LINE
 			$this->col[1]['callback_php'] = '$this->getEntryType($row->entry_type)';
 
+
+			$columns[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'app_accounts,name','datatable_where'=>'is_active=1'];
+			$columns[] = ['label'=>'Plan','name'=>'plan','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>[-1=>'Recurrente',1,2,3,4,5,6,7,8,9,10,11,12,18,24,36,60,120,240]];
+			$columns[] = ['label'=>'Frequencia','name'=>'frequency','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>[1=>'Semanal',2=>'Mensual',3=>'Bimestral',4=>'Trimestral',5=>'Cuatrimestral',6=>'Semestral',7=>'Anual']];
+			$columns[] = ['label'=>'Monto por cuota','name'=>'amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$columns[] = ['label'=>'Primera ejecución','name'=>'first_execution','type'=>'datetime','validation'=>'required|date_format:Y-m-d','width'=>'col-sm-10'];
+			$columns[] = ['label'=>'Completa?','name'=>'is_completed','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no','value'=>1];
+			$columns[] = ['label'=>'Notas','name'=>'notes','type'=>'textarea','width'=>'col-sm-5'];
+
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
 			$this->form[] = ['label'=>'Fecha','name'=>'date','type'=>'date','validation'=>'required|date_format:Y-m-d','width'=>'col-sm-10'];
@@ -61,8 +70,8 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 			$this->form[] = ['label'=>'Afecta capital?','name'=>'affect_capital','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
 			$this->form[] = ['label'=>'Es Extraordinario','name'=>'is_extraordinary','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
 			$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','width'=>'col-sm-5'];
-			$this->form[] = ['label'=>'Plan','name'=>'plan','type'=>'json','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'textarea','width'=>'col-sm-5'];
+			$this->form[] = ['label'=>'Plan','name'=>'plan','type'=>'child','width'=>'col-sm-10','table'=>'app_plans','foreign_key'=>'entry_id', 'columns'=>$columns];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
@@ -73,9 +82,9 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 			//$this->form[] = ['label'=>'Área','name'=>'area_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'app_areas,area','datatable_where'=>'is_active=1','default'=>'-- Área --'];
 			//$this->form[] = ['label'=>'Concepto','name'=>'concept','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			//$this->form[] = ['label'=>'Moneda','name'=>'currency','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'$;U$S','default'=>'$'];
-			//$this->form[] = ['label'=>'Monto real','name'=>'real_amount','type'=>'money','validation'=>'required|double|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
-			//$this->form[] = ['label'=>'Monto en un pago','name'=>'one_pay_amount','type'=>'money','validation'=>'required|double|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
-			//$this->form[] = ['label'=>'Cotización dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|double|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
+			//$this->form[] = ['label'=>'Monto real','name'=>'real_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
+			//$this->form[] = ['label'=>'Monto en un pago','name'=>'one_pay_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
+			//$this->form[] = ['label'=>'Cotización dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
 			//$this->form[] = ['label'=>'Afecta capital?','name'=>'affect_capital','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
 			//$this->form[] = ['label'=>'Es Extraordinario','name'=>'is_extraordinary','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
 			//$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
@@ -294,9 +303,20 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	public function hook_before_add(&$postdata)
 	{
 		//Your code here
+//get_object_vars()
 
 	}
 
+	public function hook_before_add_child($postdata,&$childPostdata)
+	{
+		//Your code here
+//get_object_vars()
+/*print_r($postdata);
+print_r($childPostdata);
+die();*/
+		
+	}
+	
 	/* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for execute command after add public static function called 
@@ -310,6 +330,116 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 
 	}
 
+	public function hook_after_add_child($entry_id)
+	{
+
+		$query = DB::table('app_plans')
+			->where(['entries_id', '=', $entry_id])
+			->get();
+
+		foreach($query as $plan){
+			$operations = $this->compute_operations($plan);
+			DB::table('app_operations')->insert($operations);
+		}
+	}
+
+	
+	public function compute_operations($data) {
+  		/*
+		$frequencyData = [
+			'Semanal'		=> ['amount' => '1', 'unit' => 'week'],
+			'Mensual'		=> ['amount' => '1', 'unit' => 'month'],
+			'Bimestral' 	=> ['amount' => '2', 'unit' => 'month'],
+			'Trimestral' 	=> ['amount' => '3', 'unit' => 'month'],
+			'Cuatrimestral'	=> ['amount' => '4', 'unit' => 'month'],
+			'Semestral' 	=> ['amount' => '6', 'unit' => 'month'],
+			'Anual' 		=> ['amount' => '1', 'unit' => 'year'],
+			'Binual' 		=> ['amount' => '2', 'unit' => 'year'],
+		];*/
+		$frequencyData = [
+			1 => new DateInterval('P1W'), //Semanal
+			2 => new DateInterval('P1M'), //Mensual
+			3 => new DateInterval('P2M'), //Bimestral
+			4 => new DateInterval('P3M'), //Trimestral
+			5 => new DateInterval('P4M'), //Cuatrimestral
+			6 => new DateInterval('P6M'), //Semestral
+			7 => new DateInterval('P1Y'), //Anual
+			8 => new DateInterval('P2Y'), //Bianual
+		];
+		$ordinalNumbers = [
+			1 => 'Primera',
+			2 => 'Segunda',
+			3 => 'Tercera',
+			4 => 'Cuarta',
+			5 => 'Quinta'
+		];
+		  
+		  $i = 0;
+		  while (1) {
+			$cuota = $i+1;
+
+			$operation['entry_id'] = $data['entry_id'];
+			$operation['account_id'] = $data['account_id'];
+			$operation['plan_id'] = $data['plan_id'];
+			$operation['currency'] = $data['currency'];
+			$operation['amount'] = $data['amount'];
+
+			$data['first_execution']->add($frequencyData[$data['frequency']]);
+			$operation['operation_date'] = $data['first_execution'];
+			$operation['settlement_date'] = $operation['operation_date']->format('Ym');
+			$now = new DateTime();
+			if($now->format('Ym') > $operation['settlement_date']){
+				$operation['is_done'] = 0;
+			} else {
+				$operation['is_done'] = 1;
+			}
+
+
+			if ($data['plan'] === -1) {
+				if ($data['first_execution']->format('Ym') + 100 <= $operation['settlement_date'] ) {
+					break;
+				}
+
+				if ($data['frequency'] === 1) {
+					$dayOfMonth			= $operation['operation_date']->format("j");
+					$dayOfWeek			= $operation['operation_date']->format("N");
+					$firstDayOfMonth	= new DateTime($operation['operation_date']->format("Y-m-01"));
+					$weekOfMonth		= ceil($dayOfMonth/7) ;
+					//Si el día de la semana del primer día del mes es mayor que el día de la semana de la fecha, incremento la semana del mes
+					if($firstDayOfMonth->format("N") > $dayOfWeek) {
+						$weekOfMonth++;
+					}
+					$operation['detail'] = $ordinalNumbers[$weekOfMonth] . ' semana de ' . $operation['operation_date']->format("F");
+				} else {
+					$toDate = $data['first_execution']->add($frequencyData[$data['frequency']]);
+					$operation['detail'] = 'Período desde el ' .  strftime("%e de %B de %Y", $operation['operation_date']->getTimestamp())  
+						. ' hasta el ' . strftime("%e de %B de %Y", $toDate->getTimestamp());
+				} 
+			} elseif (parseInt($data['plan']) === 1) {
+				$operation['detail'] = 'Pago único';
+			} else {
+				$operation['detail'] = "Cuota {$cuota}/{$data['plan']}";
+			}
+			
+			$operation['dollar_value'] = "";
+			if($data['currency'] == '$')
+				$operation['in_dollars'] = $data['amount']/$operation['dollar_value'];
+			
+			$operation['created_by'] = CRUDBooster::myId();
+			
+			
+			$operation['number'] = $i+1;
+			array_push($operations, $operation);
+			$i++;
+
+			//Stop when the operation number == the amount of operations 
+			if ($data['plan'] == $i) {
+				break;
+			}
+		  }
+		  return $operations;
+		}
+
 	/* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for manipulate data input before update data is execute
@@ -321,7 +451,6 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	public function hook_before_edit(&$postdata, $id)
 	{
 		//Your code here
-
 	}
 
 	/* 
