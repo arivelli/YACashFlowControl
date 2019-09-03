@@ -16,100 +16,100 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	public function cbInit()
 	{
 
-			# START CONFIGURATION DO NOT REMOVE THIS LINE
-			$this->title_field = "id";
-			$this->limit = "20";
-			$this->orderby = "id,desc";
-			$this->global_privilege = false;
-			$this->button_table_action = true;
-			$this->button_bulk_action = true;
-			$this->button_action_style = "button_icon";
-			$this->button_add = true;
-			$this->button_edit = true;
-			$this->button_delete = true;
-			$this->button_detail = true;
-			$this->button_show = true;
-			$this->button_filter = true;
-			$this->button_import = false;
-			$this->button_export = false;
-			$this->table = "app_entries";
-			# END CONFIGURATION DO NOT REMOVE THIS LINE
+		# START CONFIGURATION DO NOT REMOVE THIS LINE
+		$this->title_field = "id";
+		$this->limit = "20";
+		$this->orderby = "id,desc";
+		$this->global_privilege = false;
+		$this->button_table_action = true;
+		$this->button_bulk_action = true;
+		$this->button_action_style = "button_icon";
+		$this->button_add = true;
+		$this->button_edit = true;
+		$this->button_delete = true;
+		$this->button_detail = true;
+		$this->button_show = true;
+		$this->button_filter = true;
+		$this->button_import = false;
+		$this->button_export = false;
+		$this->table = "app_entries";
+		# END CONFIGURATION DO NOT REMOVE THIS LINE
 
-			# START COLUMNS DO NOT REMOVE THIS LINE
-			$this->col = [];
-			$this->col[] = ["label"=>"Fecha","name"=>"date"];
-			$this->col[] = ["label"=>"Tipo","name"=>"entry_type","callback_php"=>'$this->getEntryType($row->entry_type)'];
-			$this->col[] = ["label"=>"Categoría","name"=>"category_id","join"=>"app_categories,category"];
-			$this->col[] = ["label"=>"Área","name"=>"area_id","join"=>"app_areas,area"];
-			$this->col[] = ["label"=>"Concepto","name"=>"concept"];
-			$this->col[] = ["label"=>"Moneda","name"=>"currency"];
-			$this->col[] = ["label"=>"Monto real","name"=>"real_amount", "callback_php"=>'$row->real_amount/100'];
-			$this->col[] = ["label"=>"Afecta capital?","name"=>"affect_capital","callback_php"=>'($row->affect_capital ==1)?"si" : "no"'];
-			$this->col[] = ["label"=>"Es extraordinario?","name"=>"is_extraordinary","callback_php"=>'($row->is_extraordinary ==1)?"si" : "no"'];
-			$this->col[] = ["label"=>"Hecho?","name"=>"is_done","callback_php"=>'($row->is_done ==1)?"si" : "no"'];
-			# END COLUMNS DO NOT REMOVE THIS LINE
-			$this->col[1]['callback_php'] = '$this->getEntryType($row->entry_type)';
+		# START COLUMNS DO NOT REMOVE THIS LINE
+		$this->col = [];
+		$this->col[] = ["label" => "Fecha", "name" => "date"];
+		$this->col[] = ["label" => "Tipo", "name" => "entry_type", "callback_php" => '$this->getEntryType($row->entry_type)'];
+		$this->col[] = ["label" => "Categoría", "name" => "category_id", "join" => "app_categories,category"];
+		$this->col[] = ["label" => "Área", "name" => "area_id", "join" => "app_areas,area"];
+		$this->col[] = ["label" => "Concepto", "name" => "concept"];
+		$this->col[] = ["label" => "Moneda", "name" => "currency"];
+		$this->col[] = ["label" => "Monto real", "name" => "real_amount", "callback_php" => '$row->real_amount/100'];
+		$this->col[] = ["label" => "Afecta capital?", "name" => "affect_capital", "callback_php" => '($row->affect_capital ==1)?"si" : "no"'];
+		$this->col[] = ["label" => "Es extraordinario?", "name" => "is_extraordinary", "callback_php" => '($row->is_extraordinary ==1)?"si" : "no"'];
+		$this->col[] = ["label" => "Hecho?", "name" => "is_done", "callback_php" => '($row->is_done ==1)?"si" : "no"'];
+		# END COLUMNS DO NOT REMOVE THIS LINE
+		$this->col[1]['callback_php'] = '$this->getEntryType($row->entry_type)';
 
-			$columns[] = ['label'=>'Moneda','name'=>'currency_plan','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>['$','U$S'],'default'=>'-- Moneda --','value'=>'$'];
-			$columns[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'app_accounts,name','datatable_where'=>'is_active=1','datatable_orderby'=>'currency','default'=>'-- Cuenta --'];
-			$columns[] = ['label'=>'Plan','name'=>'plan','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>['-1|Recurrente',1,2,3,4,5,6,7,8,9,10,11,12,18,24,36,60,120,240],'default'=>'-- Plan --'];
-			$columns[] = ['label'=>'Frequencia','name'=>'frequency','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>['1|Semanal','2|Mensual','3|Bimestral','4|Trimestral','5|Cuatrimestral','6|Semestral','7|Anual'],'default'=>'-- Frecuencia --'];
-			$columns[] = ['label'=>'Monto por operación','name'=>'amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			$columns[] = ['label'=>'Primera ejecución','name'=>'first_execution','type'=>'datetime','validation'=>'required|date_format:Y-m-d','width'=>'col-sm-10'];
-			//$columns[] = ['label'=>'Completa?','name'=>'is_completed','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no','value'=>1];
-			$columns[] = ['label'=>'Notas','name'=>'notes','type'=>'textarea','width'=>'col-sm-5'];
+		$columns[] = ['label' => 'Moneda', 'name' => 'currency_plan', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['$', 'U$S'], 'default' => '-- Moneda --', 'value' => '$'];
+		$columns[] = ['label' => 'Cuenta', 'name' => 'account_id', 'type' => 'select', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'datatable' => 'app_accounts,name', 'datatable_where' => 'is_active=1', 'datatable_orderby' => 'currency', 'default' => '-- Cuenta --'];
+		$columns[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['-1|Recurrente', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18, 24, 36, 60, 120, 240], 'default' => '-- Plan --'];
+		$columns[] = ['label' => 'Frequencia', 'name' => 'frequency', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Semanal', '2|Mensual', '3|Bimestral', '4|Trimestral', '5|Cuatrimestral', '6|Semestral', '7|Anual'], 'default' => '-- Frecuencia --'];
+		$columns[] = ['label' => 'Monto por operación', 'name' => 'amount', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
+		$columns[] = ['label' => 'Primera ejecución', 'name' => 'first_execution', 'type' => 'datetime', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10'];
+		//$columns[] = ['label'=>'Completa?','name'=>'is_completed','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no','value'=>1];
+		$columns[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
 
-			# START FORM DO NOT REMOVE THIS LINE
-			$this->form = [];
-			$this->form[] = ['label'=>'Fecha','name'=>'date','type'=>'date','validation'=>'required|date_format:Y-m-d','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Tipo','name'=>'entry_type','type'=>'select','validation'=>'required','width'=>'col-sm-10','dataenum'=>'1|Ingreso;2|Egreso;3|Pasivo;4|Movimiento','default'=>'-- Tipo --'];
-			$this->form[] = ['label'=>'Categoría','name'=>'category_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'app_categories,category','datatable_where'=>'is_active=1','default'=>'-- Categoría --'];
-			$this->form[] = ['label'=>'Área','name'=>'area_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'app_areas,area','datatable_where'=>'is_active=1','default'=>'-- Área --'];
-			$this->form[] = ['label'=>'Concepto','name'=>'concept','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Moneda','name'=>'currency','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'$;U$S','default'=>'-- Moneda --'];
-			$this->form[] = ['label'=>'Monto real','name'=>'real_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
-			$this->form[] = ['label'=>'Monto en un pago','name'=>'one_pay_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
-			$this->form[] = ['label'=>'Cotización dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
-			$this->form[] = ['label'=>'Afecta capital?','name'=>'affect_capital','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			$this->form[] = ['label'=>'Es Extraordinario','name'=>'is_extraordinary','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'textarea','width'=>'col-sm-5'];
-			$this->form[] = ['label'=>'Plan','name'=>'plan','type'=>'child','width'=>'col-sm-10','table'=>'app_plans','foreign_key'=>'entry_id', 'columns'=>$columns];
-			# END FORM DO NOT REMOVE THIS LINE
-			$this->form[5]['value'] = '$';
-		
-			# OLD START FORM
-			//$this->form = [];
-			//$this->form[] = ['label'=>'Fecha','name'=>'date','type'=>'date','validation'=>'required|date_format:Y-m-d','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Tipo','name'=>'entry_type','type'=>'select','validation'=>'required','width'=>'col-sm-10','dataenum'=>'1|Ingreso;2|Egreso;3|Pasivo;4|Movimiento','default'=>'-- Tipo --'];
-			//$this->form[] = ['label'=>'Categoría','name'=>'category_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'app_categories,category','datatable_where'=>'is_active=1','default'=>'-- Categoría --'];
-			//$this->form[] = ['label'=>'Área','name'=>'area_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'app_areas,area','datatable_where'=>'is_active=1','default'=>'-- Área --'];
-			//$this->form[] = ['label'=>'Concepto','name'=>'concept','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Moneda','name'=>'currency','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'$;U$S','default'=>'$'];
-			//$this->form[] = ['label'=>'Monto real','name'=>'real_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
-			//$this->form[] = ['label'=>'Monto en un pago','name'=>'one_pay_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
-			//$this->form[] = ['label'=>'Cotización dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
-			//$this->form[] = ['label'=>'Afecta capital?','name'=>'affect_capital','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			//$this->form[] = ['label'=>'Es Extraordinario','name'=>'is_extraordinary','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			//$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			//$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','width'=>'col-sm-5'];
-			//$this->form[] = ['label'=>'Plan','name'=>'plan','type'=>'json','width'=>'col-sm-10'];
-			# OLD END FORM
+		# START FORM DO NOT REMOVE THIS LINE
+		$this->form = [];
+		$this->form[] = ['label' => 'Fecha', 'name' => 'date', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10'];
+		$this->form[] = ['label' => 'Tipo', 'name' => 'entry_type', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'dataenum' => '1|Ingreso;2|Egreso;3|Pasivo;4|Movimiento', 'default' => '-- Tipo --'];
+		$this->form[] = ['label' => 'Categoría', 'name' => 'category_id', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'datatable' => 'app_categories,category', 'datatable_where' => 'is_active=1', 'default' => '-- Categoría --'];
+		$this->form[] = ['label' => 'Área', 'name' => 'area_id', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'datatable' => 'app_areas,area', 'datatable_where' => 'is_active=1', 'default' => '-- Área --'];
+		$this->form[] = ['label' => 'Concepto', 'name' => 'concept', 'type' => 'text', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10'];
+		$this->form[] = ['label' => 'Moneda', 'name' => 'currency', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'default' => '-- Moneda --'];
+		$this->form[] = ['label' => 'Monto real', 'name' => 'real_amount', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'decimals' => '2', 'dec_point' => ','];
+		$this->form[] = ['label' => 'Monto en un pago', 'name' => 'one_pay_amount', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'decimals' => '2', 'dec_point' => ','];
+		$this->form[] = ['label' => 'Cotización dolar', 'name' => 'dollar_value', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'decimals' => '2', 'dec_point' => ','];
+		$this->form[] = ['label' => 'Afecta capital?', 'name' => 'affect_capital', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
+		$this->form[] = ['label' => 'Es Extraordinario', 'name' => 'is_extraordinary', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
+		$this->form[] = ['label' => 'Hecho?', 'name' => 'is_done', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
+		$this->form[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
+		$this->form[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'child', 'width' => 'col-sm-10', 'table' => 'app_plans', 'foreign_key' => 'entry_id', 'columns' => $columns];
+		# END FORM DO NOT REMOVE THIS LINE
+		$this->form[5]['value'] = '$';
 
-			$now = date_create();
-			$this->form[0]['value'] = date_format($now,'Y-m-d');
-			$this->form[9]['value'] = 0;
-			$this->form[10]['value'] = 1;
-			$this->form[11]['value'] = 0;
+		# OLD START FORM
+		//$this->form = [];
+		//$this->form[] = ['label'=>'Fecha','name'=>'date','type'=>'date','validation'=>'required|date_format:Y-m-d','width'=>'col-sm-10'];
+		//$this->form[] = ['label'=>'Tipo','name'=>'entry_type','type'=>'select','validation'=>'required','width'=>'col-sm-10','dataenum'=>'1|Ingreso;2|Egreso;3|Pasivo;4|Movimiento','default'=>'-- Tipo --'];
+		//$this->form[] = ['label'=>'Categoría','name'=>'category_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'app_categories,category','datatable_where'=>'is_active=1','default'=>'-- Categoría --'];
+		//$this->form[] = ['label'=>'Área','name'=>'area_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'app_areas,area','datatable_where'=>'is_active=1','default'=>'-- Área --'];
+		//$this->form[] = ['label'=>'Concepto','name'=>'concept','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+		//$this->form[] = ['label'=>'Moneda','name'=>'currency','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'$;U$S','default'=>'$'];
+		//$this->form[] = ['label'=>'Monto real','name'=>'real_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
+		//$this->form[] = ['label'=>'Monto en un pago','name'=>'one_pay_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
+		//$this->form[] = ['label'=>'Cotización dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','decimals'=>'2','dec_point'=>','];
+		//$this->form[] = ['label'=>'Afecta capital?','name'=>'affect_capital','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
+		//$this->form[] = ['label'=>'Es Extraordinario','name'=>'is_extraordinary','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
+		//$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
+		//$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','width'=>'col-sm-5'];
+		//$this->form[] = ['label'=>'Plan','name'=>'plan','type'=>'json','width'=>'col-sm-10'];
+		# OLD END FORM
 
-			$data_in = "http://ws.geeklab.com.ar/dolar/get-dolar-json.php";
-			$data_json = @file_get_contents($data_in);
-			if (strlen($data_json) > 0) {
-				$data_out = json_decode($data_json, true);
-				$this->form[8]['value'] = $data_out['libre']*100;
-			}
+		$now = date_create();
+		$this->form[0]['value'] = date_format($now, 'Y-m-d');
+		$this->form[9]['value'] = 0;
+		$this->form[10]['value'] = 1;
+		$this->form[11]['value'] = 0;
 
-	
+		$data_in = "http://ws.geeklab.com.ar/dolar/get-dolar-json.php";
+		$data_json = @file_get_contents($data_in);
+		if (strlen($data_json) > 0) {
+			$data_out = json_decode($data_json, true);
+			$this->form[8]['value'] = $data_out['libre'] * 100;
+		}
+
+
 		$this->sub_module = array();
 
 
@@ -307,20 +307,18 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	public function hook_before_add(&$postdata)
 	{
 		//Your code here
-//get_object_vars()
+		//get_object_vars()
 
 	}
 
-	public function hook_before_add_child($postdata,&$childPostdata)
+	public function hook_before_add_child($postdata, &$childPostdata)
 	{
 		//Your code here
-//get_object_vars()
-/*print_r($postdata);
+		//get_object_vars()
+		/*print_r($postdata);
 print_r($childPostdata);
-die();*/
-		
-	}
-	
+die();*/ }
+
 	/* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for execute command after add public static function called 
@@ -336,28 +334,26 @@ die();*/
 
 	public function hook_after_add_child($entry_id)
 	{
-/*
+		
 		$query = DB::table('app_plans')
 			->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
 			->join('app_entries','app_entries.id','=','app_plans.entry_id')
 			->where('app_entries.id', '=', $entry_id)
 			->get();
-			print_r($query);
+			
 		foreach($query as $plan){
-
 			$operations = $this->compute_operations($plan);
-			print_r($operations);
 			foreach($operations as $operation){
 				DB::table('app_operations')->insert($operation);
 			}
-			
-		}*/
-
+		}
 	}
 
-	
-	public function compute_operations($data) {
-  		/*
+
+	public function compute_operations($data)
+	{
+		setlocale(LC_ALL,'es_AR.UTF-8');
+		/*
 		$frequencyData = [
 			'Semanal'		=> ['amount' => '1', 'unit' => 'week'],
 			'Mensual'		=> ['amount' => '1', 'unit' => 'month'],
@@ -385,13 +381,16 @@ die();*/
 			4 => 'Cuarta',
 			5 => 'Quinta'
 		];
-		  
-		  $i = 0;
-		  $operations = [];
-		  
-		  $operation_date = new DateTime($data->first_execution);
-		  while (true) {
-			$cuota = $i+1;
+
+		$i = 0;
+		$operations = [];
+
+		$first_execution = new DateTime($data->first_execution);
+		$operation_date = clone $first_execution;
+		$now = new DateTime();
+
+		while (true) {
+			$cuota = $i + 1;
 
 			$operation['entry_id'] = $data->entry_id;
 			$operation['account_id'] = $data->account_id;
@@ -399,58 +398,62 @@ die();*/
 			$operation['currency'] = $data->currency;
 			$operation['amount'] = $data->amount;
 
-			
-
-			$operation_date->add($frequencyData[2]);
 			$operation['operation_date'] = $operation_date->format("Y-m-d H:i:s");
 			$operation['settlement_date'] = $operation_date->format('Ym');
-			
-			$now = new DateTime();
-			if($operation_date->format('Ymd') <= $now->format('Ymd')){
+
+			//If the operation was in the past is marked as done (with all the required fields)
+			if ($operation_date->format('Ymd') <= $now->format('Ymd')) {
 				$operation['is_done'] = 1;
 
 				$aux_dollar_value = DB::table('aux_dollar_value')
 					->select('seller')
-					->where('date','>=',$operation_date->format('Y-m-d') )
+					->where('date', '>=', $operation_date->format('Y-m-d'))
 					->orderby('date')
 					->first();
 				$operation['dollar_value'] = $aux_dollar_value->seller;
-				if($data->currency == '$') {
-					$operation['in_dollars'] = $operation['amount'] / ($operation['dollar_value']/100);
+				print($operation['amount']);
+				print($operation['dollar_value']);
+				if ($data->currency == '$') {
+					$operation['in_dollars'] = $operation['amount'] / ($operation['dollar_value'] / 100);
+
+					die();
 				}
 			} else {
 				$operation['is_done'] = 0;
 			}
 
+			//For recursive plan
 			if ($data->plan === -1) {
-				if ($operation_date->format('Ym') + 100 <= $operation['settlement_date'] ) {
+				//Stop the while after generate a year of operations
+				if ($first_execution->format('Ym') + 100 <= $operation['settlement_date']) {
 					break;
 				}
 
 				if ($data->frequency === 1) {
-					$dayOfMonth			= $operation['operation_date']->format("j");
-					$dayOfWeek			= $operation['operation_date']->format("N");
-					$firstDayOfMonth	= new DateTime($operation['operation_date']->format("Y-m-01"));
-					$weekOfMonth		= ceil($dayOfMonth/7) ;
+					$dayOfMonth			= $operation_date->format("j");
+					$dayOfWeek			= $operation_date->format("N");
+					$firstDayOfMonth	= new DateTime($operation_date->format("Y-m-01"));
+					$weekOfMonth		= ceil($dayOfMonth / 7);
 					//Si el día de la semana del primer día del mes es mayor que el día de la semana de la fecha, incremento la semana del mes
-					if($firstDayOfMonth->format("N") > $dayOfWeek) {
+					if ($firstDayOfMonth->format("N") > $dayOfWeek) {
 						$weekOfMonth++;
 					}
-					$operation['detail'] = $ordinalNumbers[$weekOfMonth] . ' semana de ' . $operation['operation_date']->format("F");
+					$operation['detail'] = $ordinalNumbers[$weekOfMonth] . ' semana de ' . $operation_date->format("F");
 				} else {
-					$toDate = $data->first_execution->add($frequencyData[$data->frequency]);
-					$operation['detail'] = 'Período desde el ' .  strftime("%e de %B de %Y", $operation['operation_date']->getTimestamp())  
+					$toDate = clone $operation_date;
+					$toDate->add($frequencyData[$data->frequency]);
+					$operation['detail'] = 'Período desde el ' .  strftime("%e de %B de %Y", $operation_date->getTimestamp())
 						. ' hasta el ' . strftime("%e de %B de %Y", $toDate->getTimestamp());
-				} 
+				}
 			} elseif ($data->plan === 1) {
 				$operation['detail'] = 'Pago único';
 			} else {
 				$operation['detail'] = "Cuota {$cuota}/{$data->plan}";
 			}
-			
-	
+
+
 			$operation['created_by'] = CRUDBooster::myId();
-			
+
 			$operation['number'] = $cuota;
 			array_push($operations, $operation);
 			unset($operation);
@@ -463,11 +466,12 @@ die();*/
 			if (241 == $i) {
 				break;
 			}
-			//break;
-		  }
-
-		  return $operations;
+			
+			$operation_date->add($frequencyData[$data->frequency]);
 		}
+
+		return $operations;
+	}
 
 	/* 
 	    | ---------------------------------------------------------------------- 
@@ -525,24 +529,25 @@ die();*/
 
 	//By the way, you can still create your own method in here... :) 
 
-	public function getEntryType($type){
-		switch ($type) { 
-			case 1 : 
-				$res = "Ingreso"; 
-				break; 
-			case 2 : 
-				$res = "Egreso"; 
-				break; 
-			case 3 : 
-				$res = "Pasivo"; 
-				break; 
-			case 4 : 
-				$res = "Movimiento"; 
-				break; 
-			default : 
-				$res = "Error"; 
-				break; 
+	public function getEntryType($type)
+	{
+		switch ($type) {
+			case 1:
+				$res = "Ingreso";
+				break;
+			case 2:
+				$res = "Egreso";
+				break;
+			case 3:
+				$res = "Pasivo";
+				break;
+			case 4:
+				$res = "Movimiento";
+				break;
+			default:
+				$res = "Error";
+				break;
 		}
-			return $res;
+		return $res;
 	}
 }
