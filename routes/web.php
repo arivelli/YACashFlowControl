@@ -14,3 +14,4 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/compute_operations/{entry_id}','AdminEntriesController@hook_after_add_child')->name('compute_operations');
