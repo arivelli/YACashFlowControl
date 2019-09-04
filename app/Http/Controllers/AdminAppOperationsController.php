@@ -39,13 +39,14 @@
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'app_account,name','datatable_where'=>'is_active=1'];
+			$this->form[] = ['label'=>'Tipo de Cuenta','name'=>'account_type','type'=>'select','validation'=>'required','width'=>'col-sm-9','datatable'=>'app_account,name','datatable_where'=>'is_active=1'];
+			$this->form[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Entrada','name'=>'entries_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Detalle','name'=>'detail','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Fecha','name'=>'operation_date','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Monto','name'=>'amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Hecho?','name'=>'is_paid','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'Array'];
+			$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','dataenum'=>'Array'];
+			$this->form[] = ['label'=>'Hecho?','name'=>'is_paid','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Plan','name'=>'plan_ref','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Periodo cubierto','name'=>'settlement_date','type'=>'text','validation'=>'integer|min:0','width'=>'col-sm-10'];
@@ -59,7 +60,7 @@
 			//$this->form[] = ['label'=>'Fecha','name'=>'operation_date','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
 			//$this->form[] = ['label'=>'Monto','name'=>'amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			//$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'Array'];
+			//$this->form[] = ['label'=>'Hecho?','name'=>'is_paid','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'Array'];
 			//$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			//$this->form[] = ['label'=>'Plan','name'=>'plan_ref','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			//$this->form[] = ['label'=>'Periodo cubierto','name'=>'settlement_date','type'=>'text','validation'=>'integer|min:0','width'=>'col-sm-10'];

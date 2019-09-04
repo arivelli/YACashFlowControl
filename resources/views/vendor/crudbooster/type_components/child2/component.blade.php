@@ -388,6 +388,50 @@ $name = str_slug($form['label'], '');
                                                         }
                                                         ?>
                                                     </select>
+
+                                                    @elseif($col['type']=='select3')
+
+
+<select id='{{$name_column}}' name='child-{{$col["name"]}}'
+        class='form-control select2 {{$col['required']?"required":""}}'
+        {{($col['readonly']===true)?"readonly":""}}
+>
+    <option value=''>{{ $col["default"] }}</option>
+    <?php
+    if ($col['queryBuilder']) {
+        
+        $data = $col['queryBuilder']->get(); ?>
+        @push('bottom')
+            <script type="text/javascript">
+                let child_{{$col["name"]}} = {!! json_encode($data) !!}
+            </script>
+        @endpush
+        <?php
+        foreach ($data as $d) {
+            $selected = ($d->id == $col['value']) ? ' selected' : '';
+            echo "<option value='{$d->id}'$selected>{$d->title}</option>";
+        }
+    } else {
+        $data = $col['dataenum'];
+        foreach ($data as $d) {
+            $enum = explode('|', $d);
+            if (count($enum) == 2) {
+                $opt_value = $enum[0];
+                $opt_label = $enum[1];
+            } else {
+                $opt_value = $opt_label = $enum[0];
+            }
+            $selected = ($opt_value == $col['value']) ? ' selected' : '';
+            echo "<option value='$opt_value'$selected>$opt_label</option>";
+        }
+    }
+    ?>
+</select>
+
+
+
+
+
                                                 @elseif($col['type']=='hidden')
                                                     <input type="{{$col['type']}}" id="{{$name.$col["name"]}}" name="child-{{$name.$col["name"]}}"
                                                            value="{{$col["value"]}}">

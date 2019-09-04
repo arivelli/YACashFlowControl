@@ -1,12 +1,12 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "name": "arivelli/YACashFlowControl",
+    "description": "Yet Another Cash Flow Control",
+    "keywords": ["cash flow", "financial"],
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=5.6.4",
-        "crocodicstudio/crudbooster": "5.3.2.*",
+        "php": ">=7.1.*",
+        "crocodicstudio/crudbooster": "5.4.0.*",
         "laravel/framework": "5.3.*"
     },
     "require-dev": {

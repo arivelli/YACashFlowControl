@@ -51,8 +51,13 @@ $(document).ready(function(){
     $('input[type=radio][name=child-currency_plan]').on('change', function(){
         format.prefix = $(this).val() + ' ';
         $('#planamount').priceFormat(format);
+        filterAccounts( $('input[type=radio][name=child-currency_plan]:checked').val(), $('input[type=radio][name=child-account_type]:checked').val());
     });
 
+    $('input[type=radio][name=child-account_type]').on('change', function(){
+        filterAccounts( $('input[type=radio][name=child-currency_plan]:checked').val(), $('input[type=radio][name=child-account_type]:checked').val());
+    });
+    
     $('#planplan').on('change', function(){
         if($(this).val() == 1){
             $($('#planfrequency')[0].parentNode.parentNode).hide();
@@ -64,6 +69,18 @@ $(document).ready(function(){
     //$($('#planfrequency')[0].parentNode.parentNode).hide();
     $('#concept').focus();
 })
+
+function filterAccounts(currency, type) {
+    if(typeof currency != 'undefined' && typeof type != 'undefined') {
+        let accountList = '';
+        child_account_id.forEach( (account) => {
+            if(account.currency == currency && account.type == type) {
+                accountList += '<option value="'+account.id+'">'+account.title+'</option>';
+            }
+        });
+        $('#planaccount_id').html(accountList);
+    }
+}
 
 
 //Agregar filtro por tipo de cuenta: efectivo, tarjetas o bancos (incluye CA, CC, tanto para transferencias como debitos, depositos  y cheques)

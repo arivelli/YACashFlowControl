@@ -8,7 +8,7 @@ Yet Another Cash Flow Control (YACFC) is a web application focuses on solve comp
 - Registry of single, recursive and many kinds of incomes and expenses
 
 
-##ToDo
+## ToDo
 - Check the balance of every account
 - Check the expenses of credit cards
 
