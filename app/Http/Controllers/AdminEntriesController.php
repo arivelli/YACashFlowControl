@@ -50,7 +50,7 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		# END COLUMNS DO NOT REMOVE THIS LINE
 		$this->col[1]['callback_php'] = '$this->getEntryType($row->entry_type)';
 
-		$columns[] = ['label' => 'Moneda', 'name' => 'currency_plan', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['$', 'U$S'], 'default' => '-- Moneda --', 'value' => '$'];
+		$columns[] = ['label' => 'Moneda', 'name' => 'currency_plan', 'type' => 'radio', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'value' => '$'];
 		$columns[] = ['label' => 'Cuenta', 'name' => 'account_id', 'type' => 'select', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'datatable' => 'app_accounts,name', 'datatable_where' => 'is_active=1', 'datatable_orderby' => 'currency', 'default' => '-- Cuenta --'];
 		$columns[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['-1|Recurrente', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18, 24, 36, 60, 120, 240], 'default' => '-- Plan --'];
 		$columns[] = ['label' => 'Frequencia', 'name' => 'frequency', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Semanal', '2|Mensual', '3|Bimestral', '4|Trimestral', '5|Cuatrimestral', '6|Semestral', '7|Anual'], 'default' => '-- Frecuencia --'];
@@ -62,20 +62,23 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		# START FORM DO NOT REMOVE THIS LINE
 		$this->form = [];
 		$this->form[] = ['label' => 'Fecha', 'name' => 'date', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10'];
-		$this->form[] = ['label' => 'Tipo', 'name' => 'entry_type', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'dataenum' => '1|Ingreso;2|Egreso;3|Pasivo;4|Movimiento', 'default' => '-- Tipo --'];
-		$this->form[] = ['label' => 'Categoría', 'name' => 'category_id', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'datatable' => 'app_categories,category', 'datatable_where' => 'is_active=1', 'default' => '-- Categoría --'];
+		$this->form[] = ['label' => 'Tipo', 'name' => 'entry_type', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'dataenum' => '1|Ingreso;2|Egreso;3|Pasivo;4|Movimiento;5|Ajuste', 'default' => '-- Tipo --'];
 		$this->form[] = ['label' => 'Área', 'name' => 'area_id', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'datatable' => 'app_areas,area', 'datatable_where' => 'is_active=1', 'default' => '-- Área --'];
+		$this->form[] = ['label' => 'Categoría', 'name' => 'category_id', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'datatable' => 'app_categories,category', 'datatable_where' => 'is_active=1', 'default' => '-- Categoría --'];
 		$this->form[] = ['label' => 'Concepto', 'name' => 'concept', 'type' => 'text', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10'];
-		$this->form[] = ['label' => 'Moneda', 'name' => 'currency', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'default' => '-- Moneda --'];
-		$this->form[] = ['label' => 'Monto real', 'name' => 'real_amount', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'decimals' => '2', 'dec_point' => ','];
-		$this->form[] = ['label' => 'Monto en un pago', 'name' => 'one_pay_amount', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'decimals' => '2', 'dec_point' => ','];
-		$this->form[] = ['label' => 'Cotización dolar', 'name' => 'dollar_value', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'decimals' => '2', 'dec_point' => ','];
+		$this->form[] = ['label' => 'Moneda', 'name' => 'currency', 'type' => 'radio', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'default' => '-- Moneda --'];
+		$this->form[] = ['label' => 'Monto real', 'name' => 'real_amount', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
+		$this->form[] = ['label' => 'Monto en un pago', 'name' => 'one_pay_amount', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
+		$this->form[] = ['label' => 'Cotización dolar', 'name' => 'dollar_value', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
 		$this->form[] = ['label' => 'Afecta capital?', 'name' => 'affect_capital', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
 		$this->form[] = ['label' => 'Es Extraordinario', 'name' => 'is_extraordinary', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
 		$this->form[] = ['label' => 'Hecho?', 'name' => 'is_done', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
 		$this->form[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
-		$this->form[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'child', 'width' => 'col-sm-10', 'table' => 'app_plans', 'foreign_key' => 'entry_id', 'columns' => $columns];
+		$this->form[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_plans', 'foreign_key' => 'entry_id', 'columns' => $columns];
 		# END FORM DO NOT REMOVE THIS LINE
+		$this->form[1]['value'] = 2;
+		$this->form[2]['value'] = 6;
+		$this->form[3]['value'] = 20;
 		$this->form[5]['value'] = '$';
 
 		# OLD START FORM
@@ -230,7 +233,7 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	        | $this->load_js[] = asset("myfile.js");
 	        |
 	        */
-		$this->load_js = array();
+		$this->load_js = array(asset("/js/entries.js"));
 
 
 

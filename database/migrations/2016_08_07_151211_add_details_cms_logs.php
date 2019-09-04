@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddMethodTypeApicustom extends Migration
+class AddDetailsCmsLogs extends Migration
 {
     /**
      * Run the migrations.
@@ -12,9 +12,9 @@ class AddMethodTypeApicustom extends Migration
      */
     public function up()
     {
-        Schema::table('cms_apicustom', function (Blueprint $table) {
+        Schema::table('cms_logs', function (Blueprint $table) {
             //
-            $table->string('method_type', 25)->nullable();
+            $table->text('details')->nullable()->after('description');
         });
     }
 
@@ -25,9 +25,9 @@ class AddMethodTypeApicustom extends Migration
      */
     public function down()
     {
-        Schema::table('cms_apicustom', function (Blueprint $table) {
+        Schema::table('cms_logs', function (Blueprint $table) {
             //
-            $table->dropColumn('method_type');
+            $table->dropColumn('details');
         });
     }
 }

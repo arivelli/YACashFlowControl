@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddMethodTypeApicustom extends Migration
+class AddTableCmsMenusPrivileges extends Migration
 {
     /**
      * Run the migrations.
@@ -12,9 +12,10 @@ class AddMethodTypeApicustom extends Migration
      */
     public function up()
     {
-        Schema::table('cms_apicustom', function (Blueprint $table) {
-            //
-            $table->string('method_type', 25)->nullable();
+        Schema::create('cms_menus_privileges', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('id_cms_menus')->nullable();
+            $table->integer('id_cms_privileges')->nullable();
         });
     }
 
@@ -25,9 +26,6 @@ class AddMethodTypeApicustom extends Migration
      */
     public function down()
     {
-        Schema::table('cms_apicustom', function (Blueprint $table) {
-            //
-            $table->dropColumn('method_type');
-        });
+        Schema::drop('cms_menus_privileges');
     }
 }

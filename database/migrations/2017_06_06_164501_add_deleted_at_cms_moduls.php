@@ -2,8 +2,9 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class AddMethodTypeApicustom extends Migration
+class AddDeletedAtCmsModuls extends Migration
 {
     /**
      * Run the migrations.
@@ -12,9 +13,8 @@ class AddMethodTypeApicustom extends Migration
      */
     public function up()
     {
-        Schema::table('cms_apicustom', function (Blueprint $table) {
-            //
-            $table->string('method_type', 25)->nullable();
+        Schema::table('cms_moduls', function (Blueprint $table) {
+            $table->softDeletes();
         });
     }
 
@@ -25,9 +25,8 @@ class AddMethodTypeApicustom extends Migration
      */
     public function down()
     {
-        Schema::table('cms_apicustom', function (Blueprint $table) {
-            //
-            $table->dropColumn('method_type');
+        Schema::table('cms_moduls', function (Blueprint $table) {
+            $table->dropSoftDeletes();
         });
     }
 }

@@ -39,10 +39,10 @@
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
 			$this->form[] = ['label'=>'Categoría','name'=>'category','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Afecta capital','name'=>'increase_capital','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
+			$this->form[] = ['label'=>'Afecta capital','name'=>'affect_capital','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
 			$this->form[] = ['label'=>'Es extraordinaria','name'=>'is_extraordinary','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
 			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'wysiwyg','width'=>'col-sm-10','dataenum'=>'Array'];
-			$this->form[] = ['label'=>'Activa','name'=>'active','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
+			$this->form[] = ['label'=>'Activa','name'=>'is_active','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM

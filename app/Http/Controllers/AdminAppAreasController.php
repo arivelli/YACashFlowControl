@@ -38,7 +38,7 @@
 			$this->form = [];
 			$this->form[] = ['label'=>'Area','name'=>'area','type'=>'text','validation'=>'required|min:1|max:50','width'=>'col-sm-4'];
 			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'wysiwyg','width'=>'col-sm-4'];
-			$this->form[] = ['label'=>'Activa?','name'=>'active','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-1','dataenum'=>'1|si;0|no'];
+			$this->form[] = ['label'=>'Activa?','name'=>'is_active','type'=>'radio','validation'=>'required|min:1|max:255','width'=>'col-sm-1','dataenum'=>'1|si;0|no'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
