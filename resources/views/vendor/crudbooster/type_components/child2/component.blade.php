@@ -58,11 +58,12 @@ $name = str_slug($form['label'], '');
                                                     } else {
                                                         $radio_value = $radio_label = $enum[0];
                                                     }
+                                                    $checked = ($radio_value == $col['value']) ? 'checked' : '';
                                                     ?>
                                                     <label class="radio-inline">
                                                         <input type="radio" name="child-{{$col['name']}}"
                                                                class='{{ ($e==0 && $col['required'])?"required":""}} {{$name_column}}'
-                                                               value="{{$radio_value}}"{{ ($e==0 && $col['required'])?" checked":""}}> {{$radio_label}}
+                                                               value="{{$radio_value}}"{{ $checked }}> {{$radio_label}}
                                                     </label>
                                                     <?php endforeach;?>
                                                     <?php endif;?>
@@ -128,6 +129,51 @@ $name = str_slug($form['label'], '');
                                                             </div><!-- /.modal-content -->
                                                         </div><!-- /.modal-dialog -->
                                                     </div><!-- /.modal -->
+
+                                                    @elseif($col['type']=='date')
+                                                    <div class='form-group form-datepicker {{$header_group_class}} {{ ($errors->first($name))?"has-error":"" }}' id='form-group-{{$name}}'
+                                                        style="{{@$form['style']}}">
+                                                        <!--label class='control-label col-sm-2'>{{$form['label']}}
+                                                            @if($required)
+                                                                <span class='text-danger' title='{!! trans('crudbooster.this_field_is_required') !!}'>*</span>
+                                                            @endif
+                                                        </label-->
+
+                                                        <div class="{{$col_width?:'col-sm-10'}}">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon open-datetimepicker"><a><i class='fa fa-calendar '></i></a></span>
+                                                                <input type='text' title="{{$col['label']}}" readonly
+                                                                    {{$required}} {{$readonly}} {!!$placeholder!!} {{$disabled}} class='form-control notfocus input_date' name="{{$name}}" id="{{$name}}"
+                                                                    value='{{ $col['value'] }}'/> 
+                                                            </div>
+                                                            <!--div class="text-danger">{!! $errors->first($name)?"<i class='fa fa-info-circle'></i> ".$errors->first($name):"" !!}</div>
+                                                            <p class='help-block'>{{ @$form['help'] }}</p-->
+                                                        </div>
+                                                    </div>
+                                                    @push('bottom')
+                                                    @if (App::getLocale() != 'en')
+                                                        <script src="{{ asset ('vendor/crudbooster/assets/adminlte/plugins/datepicker/locales/bootstrap-datepicker.'.App::getLocale().'.js') }}"
+                                                                charset="UTF-8"></script>
+                                                    @endif
+                                                    <script type="text/javascript">
+                                                        var lang = '{{App::getLocale()}}';
+                                                        $(function () {
+                                                            $('.input_date').datepicker({
+                                                                format: 'yyyy-mm-dd',
+                                                                @if (in_array(App::getLocale(), ['ar', 'fa']))
+                                                                rtl: true,
+                                                                @endif
+                                                                language: lang
+                                                            });
+
+                                                            $('.open-datetimepicker').click(function () {
+                                                                $(this).next('.input_date').datepicker('show');
+                                                            });
+
+                                                        });
+
+                                                    </script>
+                                                    @endpush
 
                                                 @elseif($col['type']=='number')
                                                     <input id='{{$name_column}}' type='number'
@@ -312,7 +358,7 @@ $name = str_slug($form['label'], '');
                                                             class='form-control select2 {{$col['required']?"required":""}}'
                                                             {{($col['readonly']===true)?"readonly":""}}
                                                     >
-                                                        <option value=''>{{trans('crudbooster.text_prefix_option')}} {{$col['label']}}</option>
+                                                        <option value=''>{{ $col["default"] }}</option>
                                                         <?php
                                                         if ($col['datatable']) {
                                                             $tableJoin = explode(',', $col['datatable'])[0];
@@ -323,7 +369,8 @@ $name = str_slug($form['label'], '');
                                                                 $data = CRUDBooster::get($tableJoin, $col['datatable_where'], "$titleField ASC");
                                                             }
                                                             foreach ($data as $d) {
-                                                                echo "<option value='$d->id'>".$d->$titleField."</option>";
+                                                                $selected = ($d->id == $col['value']) ? ' selected' : '';
+                                                                echo "<option value='$d->id'$selected>".$d->$titleField."</option>";
                                                             }
                                                         } else {
                                                             $data = $col['dataenum'];
@@ -335,7 +382,8 @@ $name = str_slug($form['label'], '');
                                                                 } else {
                                                                     $opt_value = $opt_label = $enum[0];
                                                                 }
-                                                                echo "<option value='$opt_value'>$opt_label</option>";
+                                                                $selected = ($opt_value == $col['value']) ? ' selected' : '';
+                                                                echo "<option value='$opt_value'$selected>$opt_label</option>";
                                                             }
                                                         }
                                                         ?>

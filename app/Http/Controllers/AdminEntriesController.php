@@ -49,14 +49,16 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		$this->col[] = ["label" => "Hecho?", "name" => "is_done", "callback_php" => '($row->is_done ==1)?"si" : "no"'];
 		# END COLUMNS DO NOT REMOVE THIS LINE
 		$this->col[1]['callback_php'] = '$this->getEntryType($row->entry_type)';
-
+		
+		$now = new Datetime();
 		$columns[] = ['label' => 'Moneda', 'name' => 'currency_plan', 'type' => 'radio', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'value' => '$'];
-		$columns[] = ['label' => 'Cuenta', 'name' => 'account_id', 'type' => 'select', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'datatable' => 'app_accounts,name', 'datatable_where' => 'is_active=1', 'datatable_orderby' => 'currency', 'default' => '-- Cuenta --'];
-		$columns[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['-1|Recurrente', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18, 24, 36, 60, 120, 240], 'default' => '-- Plan --'];
+		$columns[] = ['label' => 'Tipo', 'name' => 'account_type', 'type' => 'radio', 'width' => 'col-sm-10', 'dataenum' => '1|Caja de ahorro;2|Cuenta corriente;3|Efectivo;4|Tarjeta;5|Pasivo', 'value' => '3'];
+		$columns[] = ['label' => 'Cuenta', 'name' => 'account_id', 'type' => 'select', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'datatable' => 'app_accounts,name', 'datatable_where' => 'is_active=1', 'datatable_orderby' => 'currency', 'default' => '-- Cuenta --', 'value' => 1];
+		$columns[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['-1|Recurrente', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18, 24, 36, 60, 120, 240], 'default' => '-- Plan --','value'=>1];
 		$columns[] = ['label' => 'Frequencia', 'name' => 'frequency', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Semanal', '2|Mensual', '3|Bimestral', '4|Trimestral', '5|Cuatrimestral', '6|Semestral', '7|Anual'], 'default' => '-- Frecuencia --'];
 		$columns[] = ['label' => 'Monto por operación', 'name' => 'amount', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
-		$columns[] = ['label' => 'Primera ejecución', 'name' => 'first_execution', 'type' => 'datetime', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10'];
-		//$columns[] = ['label'=>'Completa?','name'=>'is_completed','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no','value'=>1];
+		$columns[] = ['label' => 'Primera ejecución', 'name' => 'first_execution', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10', 'value' => $now->format('Y-m-d') ];
+		$columns[] = ['label'=>'Completa?','name'=>'is_completed','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no','value'=>1];
 		$columns[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
 
 		# START FORM DO NOT REMOVE THIS LINE
@@ -76,10 +78,7 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		$this->form[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
 		$this->form[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_plans', 'foreign_key' => 'entry_id', 'columns' => $columns];
 		# END FORM DO NOT REMOVE THIS LINE
-		$this->form[1]['value'] = 2;
-		$this->form[2]['value'] = 6;
-		$this->form[3]['value'] = 20;
-		$this->form[5]['value'] = '$';
+		
 
 		# OLD START FORM
 		//$this->form = [];
@@ -99,8 +98,12 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		//$this->form[] = ['label'=>'Plan','name'=>'plan','type'=>'json','width'=>'col-sm-10'];
 		# OLD END FORM
 
-		$now = date_create();
-		$this->form[0]['value'] = date_format($now, 'Y-m-d');
+		
+		$this->form[0]['value'] = $now->format('Y-m-d');
+		$this->form[1]['value'] = 2;
+		$this->form[2]['value'] = 6;
+		$this->form[3]['value'] = 20;
+		$this->form[5]['value'] = '$';
 		$this->form[9]['value'] = 0;
 		$this->form[10]['value'] = 1;
 		$this->form[11]['value'] = 0;

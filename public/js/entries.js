@@ -8,24 +8,14 @@ let format = {
     'allowNegative'         : true
 }
 $(document).ready(function(){
-    $('#plancurrency_plan').on('click', function(){
-        format.prefix = $(this).val() + ' ';
-        $('#planamount').priceFormat(format);
-    });
 
-    $('#currency').on('click', function(){
+    
+    $('input[type=radio][name=currency]').on('change', function(){
         format.prefix = $(this).val() + ' ';
         $('#real_amount').priceFormat(format);
         $('#one_pay_amount').priceFormat(format);
     });
-    $('#planplan').on('change', function(){
-        if($(this).val() == 1){
-            $($('#planfrequency')[0].parentNode.parentNode).hide();
-        } else {
-            $($('#planfrequency')[0].parentNode.parentNode).show();
-        }
-    });
-
+ 
     $('#entry_type').on('change', function(){
         switch($(this).val())  {
             case '1':
@@ -58,8 +48,20 @@ $(document).ready(function(){
         }
     });
     
+    $('input[type=radio][name=child-currency_plan]').on('change', function(){
+        format.prefix = $(this).val() + ' ';
+        $('#planamount').priceFormat(format);
+    });
 
-
+    $('#planplan').on('change', function(){
+        if($(this).val() == 1){
+            $($('#planfrequency')[0].parentNode.parentNode).hide();
+        } else {
+            $($('#planfrequency')[0].parentNode.parentNode).show();
+        }
+    });
+    
+    //$($('#planfrequency')[0].parentNode.parentNode).hide();
     $('#concept').focus();
 })
 
