@@ -565,19 +565,15 @@ $name = str_slug($form['label'], '');
                                                     "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}} .input-id').val() + "'/>" +
                                                     "</td>";
                                                 @elseif($c['type']=='money')
-                
-
                                                     trRow += "<td class='{{$c['name']}}'>" + $('#{{$name.$c["name"]}}').val() +
                                                     "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}}.inputMoney').val().replace(',','').replace('U$S','').replace('$','').replace('.','') + "'/>" +
                                                     "</td>";
-
                                                 @elseif($c['type']=='upload')
                                                         @if($c['upload_type']=='image')
                                                     trRow += "<td class='{{$c['name']}}'>" +
                                                     "<a data-lightbox='roadtrip' href='{{asset('/')}}" + $('#{{$name.$c["name"]}} .input-id').val() + "'><img data-label='" + $('#{{$name.$c["name"]}} .input-label').val() + "' src='{{asset('/')}}" + $('#{{$name.$c["name"]}} .input-id').val() + "' width='50px' height='50px'/></a>" +
                                                     "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}} .input-id').val() + "'/>" +
                                                     "</td>";
-                                                
                                                 @else
                                                     trRow += "<td class='{{$c['name']}}'><a data-label='" + $('#{{$name.$c["name"]}} .input-label').val() + "' href='{{asset('/')}}" + $('#{{$name.$c["name"]}} .input-id').val() + "'>" + $('#{{$name.$c["name"]}} .input-label').val() + "</a>" +
                                                     "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}} .input-id').val() + "'/>" +

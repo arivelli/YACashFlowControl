@@ -369,28 +369,56 @@
 			$now = new Datetime();
 			$settlement_date = $settlement_date ? $settlement_date : $now->format('Ym');
 			
+			$data['settlement_date'] = $settlement_date;
+			$data['settlement_year'] = substr($settlement_date,0,4);
+			$data['settlement_month'] = substr($settlement_date,4);
+
+			$data['cashFlow'] = $this->cashFlowData($settlement_date, true);
+			
+			$this->cbView('cashflow',$data);
+		}
+
+		public function cashFlowData ($settlement_date = null, $is_internal = false) {
+			$now = new Datetime();
+			$settlement_date = $settlement_date ? $settlement_date : $now->format('Ym');
+			
 			$query = DB::table('app_operations')
 			->join('app_entries', 'app_operations.entry_id','=','app_entries.id')
 			->join('app_accounts', 'app_operations.account_id','=','app_accounts.id')
 			->leftjoin('app_categories', 'app_entries.category_id','=','app_categories.id')
+			->select('*','app_operations.id as operation_id')
 			->where('settlement_date', '=', $settlement_date)
 			->orderby('app_operations.estimated_date')
 			->get();
-			//print_r($query);
-
-			$data['settlement_date'] = $settlement_date;
-			$data['result'] = $query;		
-			$data['columns'] = $this->getBaseColumns();
-			$data['cashFlow']  = json_encode($query);
-			
-			$this->cbView('cashflow',$data);
-
+			if($is_internal) {
+				return json_encode($query);
+			} else {
+				header('Content-Type: application/json');	
+				echo json_encode($query);
+				die();
+			}
 		}
-		public function getBaseColumns(){
-			$col= [];
-			$col[] = ["label"=>"Concepto",	"name"=>"concept",	"field_raw"=>"app_entries.concept",		"field"=>"app_entries_concept",		"type_data"=>CRUDBooster::getFieldType("app_entries","concept")];
-			$col[] = ["label"=>"Detalle",	"name"=>"detail",	"field_raw"=>"app_operations.detail",	"field"=>"app_operations_detail",	"type_data"=>CRUDBooster::getFieldType("app_operations","detail")];
-			return $col;
+		public function execute_operation($id){
+
+			$data_in = "http://ws.geeklab.com.ar/dolar/get-dolar-json.php";
+			$data_json = @file_get_contents($data_in);
+			if (strlen($data_json) > 0) {
+				$data_out = json_decode($data_json, true);
+				$dollar_value = $data_out['libre'] * 100;
+			}
+			DB::enableQueryLog();
+
+			$res = DB::table('app_operations')
+			->where('id', $id)
+            ->update([
+				'operation_date' => DB::raw('NOW()'),
+				'operation_amount' => DB::raw('estimated_amount'),
+				'dollar_value' => $dollar_value,
+				'in_dollars' => DB::raw('estimated_amount/'.$dollar_value),
+				'is_done' => 1
+			]);
+			dd(DB::getQueryLog());
+			print_r($res);
 		}
 	}
 

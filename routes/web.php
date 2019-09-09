@@ -17,3 +17,6 @@ Route::get('/', function () {
 Route::get('/compute_operations/{entry_id}','AdminEntriesController@hook_after_add_child')->name('compute_operations');
 Route::get('/cashFlow/{settlement_date}','AdminAppOperationsController@cashFlow')->name('cashFlow');
 Route::get('/cashFlow','AdminAppOperationsController@cashFlow')->name('cashFlow');
+Route::get('/cashFlowData/{settlement_date}','AdminAppOperationsController@cashFlowData')->name('cashFlowData');
+
+Route::get('/admin/app_operations/execute/{entry_id}','AdminAppOperationsController@execute_operation')->name('execute_operation');
