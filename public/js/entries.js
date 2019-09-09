@@ -73,9 +73,11 @@ $(document).ready(function(){
 function filterAccounts(currency, type) {
     if(typeof currency != 'undefined' && typeof type != 'undefined') {
         let accountList = '';
-        child_account_id.forEach( (account) => {
+        let selected = ' selected';
+        child_account_id.forEach( (account, i) => {
             if(account.currency == currency && account.type == type) {
-                accountList += '<option value="'+account.id+'">'+account.title+'</option>';
+                accountList += '<option value="'+account.id+'"'+selected+'>'+account.title+'</option>';
+                selected = '';
             }
         });
         $('#planaccount_id').html(accountList);

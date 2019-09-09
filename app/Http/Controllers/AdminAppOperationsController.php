@@ -4,6 +4,9 @@
 	use Request;
 	use DB;
 	use CRUDBooster;
+	use DateTime;
+	use DatePeriod;
+	use DateInterval;
 
 	class AdminAppOperationsController extends \crocodicstudio\crudbooster\controllers\CBController {
 
@@ -31,39 +34,60 @@
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
 			$this->col[] = ["label"=>"Cuenta","name"=>"account_id","join"=>"app_accounts,name"];
-			$this->col[] = ["label"=>"Entrada","name"=>"entries_id","join"=>"app_entries,concept"];
+			$this->col[] = ["label"=>"Entrada","name"=>"entry_id","join"=>"app_entries,concept"];
 			$this->col[] = ["label"=>"Detalle","name"=>"detail"];
-			$this->col[] = ["label"=>"Monto","name"=>"amount"];
+			$this->col[] = ["label"=>"Monto","name"=>"operation_amount"];
 			$this->col[] = ["label"=>"Hecho?","name"=>"is_done","callback_php"=>'($row->is_done ==1)?"si" : "no"'];
 			# END COLUMNS DO NOT REMOVE THIS LINE
-
+			
+			$queryBuilderPlan = DB::table('app_plans')
+			->join('aux_frequencies','app_plans.frequency','=','aux_frequencies.id')
+			//->join('app_plans','app_plans.frequency','=','aux_frequencies.id')
+			->selectRAW('IF( plan = 1, "Pago único", 
+			CONCAT(
+				  IF( plan = -1, 
+					 CONCAT("Recurrente en partes ", LOWER(aux_frequencies.frequency), "es"), 
+					 CONCAT("Dividido en ",plan," partes ", LOWER(aux_frequencies.frequency), "es")
+					) 
+			) 
+		   )AS text ');
+			
+			$queryBuilderEntry = DB::table('app_entries')
+			->select('concept AS text');
+			
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Tipo de Cuenta','name'=>'account_type','type'=>'select','validation'=>'required','width'=>'col-sm-9','datatable'=>'app_account,name','datatable_where'=>'is_active=1'];
-			$this->form[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Entrada','name'=>'entries_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Entrada','name'=>'entry_id','type'=>'fixed','validation'=>'required|integer|min:0','width'=>'col-sm-10','queryBuilder' => $queryBuilderEntry];
+			$this->form[] = ['label'=>'Plan','name'=>'plan_id','type'=>'fixed','validation'=>'required|integer|min:0','width'=>'col-sm-10', 'queryBuilder' => $queryBuilderPlan, 'queryBuilder_remote_key' => 'app_plans.id'];
+			$this->form[] = ['label'=>'Tipo de Cuenta','name'=>'account_type','type'=>'hidden','validation'=>'required'];
+			$this->form[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'app_accounts,name','datatable_where'=>'is_active=1'];
+			
 			$this->form[] = ['label'=>'Detalle','name'=>'detail','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Fecha Estimada','name'=>'estimated_date','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Monto Estimado','name'=>'estimated_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Fecha','name'=>'operation_date','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Monto','name'=>'amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10','dataenum'=>'Array'];
-			$this->form[] = ['label'=>'Hecho?','name'=>'is_paid','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Plan','name'=>'plan_ref','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Monto','name'=>'operation_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
 			$this->form[] = ['label'=>'Periodo cubierto','name'=>'settlement_date','type'=>'text','validation'=>'integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
 			//$this->form = [];
-			//$this->form[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'app_account,name','datatable_where'=>'is_active=1'];
-			//$this->form[] = ['label'=>'Entrada','name'=>'entries_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Plan','name'=>'plan_id','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Tipo de Cuenta','name'=>'account_type','type'=>'select','validation'=>'required','width'=>'col-sm-9','datatable'=>'app_accounts,name','datatable_where'=>'is_active=1'];
+			//$this->form[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Entrada','name'=>'entry_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			//$this->form[] = ['label'=>'Detalle','name'=>'detail','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Fecha Estimada','name'=>'estimated_date','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Monto Estimado','name'=>'estimated_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			//$this->form[] = ['label'=>'Fecha','name'=>'operation_date','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Monto','name'=>'amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Monto','name'=>'operation_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			//$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Hecho?','name'=>'is_paid','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'Array'];
-			//$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Plan','name'=>'plan_ref','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
 			//$this->form[] = ['label'=>'Periodo cubierto','name'=>'settlement_date','type'=>'text','validation'=>'integer|min:0','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			# OLD END FORM
 
 			/* 
@@ -341,5 +365,33 @@
 
 	    //By the way, you can still create your own method in here... :) 
 
+		public function cashFlow ($settlement_date = null) {
+			$now = new Datetime();
+			$settlement_date = $settlement_date ? $settlement_date : $now->format('Ym');
+			
+			$query = DB::table('app_operations')
+			->join('app_entries', 'app_operations.entry_id','=','app_entries.id')
+			->join('app_accounts', 'app_operations.account_id','=','app_accounts.id')
+			->leftjoin('app_categories', 'app_entries.category_id','=','app_categories.id')
+			->where('settlement_date', '=', $settlement_date)
+			->orderby('app_operations.estimated_date')
+			->get();
+			//print_r($query);
 
+			$data['settlement_date'] = $settlement_date;
+			$data['result'] = $query;		
+			$data['columns'] = $this->getBaseColumns();
+			$data['cashFlow']  = json_encode($query);
+			
+			$this->cbView('cashflow',$data);
+
+		}
+		public function getBaseColumns(){
+			$col= [];
+			$col[] = ["label"=>"Concepto",	"name"=>"concept",	"field_raw"=>"app_entries.concept",		"field"=>"app_entries_concept",		"type_data"=>CRUDBooster::getFieldType("app_entries","concept")];
+			$col[] = ["label"=>"Detalle",	"name"=>"detail",	"field_raw"=>"app_operations.detail",	"field"=>"app_operations_detail",	"type_data"=>CRUDBooster::getFieldType("app_operations","detail")];
+			return $col;
+		}
 	}
+
+	

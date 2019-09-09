@@ -49,21 +49,21 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		$this->col[] = ["label" => "Hecho?", "name" => "is_done", "callback_php" => '($row->is_done ==1)?"si" : "no"'];
 		# END COLUMNS DO NOT REMOVE THIS LINE
 		$this->col[1]['callback_php'] = '$this->getEntryType($row->entry_type)';
-		
+
 		$queryBuilder = DB::table('app_accounts')
-			->select('id', 'name AS title', 'type','currency')
+			->select('id', 'name AS title', 'type', 'currency')
 			->orderby('type')
 			->orderby('currency')
-			->where('is_active','=','1');
+			->where('is_active', '=', '1');
 		$now = new Datetime();
 		$columns[] = ['label' => 'Moneda', 'name' => 'currency_plan', 'type' => 'radio', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'value' => '$'];
 		$columns[] = ['label' => 'Tipo', 'name' => 'account_type', 'type' => 'radio', 'width' => 'col-sm-10', 'dataenum' => '1|Caja de ahorro;2|Cuenta corriente;3|Efectivo;4|Tarjeta;5|Pasivo', 'value' => '3'];
 		$columns[] = ['label' => 'Cuenta', 'name' => 'account_id', 'type' => 'select3', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'queryBuilder' => $queryBuilder, 'default' => '-- Cuenta --', 'value' => 1];
-		$columns[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['-1|Recurrente', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18, 24, 36, 60, 120, 240], 'default' => '-- Plan --','value'=>1];
-		$columns[] = ['label' => 'Frequencia', 'name' => 'frequency', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Semanal', '2|Mensual', '3|Bimestral', '4|Trimestral', '5|Cuatrimestral', '6|Semestral', '7|Anual'], 'default' => '-- Frecuencia --'];
+		$columns[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['-1|Recurrente', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18, 24, 36, 60, 120, 240], 'default' => '-- Plan --', 'value' => 1];
+		$columns[] = ['label' => 'Frecuencia', 'name' => 'frequency', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Semanal', '2|Mensual', '3|Bimestral', '4|Trimestral', '5|Cuatrimestral', '6|Semestral', '7|Anual'], 'default' => '-- Frecuencia --'];
 		$columns[] = ['label' => 'Monto por operación', 'name' => 'amount', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
-		$columns[] = ['label' => 'Primera ejecución', 'name' => 'first_execution', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10', 'value' => $now->format('Y-m-d') ];
-		$columns[] = ['label'=>'Completa?','name'=>'is_completed','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no','value'=>1];
+		$columns[] = ['label' => 'Primera ejecución', 'name' => 'first_execution', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10', 'value' => $now->format('Y-m-d')];
+		$columns[] = ['label' => 'Completa?', 'name' => 'is_completed', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 1];
 		$columns[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
 
 		# START FORM DO NOT REMOVE THIS LINE
@@ -83,7 +83,7 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		$this->form[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
 		$this->form[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_plans', 'foreign_key' => 'entry_id', 'columns' => $columns];
 		# END FORM DO NOT REMOVE THIS LINE
-		
+
 
 		# OLD START FORM
 		//$this->form = [];
@@ -103,7 +103,7 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		//$this->form[] = ['label'=>'Plan','name'=>'plan','type'=>'json','width'=>'col-sm-10'];
 		# OLD END FORM
 
-		
+
 		$this->form[0]['value'] = $now->format('Y-m-d');
 		$this->form[1]['value'] = 2;
 		$this->form[2]['value'] = 6;
@@ -318,7 +318,7 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	public function hook_before_add(&$postdata)
 	{
 		//Your code here
-		//get_object_vars()
+		//unset($postdata['plan']);
 
 	}
 
@@ -339,31 +339,114 @@ die();*/ }
 	    */
 	public function hook_after_add($id)
 	{
-		//Your code here
-
-	}
-
-	public function hook_after_add_child($entry_id)
-	{
-		
 		$query = DB::table('app_plans')
 			->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
-			->join('app_entries','app_entries.id','=','app_plans.entry_id')
-			->where('app_entries.id', '=', $entry_id)
+			->join('app_entries', 'app_entries.id', '=', 'app_plans.entry_id')
+			->where([
+				['app_entries.id', '=', $id],
+				['app_plans.is_proccesed', '=', 0]
+			])
 			->get();
-			
-		foreach($query as $plan){
+
+		foreach ($query as $plan) {
 			$operations = $this->compute_operations($plan);
-			foreach($operations as $operation){
+			//print_r($operations);
+			foreach ($operations as $operation) {
+				DB::table('app_operations')->insert($operation);
+			}
+		}
+	}
+/*
+	public function hook_after_add_child($entry_id)
+	{
+		$query = DB::table('app_plans')
+			->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
+			->join('app_entries', 'app_entries.id', '=', 'app_plans.entry_id')
+			->where([
+				['app_entries.id', '=', $entry_id],
+				['app_plans.is_proccesed', '=', 0]
+			])
+			->get();
+
+		foreach ($query as $plan) {
+			$operations = $this->compute_operations($plan);
+			print_r($operations);
+			foreach ($operations as $operation) {
+				DB::table('app_operations')->insert($operation);
+			}
+		}
+	}*/
+	/* 
+	    | ---------------------------------------------------------------------- 
+	    | Hook for manipulate data input before update data is execute
+	    | ---------------------------------------------------------------------- 
+	    | @postdata = input post data 
+	    | @id       = current id 
+	    | 
+	    */
+	public function hook_before_edit(&$postdata, $id)
+	{
+		//Your code here
+		//unset($postdata['plan']);
+	}
+
+	/* 
+	    | ---------------------------------------------------------------------- 
+	    | Hook for execute command after edit public static function called
+	    | ----------------------------------------------------------------------     
+	    | @id       = current id 
+	    | 
+	    */
+	public function hook_after_edit($id)
+	{
+		//Your code here 
+		$query = DB::table('app_plans')
+			->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
+			->join('app_entries', 'app_entries.id', '=', 'app_plans.entry_id')
+			->where([
+				['app_entries.id', '=', $id],
+				['app_plans.is_proccesed', '=', 0]
+			])
+			->get();
+print_r($query);
+		foreach ($query as $plan) {
+			$operations = $this->compute_operations($plan);
+			print_r($operations);
+			foreach ($operations as $operation) {
 				DB::table('app_operations')->insert($operation);
 			}
 		}
 	}
 
+	/* 
+	    | ---------------------------------------------------------------------- 
+	    | Hook for execute command before delete public static function called
+	    | ----------------------------------------------------------------------     
+	    | @id       = current id 
+	    | 
+	    */
+	public function hook_before_delete($id)
+	{
+		//Your code here
+
+	}
+
+	/* 
+	    | ---------------------------------------------------------------------- 
+	    | Hook for execute command after delete public static function called
+	    | ----------------------------------------------------------------------     
+	    | @id       = current id 
+	    | 
+	    */
+	public function hook_after_delete($id)
+	{
+		//Your code here
+
+	}
 
 	public function compute_operations($data)
 	{
-		setlocale(LC_ALL,'es_AR.UTF-8');
+		setlocale(LC_ALL, 'es_AR.UTF-8');
 		/*
 		$frequencyData = [
 			'Semanal'		=> ['amount' => '1', 'unit' => 'week'],
@@ -407,27 +490,25 @@ die();*/ }
 			$operation['account_id'] = $data->account_id;
 			$operation['plan_id'] = $data->plan_id;
 			$operation['currency'] = $data->currency;
-			$operation['amount'] = $data->amount;
-
-			$operation['operation_date'] = $operation_date->format("Y-m-d H:i:s");
+			$operation['estimated_amount'] = $data->amount;
+			$operation['estimated_date'] = $operation_date->format("Y-m-d H:i:s");
 			$operation['settlement_date'] = $operation_date->format('Ym');
 
 			//If the operation was in the past is marked as done (with all the required fields)
 			if ($operation_date->format('Ymd') <= $now->format('Ymd')) {
 				$operation['is_done'] = 1;
+				$operation['operation_amount'] = $data->amount;
+				$operation['operation_date'] = $operation_date->format("Y-m-d H:i:s");
 
 				$aux_dollar_value = DB::table('aux_dollar_value')
 					->select('seller')
 					->where('date', '>=', $operation_date->format('Y-m-d'))
 					->orderby('date')
 					->first();
-				$operation['dollar_value'] = $aux_dollar_value->seller;
-				print($operation['amount']);
-				print($operation['dollar_value']);
+				$operation['dollar_value'] = $aux_dollar_value->seller ? $aux_dollar_value->seller : 1;
+
 				if ($data->currency == '$') {
 					$operation['in_dollars'] = $operation['amount'] / ($operation['dollar_value'] / 100);
-
-					die();
 				}
 			} else {
 				$operation['is_done'] = 0;
@@ -449,12 +530,12 @@ die();*/ }
 					if ($firstDayOfMonth->format("N") > $dayOfWeek) {
 						$weekOfMonth++;
 					}
-					$operation['detail'] = $ordinalNumbers[$weekOfMonth] . ' semana de ' . $operation_date->format("F");
+					$operation['detail'] = strftime("{$ordinalNumbers[$weekOfMonth]} semana de %B de %Y", $operation_date->getTimestamp());
 				} else {
 					$toDate = clone $operation_date;
 					$toDate->add($frequencyData[$data->frequency]);
-					$operation['detail'] = 'Período desde el ' .  strftime("%e de %B de %Y", $operation_date->getTimestamp())
-						. ' hasta el ' . strftime("%e de %B de %Y", $toDate->getTimestamp());
+					$operation['detail'] =  strftime("Período desde el %e de %B de %Y", $operation_date->getTimestamp())
+						. strftime(" hasta el %e de %B de %Y", $toDate->getTimestamp());
 				}
 			} elseif ($data->plan === 1) {
 				$operation['detail'] = 'Pago único';
@@ -477,66 +558,12 @@ die();*/ }
 			if (241 == $i) {
 				break;
 			}
-			
+
 			$operation_date->add($frequencyData[$data->frequency]);
 		}
 
 		return $operations;
 	}
-
-	/* 
-	    | ---------------------------------------------------------------------- 
-	    | Hook for manipulate data input before update data is execute
-	    | ---------------------------------------------------------------------- 
-	    | @postdata = input post data 
-	    | @id       = current id 
-	    | 
-	    */
-	public function hook_before_edit(&$postdata, $id)
-	{
-		//Your code here
-	}
-
-	/* 
-	    | ---------------------------------------------------------------------- 
-	    | Hook for execute command after edit public static function called
-	    | ----------------------------------------------------------------------     
-	    | @id       = current id 
-	    | 
-	    */
-	public function hook_after_edit($id)
-	{
-		//Your code here 
-
-	}
-
-	/* 
-	    | ---------------------------------------------------------------------- 
-	    | Hook for execute command before delete public static function called
-	    | ----------------------------------------------------------------------     
-	    | @id       = current id 
-	    | 
-	    */
-	public function hook_before_delete($id)
-	{
-		//Your code here
-
-	}
-
-	/* 
-	    | ---------------------------------------------------------------------- 
-	    | Hook for execute command after delete public static function called
-	    | ----------------------------------------------------------------------     
-	    | @id       = current id 
-	    | 
-	    */
-	public function hook_after_delete($id)
-	{
-		//Your code here
-
-	}
-
-
 
 	//By the way, you can still create your own method in here... :) 
 

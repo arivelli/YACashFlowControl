@@ -131,25 +131,25 @@ $name = str_slug($form['label'], '');
                                                     </div><!-- /.modal -->
 
                                                     @elseif($col['type']=='date')
-                                                    <div class='form-group form-datepicker {{$header_group_class}} {{ ($errors->first($name))?"has-error":"" }}' id='form-group-{{$name}}'
+                                                    <!--div class='form-group form-datepicker {{$header_group_class}} {{ ($errors->first($name))?"has-error":"" }}' id='form-group-{{$name}}'
                                                         style="{{@$form['style']}}">
-                                                        <!--label class='control-label col-sm-2'>{{$form['label']}}
+                                                        <! --label class='control-label col-sm-2'>{{$form['label']}}
                                                             @if($required)
                                                                 <span class='text-danger' title='{!! trans('crudbooster.this_field_is_required') !!}'>*</span>
                                                             @endif
-                                                        </label-->
+                                                        </label-- >
 
-                                                        <div class="{{$col_width?:'col-sm-10'}}">
+                                                        <div class="{{$col_width?:'col-sm-10'}}" -->
                                                             <div class="input-group">
                                                                 <span class="input-group-addon open-datetimepicker"><a><i class='fa fa-calendar '></i></a></span>
                                                                 <input type='text' title="{{$col['label']}}" readonly
-                                                                    {{$required}} {{$readonly}} {!!$placeholder!!} {{$disabled}} class='form-control notfocus input_date' name="{{$name}}" id="{{$name}}"
-                                                                    value='{{ $col['value'] }}'/> 
+                                                                    {{$required}} {{$readonly}} {!!$placeholder!!} {{$disabled}} class='form-control notfocus input_date'
+                                                                    name="child-{{$col["name"]}}" id="{{$name_column}}" value='{{ $col['value'] }}'/> 
                                                             </div>
                                                             <!--div class="text-danger">{!! $errors->first($name)?"<i class='fa fa-info-circle'></i> ".$errors->first($name):"" !!}</div>
-                                                            <p class='help-block'>{{ @$form['help'] }}</p-->
+                                                            <p class='help-block'>{{ @$form['help'] }}</p-- >
                                                         </div>
-                                                    </div>
+                                                    </div-->
                                                     @push('bottom')
                                                     @if (App::getLocale() != 'en')
                                                         <script src="{{ asset ('vendor/crudbooster/assets/adminlte/plugins/datepicker/locales/bootstrap-datepicker.'.App::getLocale().'.js') }}"
@@ -355,7 +355,7 @@ $name = str_slug($form['label'], '');
                                                     @endif
 
                                                     <select id='{{$name_column}}' name='child-{{$col["name"]}}'
-                                                            class='form-control select2 {{$col['required']?"required":""}}'
+                                                            class='form-control select {{$col['required']?"required":""}}'
                                                             {{($col['readonly']===true)?"readonly":""}}
                                                     >
                                                         <option value=''>{{ $col["default"] }}</option>
@@ -393,7 +393,7 @@ $name = str_slug($form['label'], '');
 
 
 <select id='{{$name_column}}' name='child-{{$col["name"]}}'
-        class='form-control select2 {{$col['required']?"required":""}}'
+        class='form-control select {{$col['required']?"required":""}}'
         {{($col['readonly']===true)?"readonly":""}}
 >
     <option value=''>{{ $col["default"] }}</option>
@@ -503,11 +503,11 @@ $name = str_slug($form['label'], '');
                                                 p.addClass('warning');
                                                 $('#btn-add-table-{{$name}}').val('{{trans("crudbooster.save_changes")}}');
                                                 @foreach($form['columns'] as $c)
-                                                @if($c['type']=='select')
+                                                @if($c['type']=='select' || $c['type']=='select3')
                                                 $('#{{$name.$c["name"]}}').val(p.find(".{{$c['name']}} input").val()).trigger("change");
                                                         @elseif($c['type']=='radio')
                                                 var v = p.find(".{{$c['name']}} input").val();
-                                                $('.{{$name.$c["name"]}}[value=' + v + ']').prop('checked', true);
+                                                $('.{{$name.$c["name"]}}[value="' + v + '"]').prop('checked', true);
                                                 @elseif($c['type']=='datamodal')
                                                 $('#{{$name.$c["name"]}} .input-label').val(p.find(".{{$c['name']}} .td-label").text());
                                                 $('#{{$name.$c["name"]}} .input-id').val(p.find(".{{$c['name']}} input").val());
@@ -549,30 +549,42 @@ $name = str_slug($form['label'], '');
 
                                                 var trRow = '<tr>';
                                                 @foreach($form['columns'] as $c)
-                                                        @if($c['type']=='select')
+
+                                                @if($c['type']=='select' || $c['type']=='select3')
                                                     trRow += "<td class='{{$c['name']}}'>" + $('#{{$name.$c["name"]}} option:selected').text() +
                                                     "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}}').val() + "'/>" +
                                                     "</td>";
                                                 @elseif($c['type']=='radio')
-                                                    trRow += "<td class='{{$c['name']}}'><span class='td-label'>" + $('.{{$name.$c["name"]}}:checked').val() + "</span>" +
+                                                    trRow += "<td class='{{$c['name']}}'><span class='td-label'>" + $.trim($($('.{{$name.$c["name"]}}:checked')[0].parentNode).text())
+                                                    
+                                                    + "</span>" +
                                                     "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('.{{$name.$c["name"]}}:checked').val() + "'/>" +
                                                     "</td>";
                                                 @elseif($c['type']=='datamodal')
                                                     trRow += "<td class='{{$c['name']}}'><span class='td-label'>" + $('#{{$name.$c["name"]}} .input-label').val() + "</span>" +
                                                     "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}} .input-id').val() + "'/>" +
                                                     "</td>";
+                                                @elseif($c['type']=='money')
+                
+
+                                                    trRow += "<td class='{{$c['name']}}'>" + $('#{{$name.$c["name"]}}').val() +
+                                                    "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}}.inputMoney').val().replace(',','').replace('U$S','').replace('$','').replace('.','') + "'/>" +
+                                                    "</td>";
+
                                                 @elseif($c['type']=='upload')
                                                         @if($c['upload_type']=='image')
                                                     trRow += "<td class='{{$c['name']}}'>" +
                                                     "<a data-lightbox='roadtrip' href='{{asset('/')}}" + $('#{{$name.$c["name"]}} .input-id').val() + "'><img data-label='" + $('#{{$name.$c["name"]}} .input-label').val() + "' src='{{asset('/')}}" + $('#{{$name.$c["name"]}} .input-id').val() + "' width='50px' height='50px'/></a>" +
                                                     "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}} .input-id').val() + "'/>" +
                                                     "</td>";
+                                                
                                                 @else
                                                     trRow += "<td class='{{$c['name']}}'><a data-label='" + $('#{{$name.$c["name"]}} .input-label').val() + "' href='{{asset('/')}}" + $('#{{$name.$c["name"]}} .input-id').val() + "'>" + $('#{{$name.$c["name"]}} .input-label').val() + "</a>" +
                                                     "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}} .input-id').val() + "'/>" +
                                                     "</td>";
                                                 @endif
                                                         @else
+                                                       
                                                     trRow += "<td class='{{$c['name']}}'>" + $('#{{$name.$c["name"]}}').val() +
                                                     "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}}').val() + "'/>" +
                                                     "</td>";
@@ -650,7 +662,7 @@ $name = str_slug($form['label'], '');
                                     @foreach($form['columns'] as $col)
                                         <td class="{{$col['name']}}">
                                             <?php
-                                            if ($col['type'] == 'select') {
+                                            if ($col['type'] == 'select' || $col['type'] == 'select3') {
                                                 if ($col['datatable']) {
                                                     $join_table = explode(',', $col['datatable'])[0];
                                                     $join_field = explode(',', $col['datatable'])[1];
