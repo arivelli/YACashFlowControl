@@ -53,7 +53,8 @@
     </div>
     <div id="filterGroupBy">
         <label><input name="view" type="radio" onclick="filterData()" value="settlement_week" checked>CashFlow</label>
-        <label><input name="view" type="radio" onclick="filterData()" value="name">Cuenta</label>
+        <label><input name="view" type="radio" onclick="filterData()" value="entry_type">Tipo de entrada</label>
+        <label><input name="view" type="radio" onclick="filterData()" value="account_name">Cuenta</label>
         <label><input name="view" type="radio" onclick="filterData()" value="area_id">Area</label>
         <label><input name="view" type="radio" onclick="filterData()" value="category">Categoría</label>
     </div>
@@ -185,8 +186,8 @@ Columnas
     }
     function drawTable(table, caption) {
         
-        let estimated_amount = 0;
-        let operation_amount = 0;
+        let total_estimated_amount = 0;
+        let total_operation_amount = 0;
         let html = `
         <a id="` + caption + `"></a><a href="#top">Subir</a>
         <table id='table_dashboard' class="table table-hover table-striped table-bordered">
@@ -200,32 +201,40 @@ Columnas
                     <th><a href="">Concepto</a></th>
                     <th><a href="">Detalle</a></th>
                     <th><a href="">Cuenta</a></th>
-                    <th style="width:60px"><a href="">Monto estimado</a></th>
-                    <th style="width:60px"><a href="">Monto operación</a></th>
+                    <th style="width:60px;text-align:right;"><a href="">Monto estimado</a></th>
+                    <th style="width:60px;text-align:right;"><a href="">Monto operación</a></th>
                     <th style="width:60px">Acciones</th>
                 </tr>
             </thead>
             <tbody>`;
         table.forEach((row, i) => {
+            operation_date = (row.operation_date != null) ? row.operation_date.substring(0,10) : '&nbsp;'
+            estimated_date = (row.estimated_date != null) ? row.estimated_date.substring(0,10) : '&nbsp;'
+            estimated_amount = moneyFormat(row.estimated_amount, row.currency);
+            operation_amount = moneyFormat(row.operation_amount, row.currency);
             html += `
             <tr>
                 <td><input type="checkbox" class="checkbox" name="checkbox[]" value="` + row.operation_id + `"/></td>
-                <td>` + row.estimated_date + `</td>
-                <td>` + row.operation_date + `</td>
+                <td>` + estimated_date + `</td>
+                <td>` + operation_date + `</td>
                 <td>` + row.entry_type + `</td>
                 <td><a href="/admin/app_entries/edit/` + row.entry_id + `?return_url=/cashFlow/` + row.settlement_date + `">` + row.concept + `</a></td>
                 <td>` + row.detail + `</td>
-                <td>` + row.name + `</td>
-                <td class="money">` + row.estimated_amount + `</td>
-                <td class="money">` + row.operation_amount + `</td>
-                <td> 
-                <a href="javascript: void executeOperation(` + row.operation_id + `)" class="btn btn-success btn-xs"><i class="fa fa-money"></i></a>
+                <td>` + row.account_name + `</td>
+                <td class="money">` + estimated_amount + `</td>
+                <td class="money">` + operation_amount + `</td>
+                <td>`;
+            if(row.is_done != 1) {
+                html += `
+                <a href="javascript: void executeOperation(` + row.operation_id + `)" class="btn btn-success btn-xs"><i class="fa fa-money"></i></a>`;
+            }
+            html += `
                 <a href="/admin/app_operations/edit/` + row.operation_id + `?return_url=/cashFlow/` + row.settlement_date + `" class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i></a>
                 <a href="javascript:void(0)" onclick="deleteRow{{$name}}(this)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>
             </td>`;
             html += '</tr>';
-            estimated_amount += row.estimated_amount;
-            operation_amount += row.operation_amount;
+            total_estimated_amount += row.estimated_amount;
+            total_operation_amount += row.operation_amount;
         });
         html += `
             </tbody>
@@ -250,8 +259,8 @@ Columnas
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>Total:</td>
-                    <td class="money"><b>` + estimated_amount + `</b></td>
-                    <td class="money"><b>` + operation_amount + `</b></td>
+                    <td class="money"><b>` + total_estimated_amount + `</b></td>
+                    <td class="money"><b>` + total_operation_amount + `</b></td>
                     <td>&nbsp;</td>
                 </tr>
             </tfoot>
@@ -259,6 +268,21 @@ Columnas
         return html;
     }
 
+function moneyFormat(number, currency) {
+    let newNumber = [];
+    number = number + '';
+    str = number.split("").reverse();
+    str.forEach((n,i)=>{
+        console.log(i + ' - ' + n + ' - ' + ( i - 2 ) / 3 );
+        if (i === 2) {
+            newNumber.push(',');
+        } else if ( ( i - 2 ) / 3 == Math.round( (i - 2) / 3 ) && i > 3 ) {
+            newNumber.push('.');
+        }
+        newNumber.push(n);
+    });
+    return currency + ' ' + newNumber.reverse().join("");
+}
 </script>
 
 <form id='form-table' method='post' action='{{CRUDBooster::mainpath("action-selected")}}'>

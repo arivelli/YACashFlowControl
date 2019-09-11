@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Session;
@@ -9,6 +8,7 @@ use CRUDBooster;
 use DateTime;
 use DatePeriod;
 use DateInterval;
+use ManageDollarValue;
 
 class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBController
 {
@@ -38,7 +38,7 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		# START COLUMNS DO NOT REMOVE THIS LINE
 		$this->col = [];
 		$this->col[] = ["label" => "Fecha", "name" => "date"];
-		$this->col[] = ["label" => "Tipo", "name" => "entry_type", "callback_php" => '$this->getEntryType($row->entry_type)'];
+		$this->col[] = ["label" => "Tipo", "name" => "entry_type", "callback_php" => '$this->get_entry_type($row->entry_type)'];
 		$this->col[] = ["label" => "Categoría", "name" => "category_id", "join" => "app_categories,category"];
 		$this->col[] = ["label" => "Área", "name" => "area_id", "join" => "app_areas,area"];
 		$this->col[] = ["label" => "Concepto", "name" => "concept"];
@@ -48,7 +48,7 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		$this->col[] = ["label" => "Es extraordinario?", "name" => "is_extraordinary", "callback_php" => '($row->is_extraordinary ==1)?"si" : "no"'];
 		$this->col[] = ["label" => "Hecho?", "name" => "is_done", "callback_php" => '($row->is_done ==1)?"si" : "no"'];
 		# END COLUMNS DO NOT REMOVE THIS LINE
-		$this->col[1]['callback_php'] = '$this->getEntryType($row->entry_type)';
+		$this->col[1]['callback_php'] = '$this->get_entry_type($row->entry_type)';
 
 		$queryBuilder = DB::table('app_accounts')
 			->select('id', 'name AS title', 'type', 'currency')
@@ -112,14 +112,7 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		$this->form[9]['value'] = 0;
 		$this->form[10]['value'] = 1;
 		$this->form[11]['value'] = 0;
-
-		$data_in = "http://ws.geeklab.com.ar/dolar/get-dolar-json.php";
-		$data_json = @file_get_contents($data_in);
-		if (strlen($data_json) > 0) {
-			$data_out = json_decode($data_json, true);
-			$this->form[8]['value'] = $data_out['libre'] * 100;
-		}
-
+		$this->form[8]['value'] = ManageDollarValue::get_value_of();
 
 		$this->sub_module = array();
 
@@ -339,6 +332,7 @@ die();*/ }
 	    */
 	public function hook_after_add($id)
 	{
+		
 		$query = DB::table('app_plans')
 			->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
 			->join('app_entries', 'app_entries.id', '=', 'app_plans.entry_id')
@@ -356,25 +350,10 @@ die();*/ }
 			}
 		}
 	}
-/*
+	/*
 	public function hook_after_add_child($entry_id)
 	{
-		$query = DB::table('app_plans')
-			->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
-			->join('app_entries', 'app_entries.id', '=', 'app_plans.entry_id')
-			->where([
-				['app_entries.id', '=', $entry_id],
-				['app_plans.is_proccesed', '=', 0]
-			])
-			->get();
 
-		foreach ($query as $plan) {
-			$operations = $this->compute_operations($plan);
-			print_r($operations);
-			foreach ($operations as $operation) {
-				DB::table('app_operations')->insert($operation);
-			}
-		}
 	}*/
 	/* 
 	    | ---------------------------------------------------------------------- 
@@ -408,7 +387,7 @@ die();*/ }
 				['app_plans.is_proccesed', '=', 0]
 			])
 			->get();
-print_r($query);
+		print_r($query);
 		foreach ($query as $plan) {
 			$operations = $this->compute_operations($plan);
 			print_r($operations);
@@ -447,17 +426,6 @@ print_r($query);
 	public function compute_operations($data)
 	{
 		setlocale(LC_ALL, 'es_AR.UTF-8');
-		/*
-		$frequencyData = [
-			'Semanal'		=> ['amount' => '1', 'unit' => 'week'],
-			'Mensual'		=> ['amount' => '1', 'unit' => 'month'],
-			'Bimestral' 	=> ['amount' => '2', 'unit' => 'month'],
-			'Trimestral' 	=> ['amount' => '3', 'unit' => 'month'],
-			'Cuatrimestral'	=> ['amount' => '4', 'unit' => 'month'],
-			'Semestral' 	=> ['amount' => '6', 'unit' => 'month'],
-			'Anual' 		=> ['amount' => '1', 'unit' => 'year'],
-			'Binual' 		=> ['amount' => '2', 'unit' => 'year'],
-		];*/
 		$frequencyData = [
 			1 => new DateInterval('P1W'), //Semanal
 			2 => new DateInterval('P1M'), //Mensual
@@ -493,22 +461,17 @@ print_r($query);
 			$operation['estimated_amount'] = $data->amount;
 			$operation['estimated_date'] = $operation_date->format("Y-m-d H:i:s");
 			$operation['settlement_date'] = $operation_date->format('Ym');
+			$operation['settlement_week'] = $this->get_week_of_month( $operation_date );
 
 			//If the operation was in the past is marked as done (with all the required fields)
 			if ($operation_date->format('Ymd') <= $now->format('Ymd')) {
 				$operation['is_done'] = 1;
 				$operation['operation_amount'] = $data->amount;
 				$operation['operation_date'] = $operation_date->format("Y-m-d H:i:s");
-
-				$aux_dollar_value = DB::table('aux_dollar_value')
-					->select('seller')
-					->where('date', '>=', $operation_date->format('Y-m-d'))
-					->orderby('date')
-					->first();
-				$operation['dollar_value'] = $aux_dollar_value->seller ? $aux_dollar_value->seller : 1;
+				$operation['dollar_value'] = ManageDollarValue::get_value_of($operation_date);
 
 				if ($data->currency == '$') {
-					$operation['in_dollars'] = $operation['amount'] / ($operation['dollar_value'] / 100);
+					$operation['in_dollars'] = $operation['operation_amount'] / ($operation['dollar_value'] / 100);
 				}
 			} else {
 				$operation['is_done'] = 0;
@@ -522,14 +485,8 @@ print_r($query);
 				}
 
 				if ($data->frequency === 1) {
-					$dayOfMonth			= $operation_date->format("j");
-					$dayOfWeek			= $operation_date->format("N");
-					$firstDayOfMonth	= new DateTime($operation_date->format("Y-m-01"));
-					$weekOfMonth		= ceil($dayOfMonth / 7);
-					//Si el día de la semana del primer día del mes es mayor que el día de la semana de la fecha, incremento la semana del mes
-					if ($firstDayOfMonth->format("N") > $dayOfWeek) {
-						$weekOfMonth++;
-					}
+
+					$weekOfMonth = $this->get_week_of_month($operation_date);
 					$operation['detail'] = strftime("{$ordinalNumbers[$weekOfMonth]} semana de %B de %Y", $operation_date->getTimestamp());
 				} else {
 					$toDate = clone $operation_date;
@@ -567,7 +524,7 @@ print_r($query);
 
 	//By the way, you can still create your own method in here... :) 
 
-	public function getEntryType($type)
+	public function get_entry_type($type)
 	{
 		switch ($type) {
 			case 1:
@@ -587,5 +544,17 @@ print_r($query);
 				break;
 		}
 		return $res;
+	}
+	public function get_week_of_month($date)
+	{
+		$dayOfMonth			= $date->format("j");
+		$dayOfWeek			= $date->format("N");
+		$firstDayOfMonth	= new DateTime($date->format("Y-m-01"));
+		$weekOfMonth		= ceil($dayOfMonth / 7);
+		//Si el día de la semana del primer día del mes es mayor que el día de la semana de la fecha, incremento la semana del mes
+		if ($firstDayOfMonth->format("N") > $dayOfWeek) {
+			$weekOfMonth++;
+		}
+		return $weekOfMonth;
 	}
 }

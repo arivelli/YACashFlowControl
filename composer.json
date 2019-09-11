@@ -1,12 +1,13 @@
 {
-    "name": "arivelli/YACashFlowControl",
+    "name": "arivelli/ya-cash-flow-control",
     "description": "Yet Another Cash Flow Control",
     "keywords": ["cash flow", "financial"],
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=7.1.*",
-        "crocodicstudio/crudbooster": "5.4.0.*",
+        "php": ">=7.1.1",
+        "crocodicstudio/crudbooster": "5.3.2.30",
+        "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "5.3.*"
     },
     "require-dev": {

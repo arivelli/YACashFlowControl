@@ -70,7 +70,7 @@
 			$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
 			$this->form[] = ['label'=>'Periodo cubierto','name'=>'settlement_date','type'=>'text','validation'=>'integer|min:0','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
@@ -386,7 +386,16 @@
 			->join('app_entries', 'app_operations.entry_id','=','app_entries.id')
 			->join('app_accounts', 'app_operations.account_id','=','app_accounts.id')
 			->leftjoin('app_categories', 'app_entries.category_id','=','app_categories.id')
-			->select('*','app_operations.id as operation_id')
+			->select(
+				'app_entries.id AS entry_id', 'app_entries.entry_type AS entry_type', 'app_entries.concept AS concept',
+				'app_entries.area_id AS area_id',
+				'app_accounts.id AS account_id', 'app_accounts.name AS account_name',
+				'app_categories.id AS category_id', 'app_categories.category AS category', 
+				'app_operations.id as operation_id', 'app_operations.is_done AS is_done', 'app_operations.estimated_date AS estimated_date', 
+				'app_operations.operation_date AS operation_date', 'app_operations.settlement_date AS settlement_date',
+				'app_operations.settlement_week AS settlement_week', 'app_operations.detail AS detail', 'app_operations.currency AS currency',
+				'app_operations.estimated_amount AS estimated_amount', 'app_operations.operation_amount AS operation_amount'
+				)
 			->where('settlement_date', '=', $settlement_date)
 			->orderby('app_operations.estimated_date')
 			->get();
@@ -400,12 +409,7 @@
 		}
 		public function execute_operation($id){
 
-			$data_in = "http://ws.geeklab.com.ar/dolar/get-dolar-json.php";
-			$data_json = @file_get_contents($data_in);
-			if (strlen($data_json) > 0) {
-				$data_out = json_decode($data_json, true);
-				$dollar_value = $data_out['libre'] * 100;
-			}
+			$dollar_value = ManageDollarValue::get_value_of();
 			DB::enableQueryLog();
 
 			$res = DB::table('app_operations')
@@ -414,7 +418,7 @@
 				'operation_date' => DB::raw('NOW()'),
 				'operation_amount' => DB::raw('estimated_amount'),
 				'dollar_value' => $dollar_value,
-				'in_dollars' => DB::raw('estimated_amount/'.$dollar_value),
+				'in_dollars' => DB::raw('estimated_amount / ' . $dollar_value / 100 ),
 				'is_done' => 1
 			]);
 			dd(DB::getQueryLog());
