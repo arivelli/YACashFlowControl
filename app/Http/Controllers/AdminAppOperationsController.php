@@ -7,6 +7,7 @@
 	use DateTime;
 	use DatePeriod;
 	use DateInterval;
+	use ManageDollarValue;
 
 	class AdminAppOperationsController extends \crocodicstudio\crudbooster\controllers\CBController {
 
@@ -386,9 +387,11 @@
 			->join('app_entries', 'app_operations.entry_id','=','app_entries.id')
 			->join('app_accounts', 'app_operations.account_id','=','app_accounts.id')
 			->leftjoin('app_categories', 'app_entries.category_id','=','app_categories.id')
+			->leftjoin('app_areas', 'app_entries.area_id','=','app_areas.id')
 			->select(
 				'app_entries.id AS entry_id', 'app_entries.entry_type AS entry_type', 'app_entries.concept AS concept',
 				'app_entries.area_id AS area_id',
+				'app_areas.area AS area',
 				'app_accounts.id AS account_id', 'app_accounts.name AS account_name',
 				'app_categories.id AS category_id', 'app_categories.category AS category', 
 				'app_operations.id as operation_id', 'app_operations.is_done AS is_done', 'app_operations.estimated_date AS estimated_date', 
@@ -409,7 +412,7 @@
 		}
 		public function execute_operation($id){
 
-			$dollar_value = ManageDollarValue::get_value_of();
+			$dollar_value = namespace\ManageDollarValue::get_value_of();
 			DB::enableQueryLog();
 
 			$res = DB::table('app_operations')

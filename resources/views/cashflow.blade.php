@@ -7,7 +7,7 @@
     #filterStatus .btn {
         width: 150px;
     }
-    .money {
+    .right {
         text-align: right;
     }
 </style>
@@ -55,7 +55,7 @@
         <label><input name="view" type="radio" onclick="filterData()" value="settlement_week" checked>CashFlow</label>
         <label><input name="view" type="radio" onclick="filterData()" value="entry_type">Tipo de entrada</label>
         <label><input name="view" type="radio" onclick="filterData()" value="account_name">Cuenta</label>
-        <label><input name="view" type="radio" onclick="filterData()" value="area_id">Area</label>
+        <label><input name="view" type="radio" onclick="filterData()" value="area">Area</label>
         <label><input name="view" type="radio" onclick="filterData()" value="category">Categoría</label>
     </div>
 </form>
@@ -137,7 +137,6 @@ Columnas
         }
         //Add the status filter only in case the amount of options selected is less than the total
         if (newFilter.status.length !== 2) {
-            console.log(newFilter.status);
             data = data.filter(function(entry) {
                 if (newFilter.status[0] == 'Pendientes') {
                     return entry.operation_amount == null || entry.operation_amount === 0;
@@ -158,9 +157,17 @@ Columnas
         dataKeys = Object.keys(groupedData);
         
         dataKeys.forEach((dataKey) => {
-            links += '<a href="#' + dataKey + '">' + dataKey + '</a>'
-            html += drawTable(groupedData[dataKey], dataKey);
+            let caption = dataKey.slice(0);
+            if( newFilter.view  === 'entry_type' ){
+                caption = getEntryType(caption);
+            }
+            if( newFilter.view  === 'settlement_week' ){
+                caption = getOrdinalNumber(caption);
+            }
+            links += '<a href="#' + caption + '">' + caption + '</a>'
+            html += drawTable(groupedData[dataKey], caption);
             
+
         });
         html = links + html;
         
@@ -217,13 +224,13 @@ Columnas
                 <td><input type="checkbox" class="checkbox" name="checkbox[]" value="` + row.operation_id + `"/></td>
                 <td>` + estimated_date + `</td>
                 <td>` + operation_date + `</td>
-                <td>` + row.entry_type + `</td>
+                <td>` + getEntryType(row.entry_type) + `</td>
                 <td><a href="/admin/app_entries/edit/` + row.entry_id + `?return_url=/cashFlow/` + row.settlement_date + `">` + row.concept + `</a></td>
                 <td>` + row.detail + `</td>
                 <td>` + row.account_name + `</td>
-                <td class="money">` + estimated_amount + `</td>
-                <td class="money">` + operation_amount + `</td>
-                <td>`;
+                <td class="right">` + estimated_amount + `</td>
+                <td class="right">` + operation_amount + `</td>
+                <td class="right">`;
             if(row.is_done != 1) {
                 html += `
                 <a href="javascript: void executeOperation(` + row.operation_id + `)" class="btn btn-success btn-xs"><i class="fa fa-money"></i></a>`;
@@ -247,8 +254,8 @@ Columnas
                     <td>Concepto</td>
                     <td>Detalle</td>
                     <td>Cuenta</td>
-                    <td>Monto estimado</td>
-                    <td>Monto operación</td>
+                    <td class="right">Monto estimado</td>
+                    <td class="right">Monto operación</td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
@@ -258,9 +265,9 @@ Columnas
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
-                    <td>Total:</td>
-                    <td class="money"><b>` + total_estimated_amount + `</b></td>
-                    <td class="money"><b>` + total_operation_amount + `</b></td>
+                    <td class="right">Total:</td>
+                    <td class="right"><b>` + moneyFormat(total_estimated_amount, '$') + `</b></td>
+                    <td class="right"><b>` + moneyFormat(total_operation_amount, '$') + `</b></td>
                     <td>&nbsp;</td>
                 </tr>
             </tfoot>
@@ -269,20 +276,60 @@ Columnas
     }
 
 function moneyFormat(number, currency) {
-    let newNumber = [];
-    number = number + '';
-    str = number.split("").reverse();
-    str.forEach((n,i)=>{
-        console.log(i + ' - ' + n + ' - ' + ( i - 2 ) / 3 );
-        if (i === 2) {
-            newNumber.push(',');
-        } else if ( ( i - 2 ) / 3 == Math.round( (i - 2) / 3 ) && i > 3 ) {
-            newNumber.push('.');
-        }
-        newNumber.push(n);
-    });
-    return currency + ' ' + newNumber.reverse().join("");
+    let res = '';
+    if (number !== null) {
+        let newNumber = [];
+        number = number + '';
+        str = number.split("").reverse();
+        str.forEach((n,i)=>{
+            if (i === 2) {
+                newNumber.push(',');
+            } else if ( ( i - 2 ) / 3 == Math.round( (i - 2) / 3 ) && i > 3 ) {
+                newNumber.push('.');
+            }
+            newNumber.push(n);
+        });
+        currency = (typeof currency != 'undefined') ? currency : '';
+        res =  currency + ' ' + newNumber.reverse().join("");
+    }
+    return res;
 }
+function getEntryType(type)
+	{
+        type = parseInt(type);
+        let res = '';
+		switch (type) {
+			case 1:
+				res = "Ingreso";
+				break;
+			case 2:
+				res = "Egreso";
+				break;
+			case 3:
+				res = "Pasivo";
+				break;
+			case 4:
+				res = "Movimiento";
+				break;
+			default:
+				res = "Error";
+				break;
+		}
+		return res;
+	}
+function getOrdinalNumber(number, genre)
+	{
+        number = parseInt(number);
+        genre = (typeof genre !== 'undefined') ? genre : 'female';
+        let maleNumbers = ['-','Primero','Segundo','Tercero','Cuarto','Quinto'];
+        let femaleNumbers = ['-','Primera','Segunda','Tercera','Cuarta','Quinta'];
+        if(genre === 'male'){
+            res = maleNumbers[number];
+        } else {
+            res = femaleNumbers[number];
+        }
+		return res;
+	}
 </script>
 
 <form id='form-table' method='post' action='{{CRUDBooster::mainpath("action-selected")}}'>

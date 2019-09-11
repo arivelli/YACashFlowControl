@@ -112,7 +112,7 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		$this->form[9]['value'] = 0;
 		$this->form[10]['value'] = 1;
 		$this->form[11]['value'] = 0;
-		$this->form[8]['value'] = ManageDollarValue::get_value_of();
+		$this->form[8]['value'] = namespace\ManageDollarValue::get_value_of();
 
 		$this->sub_module = array();
 
