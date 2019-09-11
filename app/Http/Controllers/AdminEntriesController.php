@@ -379,22 +379,7 @@ die();*/ }
 	public function hook_after_edit($id)
 	{
 		//Your code here 
-		$query = DB::table('app_plans')
-			->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
-			->join('app_entries', 'app_entries.id', '=', 'app_plans.entry_id')
-			->where([
-				['app_entries.id', '=', $id],
-				['app_plans.is_proccesed', '=', 0]
-			])
-			->get();
-		print_r($query);
-		foreach ($query as $plan) {
-			$operations = $this->compute_operations($plan);
-			print_r($operations);
-			foreach ($operations as $operation) {
-				DB::table('app_operations')->insert($operation);
-			}
-		}
+		$this->hook_after_add($id);
 	}
 
 	/* 
@@ -426,7 +411,7 @@ die();*/ }
 	public function compute_operations($data)
 	{
 		setlocale(LC_ALL, 'es_AR.UTF-8');
-		$frequencyData = [
+		$frequency_data = [
 			1 => new DateInterval('P1W'), //Semanal
 			2 => new DateInterval('P1M'), //Mensual
 			3 => new DateInterval('P2M'), //Bimestral
@@ -436,7 +421,7 @@ die();*/ }
 			7 => new DateInterval('P1Y'), //Anual
 			8 => new DateInterval('P2Y'), //Bianual
 		];
-		$ordinalNumbers = [
+		$ordinal_numbers = [
 			1 => 'Primera',
 			2 => 'Segunda',
 			3 => 'Tercera',
@@ -448,7 +433,7 @@ die();*/ }
 		$operations = [];
 
 		$first_execution = new DateTime($data->first_execution);
-		$operation_date = clone $first_execution;
+		$operation_date = new DateTime($data->first_execution);
 		$now = new DateTime();
 
 		while (true) {
@@ -468,10 +453,10 @@ die();*/ }
 				$operation['is_done'] = 1;
 				$operation['operation_amount'] = $data->amount;
 				$operation['operation_date'] = $operation_date->format("Y-m-d H:i:s");
-				$operation['dollar_value'] = ManageDollarValue::get_value_of($operation_date);
+				$operation['dollar_value'] = namespace\ManageDollarValue::get_value_of($operation_date);
 
 				if ($data->currency == '$') {
-					$operation['in_dollars'] = $operation['operation_amount'] / ($operation['dollar_value'] / 100);
+					$operation['in_dollars'] = $operation['operation_amount'] / $operation['dollar_value'] * 100;
 				}
 			} else {
 				$operation['is_done'] = 0;
@@ -486,11 +471,11 @@ die();*/ }
 
 				if ($data->frequency === 1) {
 
-					$weekOfMonth = $this->get_week_of_month($operation_date);
-					$operation['detail'] = strftime("{$ordinalNumbers[$weekOfMonth]} semana de %B de %Y", $operation_date->getTimestamp());
+					$week_of_month = $this->get_week_of_month($operation_date);
+					$operation['detail'] = strftime("{$ordinal_numbers[$week_of_month]} semana de %B de %Y", $operation_date->getTimestamp());
 				} else {
 					$toDate = clone $operation_date;
-					$toDate->add($frequencyData[$data->frequency]);
+					$toDate->add($frequency_data[$data->frequency]);
 					$operation['detail'] =  strftime("Período desde el %e de %B de %Y", $operation_date->getTimestamp())
 						. strftime(" hasta el %e de %B de %Y", $toDate->getTimestamp());
 				}
@@ -516,7 +501,7 @@ die();*/ }
 				break;
 			}
 
-			$operation_date->add($frequencyData[$data->frequency]);
+			$operation_date->add($frequency_data[$data->frequency]);
 		}
 
 		return $operations;
@@ -547,14 +532,37 @@ die();*/ }
 	}
 	public function get_week_of_month($date)
 	{
-		$dayOfMonth			= $date->format("j");
-		$dayOfWeek			= $date->format("N");
-		$firstDayOfMonth	= new DateTime($date->format("Y-m-01"));
-		$weekOfMonth		= ceil($dayOfMonth / 7);
+		$day_of_month			= $date->format("j");
+		$day_of_week			= $date->format("N");
+		$first_day_of_month		= new DateTime($date->format("Y-m-01"));
+		$week_of_month			= ceil($day_of_month / 7);
 		//Si el día de la semana del primer día del mes es mayor que el día de la semana de la fecha, incremento la semana del mes
-		if ($firstDayOfMonth->format("N") > $dayOfWeek) {
-			$weekOfMonth++;
+		if ($first_day_of_month->format("N") > $day_of_week) {
+			$week_of_month++;
 		}
-		return $weekOfMonth;
+		return $week_of_month;
+	}
+
+	public function testDates(){
+		setlocale(LC_ALL, 'es_AR.UTF-8');
+		$date = new DateTime('2019-01-01');
+		$ordinal_numbers = [
+			1 => 'Primera',
+			2 => 'Segunda',
+			3 => 'Tercera',
+			4 => 'Cuarta',
+			5 => 'Quinta'
+		];
+		$month = 1;
+		for ($i = 0; $i < 360 ; $i++){
+			$week_of_month =  $this->get_week_of_month($date);
+			echo strftime("{$ordinal_numbers[$week_of_month]} semana - %A %e de %B de %Y", $date->getTimestamp()) . ' - ' . $date->format('Y-m-d') . '<br>';
+			$date->add(new DateInterval('P1D'));
+			if($month != $date->format('m')){
+				echo '<hr>';
+			}
+			$month = $date->format('m');
+		}
+		
 	}
 }

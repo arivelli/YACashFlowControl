@@ -22,3 +22,4 @@ Route::get('/cashFlowData/{settlement_date}','AdminAppOperationsController@cashF
 Route::get('/admin/app_operations/execute/{entry_id}','AdminAppOperationsController@execute_operation')->name('execute_operation');
 
 Route::get('updateDollarValues','ManageDollarValue@updateTable')->name('updateTable');
+Route::get('testDates','AdminEntriesController@testDates')->name('testDates');
