@@ -30,7 +30,7 @@ class ManageDollarValue extends \crocodicstudio\crudbooster\controllers\CBContro
         if($query[0]->d < $tomorrow->format('Y-m-d') ) {
 
             //Get the values from BCRA
-            $values = $this->getValues();
+            $values = $this->get_values();
 
             //Filter the values by letting just the newest
             foreach($values as $dollar_value){
@@ -82,7 +82,7 @@ class ManageDollarValue extends \crocodicstudio\crudbooster\controllers\CBContro
      * 
      * @retrun array
      */
-    public function getValues(){
+    public function get_values(){
         $client = new Client();
         $api_response = $client->get('https://api.estadisticasbcra.com/usd_of_minorista', [
             'headers' => [

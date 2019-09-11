@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use DB;
 use Session;
 use Request;
+use ManageDollarValue;
 
 class CBHook extends Controller {
 
@@ -15,5 +16,7 @@ class CBHook extends Controller {
 	*/
 	public function afterLogin() {
 		
+		$dollar = new namespace\ManageDollarValue();
+		$dollar->updateTable();
 	}
 }
