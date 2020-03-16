@@ -181,12 +181,13 @@ $name = str_slug($form['label'], '');
                                                            class='form-control {{$col['required']?"required":""}}'
                                                             {{($col['readonly']===true)?"readonly":""}}
                                                     />
-                                                @elseif($col['type']=='money')
+                                                @elseif($col['type']=='money2')
                                                     <input id='{{$name_column}}' type='text' 
                                                            {{ ($col['min'])?"min='".$col['min']."'":"" }} {{ ($col['max'])?"max='$col[max]'":"" }} name='child-{{$col["name"]}}'
                                                            class='form-control inputMoney {{$col['required']?"required":""}}'
                                                             {{($col['readonly']===true)?"readonly":""}}
                                                     />
+
                                                 @elseif($col['type']=='textarea')
                                                     <textarea id='{{$name_column}}' name='child-{{$col["name"]}}'
                                                               class='form-control {{$col['required']?"required":""}}' {{($col['readonly']===true)?"readonly":""}} ></textarea>
@@ -392,41 +393,41 @@ $name = str_slug($form['label'], '');
                                                     @elseif($col['type']=='select3')
 
 
-<select id='{{$name_column}}' name='child-{{$col["name"]}}'
-        class='form-control select {{$col['required']?"required":""}}'
-        {{($col['readonly']===true)?"readonly":""}}
->
-    <option value=''>{{ $col["default"] }}</option>
-    <?php
-    if ($col['queryBuilder']) {
-        
-        $data = $col['queryBuilder']->get(); ?>
-        @push('bottom')
-            <script type="text/javascript">
-                let child_{{$col["name"]}} = {!! json_encode($data) !!}
-            </script>
-        @endpush
-        <?php
-        foreach ($data as $d) {
-            $selected = ($d->id == $col['value']) ? ' selected' : '';
-            echo "<option value='{$d->id}'$selected>{$d->title}</option>";
-        }
-    } else {
-        $data = $col['dataenum'];
-        foreach ($data as $d) {
-            $enum = explode('|', $d);
-            if (count($enum) == 2) {
-                $opt_value = $enum[0];
-                $opt_label = $enum[1];
-            } else {
-                $opt_value = $opt_label = $enum[0];
-            }
-            $selected = ($opt_value == $col['value']) ? ' selected' : '';
-            echo "<option value='$opt_value'$selected>$opt_label</option>";
-        }
-    }
-    ?>
-</select>
+                                                    <select id='{{$name_column}}' name='child-{{$col["name"]}}'
+                                                            class='form-control select {{$col['required']?"required":""}}'
+                                                            {{($col['readonly']===true)?"readonly":""}}
+                                                    >
+                                                        <option value=''>{{ $col["default"] }}</option>
+                                                        <?php
+                                                        if ($col['queryBuilder']) {
+                                                            
+                                                            $data = $col['queryBuilder']->get(); ?>
+                                                            @push('bottom')
+                                                                <script type="text/javascript">
+                                                                    let child_{{$col["name"]}} = {!! json_encode($data) !!}
+                                                                </script>
+                                                            @endpush
+                                                            <?php
+                                                            foreach ($data as $d) {
+                                                                $selected = ($d->id == $col['value']) ? ' selected' : '';
+                                                                echo "<option value='{$d->id}'$selected>{$d->title}</option>";
+                                                            }
+                                                        } else {
+                                                            $data = $col['dataenum'];
+                                                            foreach ($data as $d) {
+                                                                $enum = explode('|', $d);
+                                                                if (count($enum) == 2) {
+                                                                    $opt_value = $enum[0];
+                                                                    $opt_label = $enum[1];
+                                                                } else {
+                                                                    $opt_value = $opt_label = $enum[0];
+                                                                }
+                                                                $selected = ($opt_value == $col['value']) ? ' selected' : '';
+                                                                echo "<option value='$opt_value'$selected>$opt_label</option>";
+                                                            }
+                                                        }
+                                                        ?>
+                                                    </select>
 
 
 
@@ -550,43 +551,41 @@ $name = str_slug($form['label'], '');
                                                 var trRow = '<tr>';
                                                 @foreach($form['columns'] as $c)
 
-                                                @if($c['type']=='select' || $c['type']=='select3')
-                                                    trRow += "<td class='{{$c['name']}}'>" + $('#{{$name.$c["name"]}} option:selected').text() +
-                                                    "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}}').val() + "'/>" +
-                                                    "</td>";
-                                                @elseif($c['type']=='radio')
-                                                    trRow += "<td class='{{$c['name']}}'><span class='td-label'>" + $.trim($($('.{{$name.$c["name"]}}:checked')[0].parentNode).text())
-                                                    
-                                                    + "</span>" +
-                                                    "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('.{{$name.$c["name"]}}:checked').val() + "'/>" +
-                                                    "</td>";
-                                                @elseif($c['type']=='datamodal')
-                                                    trRow += "<td class='{{$c['name']}}'><span class='td-label'>" + $('#{{$name.$c["name"]}} .input-label').val() + "</span>" +
-                                                    "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}} .input-id').val() + "'/>" +
-                                                    "</td>";
-                                                @elseif($c['type']=='money')
-                                                    trRow += "<td class='{{$c['name']}}'>" + $('#{{$name.$c["name"]}}').val() +
-                                                    "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}}.inputMoney').val().replace(',','').replace('U$S','').replace('$','').replace('.','') + "'/>" +
-                                                    "</td>";
-                                                @elseif($c['type']=='upload')
+                                                    @if($c['type']=='select' || $c['type']=='select3')
+                                                        trRow += "<td class='{{$c['name']}}'>" + $('#{{$name.$c["name"]}} option:selected').text() +
+                                                        "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}}').val() + "'/>" +
+                                                        "</td>";
+                                                    @elseif($c['type']=='radio')
+                                                        trRow += "<td class='{{$c['name']}}'><span class='td-label'>" + $.trim($($('.{{$name.$c["name"]}}:checked')[0].parentNode).text()) + "</span>" +
+                                                        "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('.{{$name.$c["name"]}}:checked').val() + "'/>" +
+                                                        "</td>";
+                                                    @elseif($c['type']=='datamodal')
+                                                        trRow += "<td class='{{$c['name']}}'><span class='td-label'>" + $('#{{$name.$c["name"]}} .input-label').val() + "</span>" +
+                                                        "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}} .input-id').val() + "'/>" +
+                                                        "</td>";
+                                                    @elseif($c['type']=='money')
+                                                        trRow += "<td class='{{$c['name']}}'>" + $('#{{$name.$c["name"]}}').val() +
+                                                        "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}}.inputMoney').val().replace(',','').replace('U$S','').replace('$','').replace('.','') + "'/>" +
+                                                        "</td>";
+                                                    @elseif($c['type']=='upload')
                                                         @if($c['upload_type']=='image')
-                                                    trRow += "<td class='{{$c['name']}}'>" +
-                                                    "<a data-lightbox='roadtrip' href='{{asset('/')}}" + $('#{{$name.$c["name"]}} .input-id').val() + "'><img data-label='" + $('#{{$name.$c["name"]}} .input-label').val() + "' src='{{asset('/')}}" + $('#{{$name.$c["name"]}} .input-id').val() + "' width='50px' height='50px'/></a>" +
-                                                    "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}} .input-id').val() + "'/>" +
-                                                    "</td>";
-                                                @else
-                                                    trRow += "<td class='{{$c['name']}}'><a data-label='" + $('#{{$name.$c["name"]}} .input-label').val() + "' href='{{asset('/')}}" + $('#{{$name.$c["name"]}} .input-id').val() + "'>" + $('#{{$name.$c["name"]}} .input-label').val() + "</a>" +
-                                                    "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}} .input-id').val() + "'/>" +
-                                                    "</td>";
-                                                @endif
+                                                            trRow += "<td class='{{$c['name']}}'>" +
+                                                            "<a data-lightbox='roadtrip' href='{{asset('/')}}" + $('#{{$name.$c["name"]}} .input-id').val() + "'><img data-label='" + $('#{{$name.$c["name"]}} .input-label').val() + "' src='{{asset('/')}}" + $('#{{$name.$c["name"]}} .input-id').val() + "' width='50px' height='50px'/></a>" +
+                                                            "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}} .input-id').val() + "'/>" +
+                                                            "</td>";
                                                         @else
-                                                       
-                                                    trRow += "<td class='{{$c['name']}}'>" + $('#{{$name.$c["name"]}}').val() +
-                                                    "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}}').val() + "'/>" +
-                                                    "</td>";
-                                                @endif
-                                                        @endforeach
-                                                    trRow += "<td>" +
+                                                            trRow += "<td class='{{$c['name']}}'><a data-label='" + $('#{{$name.$c["name"]}} .input-label').val() + "' href='{{asset('/')}}" + $('#{{$name.$c["name"]}} .input-id').val() + "'>" + $('#{{$name.$c["name"]}} .input-label').val() + "</a>" +
+                                                            "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}} .input-id').val() + "'/>" +
+                                                            "</td>";
+                                                        @endif
+                                                    @else
+                                                        trRow += "<td class='{{$c['name']}}'>" + $('#{{$name.$c["name"]}}').val() +
+                                                        "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}}').val() + "'/>" +
+                                                        "</td>";
+                                                    @endif
+                                                
+                                                @endforeach
+                                                trRow += "<td>" +
                                                     "<a href='#panel-form-{{$name}}' onclick='editRow{{$name}}(this)' class='btn btn-warning btn-xs'><i class='fa fa-pencil'></i></a> " +
                                                     "<a href='javascript:void(0)' onclick='deleteRow{{$name}}(this)' class='btn btn-danger btn-xs'><i class='fa fa-trash'></i></a></td>";
                                                 trRow += '</tr>';

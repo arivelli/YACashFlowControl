@@ -168,7 +168,7 @@ return [
          */
 
         //
-        crocodicstudio\crudbooster\CRUDBoosterServiceProvider::class,
+        arivelli\crudbooster\CRUDBoosterServiceProvider::class,
 
         /*
          * Application Service Providers...

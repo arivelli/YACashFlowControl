@@ -7,13 +7,19 @@ let format = {
     'limit'                 : false,
     'allowNegative'         : true
 }
+
+function applyCurrency(prefix) {
+    format.prefix = prefix + ' ';
+    $('#real_amount').priceFormat(format);
+    $('#one_pay_amount').priceFormat(format);
+}
+
 $(document).ready(function(){
 
-    
-    $('input[type=radio][name=currency]').on('change', function(){
-        format.prefix = $(this).val() + ' ';
-        $('#real_amount').priceFormat(format);
-        $('#one_pay_amount').priceFormat(format);
+    applyCurrency();
+
+    $('input[type=radio][name=currency]').on('change', function() {
+        applyCurrency($(this).val());
     });
  
     $('#entry_type').on('change', function(){
@@ -48,7 +54,13 @@ $(document).ready(function(){
         }
     });
     
-    $('input[type=radio][name=child-currency_plan]').on('change', function(){
+    //set format prefix based on selected currency for plan->amount
+    format.prefix = $('input[type=radio][name=child-currency_plan]').val();
+    $('#planamount').priceFormat(format);
+    //Filter available accountd based on currency and account type selected
+    filterAccounts( $('input[type=radio][name=child-currency_plan]:checked').val(), $('input[type=radio][name=child-account_type]:checked').val());
+
+    $('input[type=radio][name=child-currency_plan]').on('change load', function(){
         format.prefix = $(this).val() + ' ';
         $('#planamount').priceFormat(format);
         filterAccounts( $('input[type=radio][name=child-currency_plan]:checked').val(), $('input[type=radio][name=child-account_type]:checked').val());

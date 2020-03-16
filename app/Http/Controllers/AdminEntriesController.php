@@ -8,9 +8,9 @@ use CRUDBooster;
 use DateTime;
 use DatePeriod;
 use DateInterval;
-use ManageDollarValue;
+use App\Http\Controllers\ManageDollarValue;
 
-class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBController
+class AdminEntriesController extends \arivelli\crudbooster\controllers\CBController
 {
 
 	public function cbInit()
@@ -61,7 +61,7 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		$columns[] = ['label' => 'Cuenta', 'name' => 'account_id', 'type' => 'select3', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'queryBuilder' => $queryBuilder, 'default' => '-- Cuenta --', 'value' => 1];
 		$columns[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['-1|Recurrente', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18, 24, 36, 60, 120, 240], 'default' => '-- Plan --', 'value' => 1];
 		$columns[] = ['label' => 'Frecuencia', 'name' => 'frequency', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Semanal', '2|Mensual', '3|Bimestral', '4|Trimestral', '5|Cuatrimestral', '6|Semestral', '7|Anual'], 'default' => '-- Frecuencia --'];
-		$columns[] = ['label' => 'Monto por operación', 'name' => 'amount', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
+		$columns[] = ['label' => 'Monto por operación', 'name' => 'amount', 'type' => 'money2', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
 		$columns[] = ['label' => 'Primera ejecución', 'name' => 'first_execution', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10', 'value' => $now->format('Y-m-d')];
 		$columns[] = ['label' => 'Completa?', 'name' => 'is_completed', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 1];
 		$columns[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
@@ -74,9 +74,9 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		$this->form[] = ['label' => 'Categoría', 'name' => 'category_id', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'datatable' => 'app_categories,category', 'datatable_where' => 'is_active=1', 'default' => '-- Categoría --'];
 		$this->form[] = ['label' => 'Concepto', 'name' => 'concept', 'type' => 'text', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10'];
 		$this->form[] = ['label' => 'Moneda', 'name' => 'currency', 'type' => 'radio', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'default' => '-- Moneda --'];
-		$this->form[] = ['label' => 'Monto real', 'name' => 'real_amount', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
-		$this->form[] = ['label' => 'Monto en un pago', 'name' => 'one_pay_amount', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
-		$this->form[] = ['label' => 'Cotización dolar', 'name' => 'dollar_value', 'type' => 'money', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
+		$this->form[] = ['label' => 'Monto real', 'name' => 'real_amount', 'type' => 'money2', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
+		$this->form[] = ['label' => 'Monto en un pago', 'name' => 'one_pay_amount', 'type' => 'money2', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
+		$this->form[] = ['label' => 'Cotización dolar', 'name' => 'dollar_value', 'type' => 'money2', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
 		$this->form[] = ['label' => 'Afecta capital?', 'name' => 'affect_capital', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
 		$this->form[] = ['label' => 'Es Extraordinario', 'name' => 'is_extraordinary', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
 		$this->form[] = ['label' => 'Hecho?', 'name' => 'is_done', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
@@ -109,10 +109,11 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 		$this->form[2]['value'] = 6;
 		$this->form[3]['value'] = 20;
 		$this->form[5]['value'] = '$';
+		$this->form[8]['value'] = ManageDollarValue::get_value_of();
 		$this->form[9]['value'] = 0;
 		$this->form[10]['value'] = 1;
 		$this->form[11]['value'] = 0;
-		$this->form[8]['value'] = namespace\ManageDollarValue::get_value_of();
+		
 
 		$this->sub_module = array();
 
@@ -319,9 +320,11 @@ class AdminEntriesController extends \crocodicstudio\crudbooster\controllers\CBC
 	{
 		//Your code here
 		//get_object_vars()
-		/*print_r($postdata);
+		print_r($postdata);
+
 print_r($childPostdata);
-die();*/ }
+die();
+ }
 
 	/* 
 	    | ---------------------------------------------------------------------- 
@@ -453,7 +456,7 @@ die();*/ }
 				$operation['is_done'] = 1;
 				$operation['operation_amount'] = $data->amount;
 				$operation['operation_date'] = $operation_date->format("Y-m-d H:i:s");
-				$operation['dollar_value'] = namespace\ManageDollarValue::get_value_of($operation_date);
+				$operation['dollar_value'] = ManageDollarValue::get_value_of($operation_date);
 
 				if ($data->currency == '$') {
 					$operation['in_dollars'] = $operation['operation_amount'] / $operation['dollar_value'] * 100;

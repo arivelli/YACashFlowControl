@@ -9,7 +9,7 @@
 	use DateInterval;
 	use ManageDollarValue;
 
-	class AdminAppOperationsController extends \crocodicstudio\crudbooster\controllers\CBController {
+	class AdminAppOperationsController extends \arivelli\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
 

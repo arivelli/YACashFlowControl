@@ -5,7 +5,7 @@
 	use DB;
 	use CRUDBooster;
 
-	class AdminAppAreasController extends \crocodicstudio\crudbooster\controllers\CBController {
+	class AdminAppAreasController extends \arivelli\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
 

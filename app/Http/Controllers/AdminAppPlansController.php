@@ -5,7 +5,7 @@
 	use DB;
 	use CRUDBooster;
 
-	class AdminAppPlansController extends \crocodicstudio\crudbooster\controllers\CBController {
+	class AdminAppPlansController extends \arivelli\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
 
@@ -44,7 +44,7 @@
 			$this->form[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Plan','name'=>'plan','type'=>'select2','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'-1|\'Recurrente\';1;2;3;4;5;6;7;8;9;10;11;12;18;24;36;60;120;240'];
 			$this->form[] = ['label'=>'Frequencia','name'=>'frequency','type'=>'select2','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Semanal;2|Mensual;3|Bimestral;4|Trimestral;5|Cuatrimestral;6|Semestral;7|Anual'];
-			$this->form[] = ['label'=>'Monto por cuota','name'=>'amount','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Monto operación','name'=>'amount','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Primera ejecución','name'=>'first_execution','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Completa?','name'=>'is_completed','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no','value'=>1];
 			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'wysiwyg','width'=>'col-sm-5'];

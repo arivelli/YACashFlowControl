@@ -5,7 +5,7 @@ use DB;
 use GuzzleHttp\Client;
 use DateTime;
 
-class ManageDollarValue extends \crocodicstudio\crudbooster\controllers\CBController
+class ManageDollarValue extends \arivelli\crudbooster\controllers\CBController
 {
     private $token = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTk2NTUxMzMsInR5cGUiOiJleHRlcm5hbCIsInVzZXIiOiJhcml2ZWxsaUB3ZWJtaW5kLmNvbS5hciJ9.fnHUY1p-hvIf54-j-Q75ZLJ8A5TmxQ3LtDiYXKV0WfNC435hLZcZi3eTWu2lFEcWLyImwXzwwcjf9_8iLeJZ8g';
     
