@@ -504,24 +504,26 @@ $name = str_slug($form['label'], '');
                                                 p.addClass('warning');
                                                 $('#btn-add-table-{{$name}}').val('{{trans("crudbooster.save_changes")}}');
                                                 @foreach($form['columns'] as $c)
-                                                @if($c['type']=='select' || $c['type']=='select3')
-                                                $('#{{$name.$c["name"]}}').val(p.find(".{{$c['name']}} input").val()).trigger("change");
-                                                        @elseif($c['type']=='radio')
-                                                var v = p.find(".{{$c['name']}} input").val();
-                                                $('.{{$name.$c["name"]}}[value="' + v + '"]').prop('checked', true);
-                                                @elseif($c['type']=='datamodal')
-                                                $('#{{$name.$c["name"]}} .input-label').val(p.find(".{{$c['name']}} .td-label").text());
-                                                $('#{{$name.$c["name"]}} .input-id').val(p.find(".{{$c['name']}} input").val());
-                                                @elseif($c['type']=='upload')
-                                                @if($c['upload_type']=='image')
-                                                $('#{{$name.$c["name"]}} .input-label').val(p.find(".{{$c['name']}} img").data('label'));
-                                                @else
-                                                $('#{{$name.$c["name"]}} .input-label').val(p.find(".{{$c['name']}} a").data('label'));
-                                                @endif
-                                                $('#{{$name.$c["name"]}} .input-id').val(p.find(".{{$c['name']}} input").val());
-                                                @else
-                                                $('#{{$name.$c["name"]}}').val(p.find(".{{$c['name']}} input").val());
-                                                @endif
+                                                    @if($c['type']=='select' || $c['type']=='select3')
+                                                        $('#{{$name.$c["name"]}}').val(p.find(".{{$c['name']}} input").val()).trigger("change");
+                                                        console.log('{{$name.$c["name"]}}: ' + p.find(".{{$c['name']}} input").val())
+                                                    @elseif($c['type']=='radio')
+                                                        var v = p.find(".{{$c['name']}} input").val();
+                                                        $('.{{$name.$c["name"]}}[value="' + v + '"]').prop('checked', true).trigger("change");
+                                                        
+                                                    @elseif($c['type']=='datamodal')
+                                                        $('#{{$name.$c["name"]}} .input-label').val(p.find(".{{$c['name']}} .td-label").text());
+                                                        $('#{{$name.$c["name"]}} .input-id').val(p.find(".{{$c['name']}} input").val());
+                                                    @elseif($c['type']=='upload')
+                                                        @if($c['upload_type']=='image')
+                                                            $('#{{$name.$c["name"]}} .input-label').val(p.find(".{{$c['name']}} img").data('label'));
+                                                        @else
+                                                            $('#{{$name.$c["name"]}} .input-label').val(p.find(".{{$c['name']}} a").data('label'));
+                                                        @endif
+                                                        $('#{{$name.$c["name"]}} .input-id').val(p.find(".{{$c['name']}} input").val());
+                                                    @else
+                                                        $('#{{$name.$c["name"]}}').val(p.find(".{{$c['name']}} input").val()).trigger("keyup");
+                                                    @endif
                                                 @endforeach
                                             }
 
@@ -563,7 +565,7 @@ $name = str_slug($form['label'], '');
                                                         trRow += "<td class='{{$c['name']}}'><span class='td-label'>" + $('#{{$name.$c["name"]}} .input-label').val() + "</span>" +
                                                         "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}} .input-id').val() + "'/>" +
                                                         "</td>";
-                                                    @elseif($c['type']=='money')
+                                                    @elseif($c['type']=='money'||$c['type']=='money2')
                                                         trRow += "<td class='{{$c['name']}}'>" + $('#{{$name.$c["name"]}}').val() +
                                                         "<input type='hidden' name='{{$name}}-{{$c['name']}}[]' value='" + $('#{{$name.$c["name"]}}.inputMoney').val().replace(',','').replace('U$S','').replace('$','').replace('.','') + "'/>" +
                                                         "</td>";
@@ -657,7 +659,7 @@ $name = str_slug($form['label'], '');
                                     @foreach($form['columns'] as $col)
                                         <td class="{{$col['name']}}">
                                             <?php
-                                            if ($col['type'] == 'select' || $col['type'] == 'select3') {
+                                            if ($col['type'] == 'select' || $col['type'] == 'select3' || $col['type'] == 'radio') {
                                                 if ($col['datatable']) {
                                                     $join_table = explode(',', $col['datatable'])[0];
                                                     $join_field = explode(',', $col['datatable'])[1];
@@ -668,7 +670,28 @@ $name = str_slug($form['label'], '');
                                                 }
                                                 if ($col['dataenum']) {
                                                     echo "<span class='td-label'>";
-                                                    echo $d->{$col['name']};
+                                                        if(is_array($col['dataenum'])) {
+                                                            $items = $col['dataenum'];
+                                                        } else {
+                                                            $items = explode(';', $col['dataenum']);
+                                                        }
+                                                        foreach ($items as $item) {
+                                                            $keyValueItem = explode('|', $item);
+                                                            if ($keyValueItem[0] == $d->{$col['name']} ) {
+                                                                if( isset($keyValueItem[1]) ){
+                                                                    echo $keyValueItem[1];
+                                                                } else {
+                                                                    echo $d->{$col['name']};
+                                                                }
+                                                            }
+                                                        }
+                                                    echo "</span>";
+                                                    echo "<input type='hidden' name='".$name."-".$col['name']."[]' value='".$d->{$col['name']}."'/>";
+                                                }
+                                                if ($col['queryBuilder']) {
+                                                    $res = $col['queryBuilder']->where('id','=',$d->{$col['name']})->first();
+                                                    echo "<span class='td-label'>";
+                                                    echo $res->title;
                                                     echo "</span>";
                                                     echo "<input type='hidden' name='".$name."-".$col['name']."[]' value='".$d->{$col['name']}."'/>";
                                                 }

@@ -34,6 +34,8 @@
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
+			
+			$this->col[] = ["label"=>"Fecha Estimada","name"=>"estimated_date"];
 			$this->col[] = ["label"=>"Cuenta","name"=>"account_id","join"=>"app_accounts,name"];
 			$this->col[] = ["label"=>"Entrada","name"=>"entry_id","join"=>"app_entries,concept"];
 			$this->col[] = ["label"=>"Detalle","name"=>"detail"];

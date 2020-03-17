@@ -60,7 +60,7 @@ function filterData2(newFilter) {
     }
     
     let html = '';
-    let links = '';
+    let links = [];
     dataKeys = Object.keys(groupedData);
     
     dataKeys.forEach((dataKey) => {
@@ -71,12 +71,12 @@ function filterData2(newFilter) {
         if( newFilter.view  === 'settlement_week' ){
             caption = getOrdinalNumber(caption);
         }
-        links += '<a href="#' + caption + '">' + caption + '</a>'
+        links.push('<a href="#' + caption + '">' + caption + '</a>');
         html += drawTable(groupedData[dataKey], caption);
         
 
     });
-    html = links + html;
+    html = links.join(' | ') + '<hr>' + html;
     
     $('#tables_group').html(html);
     $('.'+newFilter.view).hide();
@@ -104,6 +104,7 @@ function drawTable(table, caption) {
     let total_estimated_amount = 0;
     let total_operation_amount = 0;
     let html = `
+    <br>
     <a id="` + caption + `"></a><a href="#top">Subir</a>
     <table id='table_dashboard' class="table table-hover table-striped table-bordered">
         <caption>` + caption + `</caption>

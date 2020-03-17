@@ -27,21 +27,24 @@
 			$this->button_export = false;
 			$this->table = "app_plans";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
-
+			$this->frequencies = [
+				1=>'Semanal', 2=>'Mensual', 3=>'Bimestral', 4=>'Trimestral', 5=>'Cuatrimestral', 6=>'Semestral', 7=>'Anual'
+			];
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
 			$this->col[] = ["label"=>"Cuenta","name"=>"account_id","join"=>"app_accounts,name"];
 			$this->col[] = ["label"=>"Monto unitario","name"=>"amount"];
 			$this->col[] = ["label"=>"Entrada","name"=>"entry_id","join"=>"app_entries,concept"];
 			$this->col[] = ["label"=>"Primera ejecución","name"=>"first_execution"];
-			$this->col[] = ["label"=>"Frequencia","name"=>"frequency"];
-			$this->col[] = ["label"=>"Completado?","name"=>"is_completed"];
+			$this->col[] = ["label"=>"Frequencia","name"=>"frequency","callback_php"=>'$this->frequencies[$row->frequency]'];
+			$this->col[] = ["label"=>"Completado?","name"=>"is_completed", "callback_php" => '($row->is_completed ==1)?"si" : "no"'];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
+			
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Entrada','name'=>'entry_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'app_account,name','datatable_where'=>'is_active=1'];
-			$this->form[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Entrada','name'=>'entry_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'app_entries,concept'];
+			$this->form[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'app_accounts,name','datatable_where'=>'is_active=1'];
 			$this->form[] = ['label'=>'Plan','name'=>'plan','type'=>'select2','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'-1|\'Recurrente\';1;2;3;4;5;6;7;8;9;10;11;12;18;24;36;60;120;240'];
 			$this->form[] = ['label'=>'Frequencia','name'=>'frequency','type'=>'select2','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Semanal;2|Mensual;3|Bimestral;4|Trimestral;5|Cuatrimestral;6|Semestral;7|Anual'];
 			$this->form[] = ['label'=>'Monto operación','name'=>'amount','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
