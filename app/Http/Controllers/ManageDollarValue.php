@@ -14,7 +14,7 @@ class ManageDollarValue extends \arivelli\crudbooster\controllers\CBController
     /**
      * Keep the aux_dollar_value table updated with values from BCRA
      */
-    public function updateTable()
+    public function update_table()
     {
         $tomorrow = new DateTime('tomorrow');
         $today = new DateTime('today');
@@ -99,9 +99,14 @@ class ManageDollarValue extends \arivelli\crudbooster\controllers\CBController
     }
 
     static public function get_value_of($date = null){
-        $date = $date !== null ? $date : new DateTime();
+        $date = $date !== null ? $date : (new DateTime())->format('Y-m-d');
+        
         $query = DB::table('aux_dollar_value')
-        ->where('d','>=',$date->format('Y-m-d'))
+        ->where([
+            ['d', '<=', $date],
+            ['v', '>', 0]
+        ])
+        ->orderBy('d', 'DESC')
         ->first();
         return $query->v;
     }

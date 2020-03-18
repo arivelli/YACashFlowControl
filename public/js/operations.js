@@ -16,7 +16,8 @@ function filterData() {
     });
     //get the settlementDate
     newFilter.settlementDate = newFilter.year + newFilter.month;
-
+    window.cashFlow.settlement_date = newFilter.settlementDate;
+    
     if(typeof window.cashFlow[newFilter.settlementDate] !== 'undefined'){
         filterData2(newFilter);
     } else {
@@ -89,15 +90,45 @@ const groupBy = key => array =>
         return objectsByKeyValue;
     }, {});
 
+
+function showModalExecuteOperation(id){
+    let operation = window.cashFlow[window.cashFlow.settlement_date].find((e) => { return e.operation_id == id });
+    $('#cancel-operation_concept').html(operation.concept);
+    $('#cancel-operation_detail').html(operation.detail);
+    $('#cancel-operation_operation_amount').val(operation.estimated_amount);
+    $('#cancel-operation_account_id').val(operation.account_id);
+    $('#cancel-operation_operation_id').val(operation.operation_id);
+    $('#cancel-operation_operation_date').val(operation.estimated_date);
+    set_dollar_value();
+    
+    $('#cancel-operation_operation_amount').priceFormat({
+        'prefix' : operation.currency + " ",
+        'centsSeparator' : ",",
+        'thousandsSeparator' : ".",
+        'centsLimit'  : 2
+    });
+    $('#modal-datamodal-cancel-operation').modal('show');
+}
+
 function executeOperation(id){
-    alert(id);
-    $.ajax( "/admin/app_operations/execute/" + id )
+    let data = {};
+    var numberPattern = /\d+/g;
+
+    data.operation_amount = $('#cancel-operation_operation_amount').val().match( numberPattern ).join('');
+    data.dollar_value = $('#cancel-operation_dollar_value').val().match( numberPattern ).join('');
+    data.account_id = $('#cancel-operation_account_id').val();
+    data.operation_id = $('#cancel-operation_operation_id').val();
+    data.operation_date = $('#cancel-operation_operation_date').val();
+
+
+    $.post( "/admin/app_operations/execute/" + id , data)
         .done(function(res) {
             alert("ok");
         })
         .fail(function() {
             alert( "error" );
-        })
+        });
+    
 }
 function drawTable(table, caption) {
     
@@ -146,7 +177,7 @@ function drawTable(table, caption) {
             <td class="right">`;
         if(row.is_done != 1) {
             html += `
-            <a href="javascript: void executeOperation(` + row.operation_id + `)" class="btn btn-success btn-xs"><i class="fa fa-money"></i></a>`;
+            <a href="javascript: void showModalExecuteOperation(` + row.operation_id + `)" class="btn btn-success btn-xs"><i class="fa fa-money"></i></a>`;
         }
         html += `
             <a href="/admin/app_operations/edit/` + row.operation_id + `?return_url=/cashFlow/` + row.settlement_date + `" class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i></a>
@@ -248,3 +279,25 @@ function getOrdinalNumber(number, genre)
     return res;
 }
 
+function set_dollar_value(){
+    if (typeof window.cashFlow.dollar_value === 'undefined'){
+        window.cashFlow.dollar_value = {};
+    }
+    let quote_date = $('#cancel-operation_operation_date').val();
+    if(typeof window.cashFlow.dollar_value[quote_date] !== 'undefined') {
+        $('#cancel-operation_dollar_value').val(window.cashFlow.dollar_value[quote_date]);
+        $('#cancel-operation_dollar_value').trigger('keyup');
+    } else {
+        $.get({
+            url : '/dollarValue/getvalueof/'+quote_date,
+            success: (data) => {
+                $('#cancel-operation_dollar_value').val(data);
+                window.cashFlow.dollar_value[quote_date] = data;
+                $('#cancel-operation_dollar_value').trigger('keyup');
+            }
+        });
+    }
+    
+    
+
+}

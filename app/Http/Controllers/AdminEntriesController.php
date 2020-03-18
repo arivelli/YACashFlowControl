@@ -456,7 +456,7 @@ die();
 				$operation['is_done'] = 1;
 				$operation['operation_amount'] = $data->amount;
 				$operation['operation_date'] = $operation_date->format("Y-m-d H:i:s");
-				$operation['dollar_value'] = ManageDollarValue::get_value_of($operation_date);
+				$operation['dollar_value'] = ManageDollarValue::get_value_of($operation_date->format('Y-m-d'));
 
 				if ($data->currency == '$') {
 					$operation['in_dollars'] = $operation['operation_amount'] / $operation['dollar_value'] * 100;

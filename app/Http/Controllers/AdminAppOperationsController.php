@@ -1,13 +1,15 @@
 <?php namespace App\Http\Controllers;
 
 	use Session;
-	use Request;
+	use Illuminate\Http\Request;
 	use DB;
 	use CRUDBooster;
 	use DateTime;
 	use DatePeriod;
 	use DateInterval;
-	use ManageDollarValue;
+	use App\Http\Controllers\ManageDollarValue;
+	use App\AppAccount;
+	use App\AppOperation;
 
 	class AdminAppOperationsController extends \arivelli\crudbooster\controllers\CBController {
 
@@ -380,6 +382,8 @@
 
 			$data['cashFlow'] = $this->cashFlowData($settlement_date, true);
 			
+			$data['accounts'] = AppAccount::where('is_active', '=', 1)->orderby('name', 'ASC')->get();
+
 			$this->cbView('cashflow',$data);
 		}
 
@@ -414,21 +418,34 @@
 				die();
 			}
 		}
-		public function execute_operation($id){
+		public function execute_operation($id, Request $request){
 
-			$dollar_value = namespace\ManageDollarValue::get_value_of();
-			DB::enableQueryLog();
+			$validatedData = $request->validate([
+				
+				'account_id' => 'required|integer',
+                'operation_date' => 'required',
+				'operation_amount' => 'required|integer',
+				'dollar_value' => 'required|integer',
+            ]);
 
-			$res = DB::table('app_operations')
-			->where('id', $id)
+            /*if ($validator->fails()) {
+                return redirect('post/create')
+                            ->withErrors($validator)
+                            ->withInput();
+			}*/
+			
+			//print_r($validatedData);
+			//DB::enableQueryLog();
+			$res = \App\AppOperation::where('id', $id)
             ->update([
-				'operation_date' => DB::raw('NOW()'),
-				'operation_amount' => DB::raw('estimated_amount'),
-				'dollar_value' => $dollar_value,
-				'in_dollars' => DB::raw('estimated_amount / ' . $dollar_value / 100 ),
+				'account_id' => $validatedData['account_id'],
+				'operation_date' => $validatedData['operation_date'],
+				'operation_amount' => $validatedData['operation_amount'],
+				'dollar_value' => $validatedData['dollar_value'],
+				'in_dollars' => round($validatedData['operation_amount'] / $validatedData['dollar_value'] * 100),
 				'is_done' => 1
 			]);
-			dd(DB::getQueryLog());
+			//dd(DB::getQueryLog());
 			print_r($res);
 		}
 	}
