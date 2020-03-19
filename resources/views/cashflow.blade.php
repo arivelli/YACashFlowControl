@@ -185,7 +185,7 @@ button.btn.btn-selected {
   <div class="btn-group">
     <button type="button" class="btn btn-default">ENE</button>
     <button type="button" class="btn btn-default">FEB</button>
-    <button type="button" class="btn btn-default selected">MAR</button>
+    <button type="button" class="btn btn-info">MAR</button>
     <button type="button" class="btn btn-default">ABR</button>
     <button type="button" class="btn btn-default">MAY</button>
     <button type="button" class="btn btn-default">JUN</button>
@@ -199,22 +199,22 @@ button.btn.btn-selected {
 </div>
 <div style="border: 1px solid #f4f4f4; padding:3px; float:left; clear:left; margin-right: 20px;">
   <div class="btn-group">
-    <button type="button" class="btn btn-default selected">Ingresos</button>
-    <button type="button" class="btn btn-default selected">Egresos</button>
-    <button type="button" class="btn btn-default selected">Pasivos</button>
-    <button type="button" class="btn btn-default selected">Movimientos</button>
-    <button type="button" class="btn btn-default selected">Ajustes</button>
+    <button type="button" class="btn btn-info">Ingresos</button>
+    <button type="button" class="btn btn-info">Egresos</button>
+    <button type="button" class="btn btn-info">Pasivos</button>
+    <button type="button" class="btn btn-info">Movimientos</button>
+    <button type="button" class="btn btn-info">Ajustes</button>
   </div>
 </div>
 <div style="border: 1px solid #f4f4f4; padding:3px; float:left; margin-right: 20px;">
   <div class="btn-group">
-    <button type="button" class="btn btn-default selected">Pendientes</button>
-    <button type="button" class="btn btn-default selected">Realizados</button>
+    <button type="button" class="btn btn-info">Pendientes</button>
+    <button type="button" class="btn btn-info">Realizados</button>
   </div>
 </div>
 <div style="border: 1px solid #f4f4f4; padding:3px; float:left">
   <div class="btn-group">
-    <button type="button" class="btn btn-default selected">Cashflow</button>
+    <button type="button" class="btn btn-info">Cashflow</button>
     <button type="button" class="btn btn-default">Tipo de Entrada</button>
     <button type="button" class="btn btn-default">Cuenta</button>
     <button type="button" class="btn btn-default">Área</button>
