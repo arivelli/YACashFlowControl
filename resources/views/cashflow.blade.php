@@ -197,20 +197,20 @@ button.btn.btn-selected {
       <button type="button" class="btn btn-default">DIC</button>
     </div>
   </div>
-  <div style="float:right; font-size: 34px; line-height: 34px; font-weight: bold;">MARZO 2020</div>
+  
   <div style="float:left; clear:left; margin: 10px 20px 0 0;">
   <div class="btn-group">
     <button type="button" class="btn btn-info">Ingresos</button>
-    <button type="button" class="btn btn-info">Egresos</button>
-    <button type="button" class="btn btn-info">Pasivos</button>
-    <button type="button" class="btn btn-info">Movimientos</button>
-    <button type="button" class="btn btn-info">Ajustes</button>
+    <button type="button" class="btn btn-default">Egresos</button>
+    <button type="button" class="btn btn-default">Pasivos</button>
+    <button type="button" class="btn btn-default">Movimientos</button>
+    <button type="button" class="btn btn-default">Ajustes</button>
   </div>
 </div>
 <div style="float:left; margin-top: 10px;">
   <div class="btn-group">
     <button type="button" class="btn btn-info">Pendientes</button>
-    <button type="button" class="btn btn-info">Realizados</button>
+    <button type="button" class="btn btn-default">Realizados</button>
   </div>
 </div>
 
@@ -230,7 +230,7 @@ button.btn.btn-selected {
 </div>
 <div style="clear:both"></div>
 <br /><br />
-
+<div style="float:right; font-size: 34px; line-height: 34px; font-weight: bold;">MARZO 2020</div>
 <div style="font-size: 24px; line-height: 24px; font-weight: bold;">Semana: Tercera | Cuarta</div>
 
 
