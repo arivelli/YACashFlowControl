@@ -37,6 +37,8 @@
     }
   }
 }
+</style>
+<style type="text/css">
 /*MARU*/
 .grouper { padding:3px; display:table; width:100% }
 .group1 { float:left; margin-right:20px }
@@ -45,8 +47,6 @@
 .group4 { float:left; margin-top: 10px; }
 .filterTitle { font-size: 34px; line-height: 34px; font-weight: bold; }
 .filterSubtitle { font-size: 24px; line-height: 34px; }
-
-
 </style>
 @endpush
 
