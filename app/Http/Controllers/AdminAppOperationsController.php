@@ -42,39 +42,46 @@
 			$this->col[] = ["label"=>"Entrada","name"=>"entry_id","join"=>"app_entries,concept"];
 			$this->col[] = ["label"=>"Detalle","name"=>"detail"];
 			$this->col[] = ["label"=>"Monto","name"=>"operation_amount"];
-			$this->col[] = ["label"=>"Hecho?","name"=>"is_done","callback_php"=>'($row->is_done ==1)?"si" : "no"'];
+			$this->col[] = ["label"=>"Hecho?","name"=>"is_done","callback_php"=>'($row->is_done ==1)? "Sí" : "No"'];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 			
 			$queryBuilderPlan = DB::table('app_plans')
 			->join('aux_frequencies','app_plans.frequency','=','aux_frequencies.id')
 			//->join('app_plans','app_plans.frequency','=','aux_frequencies.id')
-			->selectRAW('IF( plan = 1, "Pago único", 
+			->selectRAW('IF( app_plans.plan = 1, "Única operación", 
 			CONCAT(
-				  IF( plan = -1, 
-					 CONCAT("Recurrente en partes ", LOWER(aux_frequencies.frequency), "es"), 
-					 CONCAT("Dividido en ",plan," partes ", LOWER(aux_frequencies.frequency), "es")
+				  IF( app_plans.plan = -1, 
+					 CONCAT("Recurrente (", aux_frequencies.frequency, ")"), 
+					 CONCAT("Dividido en ",app_plans.plan," partes ", aux_frequencies.frequency, "es")
 					) 
 			) 
-		   )AS text ');
+		   ) AS text ');
+
 			
 			$queryBuilderEntry = DB::table('app_entries')
 			->select('concept AS text');
-			
+
+			$queryBuilderAccount = DB::table('app_accounts')
+			->select('id', 'name AS title', 'type', 'currency')
+			->orderby('type')
+			->orderby('currency')
+			->where('is_active', '=', '1');
+
+
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Entrada','name'=>'entry_id','type'=>'fixed','validation'=>'required|integer|min:0','width'=>'col-sm-10','queryBuilder' => $queryBuilderEntry];
-			$this->form[] = ['label'=>'Plan','name'=>'plan_id','type'=>'fixed','validation'=>'required|integer|min:0','width'=>'col-sm-10', 'queryBuilder' => $queryBuilderPlan, 'queryBuilder_remote_key' => 'app_plans.id'];
-			$this->form[] = ['label'=>'Tipo de Cuenta','name'=>'account_type','type'=>'hidden','validation'=>'required'];
-			$this->form[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'app_accounts,name','datatable_where'=>'is_active=1'];
-			
+			$this->form[] = ['label'=>'Entrada','name'=>'entry_id','type'=>'fixed','validation'=>'integer|min:0','width'=>'col-sm-10','queryBuilder' => $queryBuilderEntry];
+			$this->form[] = ['label'=>'Plan','name'=>'plan_id','type'=>'fixed','validation'=>'integer|min:0','width'=>'col-sm-10', 'queryBuilder' => $queryBuilderPlan, 'queryBuilder_remote_key' => 'app_plans.id'];
+			$this->form[] = ['label'=>'Moneda','name'=>'currency','type'=>'hidden','validation'=>'required'];
+			$this->form[] = ['label'=>'Cuenta', 'name' => 'account_id', 'type' => 'select3', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'queryBuilder' => $queryBuilderAccount, 'default' => '-- Cuenta --', 'value' => 1];
 			$this->form[] = ['label'=>'Detalle','name'=>'detail','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Fecha Estimada','name'=>'estimated_date','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Monto Estimado','name'=>'estimated_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Fecha Estimada','name'=>'estimated_date','type' => 'date', 'validation' => 'required|date_format:Y-m-d','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Monto Estimado','name'=>'estimated_amount','type'=>'money2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			
-			$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no'];
-			$this->form[] = ['label'=>'Fecha de Operación','name'=>'operation_date','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Monto de Operación','name'=>'operation_amount','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|Sí;0|No'];
+			$this->form[] = ['label'=>'Fecha de Operación','name'=>'operation_date','type' => 'date', 'validation' => 'required|date_format:Y-m-d','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Monto de Operación','name'=>'operation_amount','type'=>'money2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			
 			$this->form[] = ['label'=>'Periodo cubierto','name'=>'settlement_date','type'=>'text','validation'=>'integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','width'=>'col-sm-10'];
@@ -228,8 +235,11 @@
 	        | URL of your javascript each array 
 	        | $this->load_js[] = asset("myfile.js");
 	        |
-	        */
-	        $this->load_js = array();
+			*/
+			
+			$this->load_js = array(
+			asset("/js/operations.js")
+		);
 	        
 	        
 	        
@@ -253,7 +263,7 @@
 	        | $this->load_css[] = asset("myfile.css");
 	        |
 	        */
-	        $this->load_css = array();
+	        $this->load_css = array('https://adminlte.io/themes/AdminLTE/plugins/iCheck/flat/_all.css', 'https://adminlte.io/themes/AdminLTE/plugins/iCheck/all.css');
 	        
 	        
 	    }
@@ -383,6 +393,8 @@
 			$data['cashFlow'] = $this->cashFlowData($settlement_date, true);
 			
 			$data['accounts'] = AppAccount::where('is_active', '=', 1)->orderby('name', 'ASC')->get();
+
+			$data['page_title'] = 'WorkFlow';
 
 			$this->cbView('cashflow',$data);
 		}

@@ -34,7 +34,7 @@
 			$this->col[] = ["label"=>"Banco","name"=>"bank"];
 			$this->col[] = ["label"=>"Tipo","name"=>"type","callback_php"=>'$this->getAccountType($row->type)'];
 			$this->col[] = ["label"=>"Moneda","name"=>"currency"];
-			$this->col[] = ["label"=>"Activo","name"=>"is_active","callback_php"=>'($row->is_active ==1)?"si" : "no"'];
+			$this->col[] = ["label"=>"Activo","name"=>"is_active","callback_php"=>'($row->is_active ==1)? "Sí" : "No"'];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
@@ -44,9 +44,9 @@
 			$this->form[] = ['label'=>'Banco','name'=>'bank','type'=>'text','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'CBU','name'=>'cbu','type'=>'text','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Número','name'=>'number','type'=>'text','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Moneda','name'=>'currency','type'=>'text','validation'=>'required|min:1|max:3','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Moneda','name'=>'currency','type'=>'radio','validation'=>'required|min:1|max:3','width'=>'col-sm-1','dataenum'=>'$;U$S'];
 			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'wysiwyg','width'=>'col-sm-4'];
-			$this->form[] = ['label'=>'Activa?','name'=>'is_active','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-1','dataenum'=>'1|si;0|no'];
+			$this->form[] = ['label'=>'Activa?','name'=>'is_active','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-1','dataenum'=>'1|Sí;0|No'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM

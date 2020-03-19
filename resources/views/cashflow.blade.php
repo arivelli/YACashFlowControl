@@ -1,6 +1,6 @@
 @extends('crudbooster::admin_template')
-@push('top')
-<style rel="stylesheet" type="text/css" href="https://adminlte.io/themes/AdminLTE/plugins/iCheck/flat/_all.css" />
+
+@push('head')
 <style>
     #filterEntryType .btn {
         width: 150px;
@@ -319,4 +319,4 @@ Columnas
 </div><!-- /.modal -->
 
 @endsection
-<script type="text/javascript" src="/js/operations.js"></script>
+<script type="text/javascript" src="/js/cashFlow.js"></script>
