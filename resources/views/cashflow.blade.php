@@ -12,8 +12,6 @@
     .right {
         text-align: right;
     }
-
-    /* MARU */
  
 
 // Checkbox and radio options
@@ -39,6 +37,15 @@
     }
   }
 }
+/*MARU*/
+.grouper { padding:3px; display:table; width:100% }
+.group1 { float:left; margin-right:20px }
+.group2 { float:left;}
+.group3 { float:left; clear:left; margin: 10px 20px 0 0; }
+.group4 { float:left; margin-top: 10px; }
+.filterTitle { font-size: 34px; line-height: 34px; font-weight: bold; }
+.filterSubtitle { font-size: 24px; line-height: 34px; }
+
 
 </style>
 @endpush
@@ -47,8 +54,8 @@
 
 <!-- Maru Code -->
 <br />
-<div style="padding:3px; display:table; width:100%">
-  <div style="float:left; margin-right:20px">
+<div class="grouper">
+  <div class="group1">
     <div class="btn-group">
       <button type="button" class="btn btn-default">2015</button>
       <button type="button" class="btn btn-default">2016</button>
@@ -60,7 +67,7 @@
       <button type="button" class="btn btn-default">2022</button>
     </div>
   </div>
-  <div style="float:left;">
+  <div class="group2">
     <div class="btn-group">
       <button type="button" class="btn btn-default">ENE</button>
       <button type="button" class="btn btn-default">FEB</button>
@@ -77,7 +84,7 @@
     </div>
   </div>
   
-  <div style="float:left; clear:left; margin: 10px 20px 0 0;">
+  <div class="group3">
   <div class="btn-group">
     <button type="button" class="btn btn-info">Ingresos</button>
     <button type="button" class="btn btn-default">Egresos</button>
@@ -86,7 +93,7 @@
     <button type="button" class="btn btn-default">Ajustes</button>
   </div>
 </div>
-<div style="float:left; margin-top: 10px;">
+<div class="group4">
   <div class="btn-group">
     <button type="button" class="btn btn-info">Pendientes</button>
     <button type="button" class="btn btn-default">Realizados</button>
@@ -96,8 +103,8 @@
 </div>
 <div style="clear:both"></div>
 <br />
-<div style="padding:3px; display:table; width:100%">
-  <div style="float:left">
+<div class="grouper">
+  <div class="group2">
     <div class="btn-group">
       <button type="button" class="btn btn-danger">Cashflow</button>
       <button type="button" class="btn btn-default">Tipo de Entrada</button>
@@ -109,8 +116,8 @@
 </div>
 <div style="clear:both"></div>
 <br /><br />
-<div style="font-size: 34px; line-height: 34px; font-weight: bold;">MARZO 2020</div>
-<div style="font-size: 24px; line-height: 34px;">Semana: <a href="#">Tercera</a> | <a href="#">Cuarta</a></div>
+<div class="filterTitle">MARZO 2020</div>
+<div class="filterSubtitle">Semana: <a href="#">Tercera</a> | <a href="#">Cuarta</a></div>
 
 
 <br />
