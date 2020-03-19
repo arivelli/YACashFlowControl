@@ -263,7 +263,11 @@
 	        | $this->load_css[] = asset("myfile.css");
 	        |
 	        */
-	        $this->load_css = array('https://adminlte.io/themes/AdminLTE/plugins/iCheck/flat/_all.css', 'https://adminlte.io/themes/AdminLTE/plugins/iCheck/all.css');
+	        $this->load_css = array(
+				//'https://adminlte.io/themes/AdminLTE/plugins/iCheck/flat/_all.css', 
+				//'https://adminlte.io/themes/AdminLTE/plugins/iCheck/all.css',
+				asset("/css/cashFlow.css")
+			);
 	        
 	        
 	    }
@@ -394,7 +398,7 @@
 			
 			$data['accounts'] = AppAccount::where('is_active', '=', 1)->orderby('name', 'ASC')->get();
 
-			$data['page_title'] = 'WorkFlow';
+			$data['page_title'] = 'CashFlow';
 
 			$this->cbView('cashflow',$data);
 		}
