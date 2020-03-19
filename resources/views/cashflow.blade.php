@@ -197,10 +197,8 @@ FILTRO
       <button type="button" class="btn btn-default">DIC</button>
     </div>
   </div>
-  <div style="float:right;">MARZO 2020</div>
-</div>
-
-<div style="float:left; clear:left; margin-right: 20px;">
+  <div style="float:right; font-size: 34px; line-height: 34px; font-weight: bold;">MARZO 2020</div>
+  <div style="float:left; clear:left; margin-right: 20px;">
   <div class="btn-group">
     <button type="button" class="btn btn-info">Ingresos</button>
     <button type="button" class="btn btn-info">Egresos</button>
@@ -215,6 +213,9 @@ FILTRO
     <button type="button" class="btn btn-info">Realizados</button>
   </div>
 </div>
+
+</div>
+AGRUPADOR
 <div style="float:left">
   <div class="btn-group">
     <button type="button" class="btn btn-info">Cashflow</button>
