@@ -281,7 +281,7 @@
     <button type="button" class="btn btn-default">2022</button>
   </div>
 </div>
-<div style="border: 1px solid #f4f4f4; padding:3px; float:left;  clear:right">
+<div style="border: 1px solid #f4f4f4; padding:3px; float:left;">
   <div class="btn-group">
     <button type="button" class="btn btn-default">ENE</button>
     <button type="button" class="btn btn-default">FEB</button>
@@ -297,7 +297,7 @@
     <button type="button" class="btn btn-default">DIC</button>
   </div>
 </div>
-<div style="border: 1px solid #f4f4f4; padding:3px; float:left; margin-left: 20px;">
+<div style="border: 1px solid #f4f4f4; padding:3px; float:left; clear:left; margin-left: 20px;">
   <div class="btn-group">
     <button type="button" class="btn btn-default">Ingresos</button>
     <button type="button" class="btn btn-default">Egresos</button>
@@ -312,7 +312,7 @@
     <button type="button" class="btn btn-default">Realizados</button>
   </div>
 </div>
-<div style="border: 1px solid #f4f4f4; padding:3px; float:left; margin-left: 20px; clear:right">
+<div style="border: 1px solid #f4f4f4; padding:3px; float:left; margin-left: 20px">
   <div class="btn-group">
     <button type="button" class="btn btn-default">Cashflow</button>
     <button type="button" class="btn btn-default">Tipo de Entrada</button>
