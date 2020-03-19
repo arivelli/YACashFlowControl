@@ -276,7 +276,7 @@
     <button type="button" class="btn btn-default">2017</button>
     <button type="button" class="btn btn-default">2018</button>
     <button type="button" class="btn btn-default">2019</button>
-    <button type="button" class="btn btn-default">2020</button>
+    <button type="button" class="btn btn-default selected">2020</button>
     <button type="button" class="btn btn-default">2021</button>
     <button type="button" class="btn btn-default">2022</button>
   </div>
@@ -285,7 +285,7 @@
   <div class="btn-group">
     <button type="button" class="btn btn-default">ENE</button>
     <button type="button" class="btn btn-default">FEB</button>
-    <button type="button" class="btn btn-default">MAR</button>
+    <button type="button" class="btn btn-default selected">MAR</button>
     <button type="button" class="btn btn-default">ABR</button>
     <button type="button" class="btn btn-default">MAY</button>
     <button type="button" class="btn btn-default">JUN</button>
@@ -299,22 +299,22 @@
 </div>
 <div style="border: 1px solid #f4f4f4; padding:3px; float:left; clear:left; margin-right: 20px;">
   <div class="btn-group">
-    <button type="button" class="btn btn-default">Ingresos</button>
-    <button type="button" class="btn btn-default">Egresos</button>
-    <button type="button" class="btn btn-default">Pasivos</button>
-    <button type="button" class="btn btn-default">Movimientos</button>
-    <button type="button" class="btn btn-default">Ajustes</button>
+    <button type="button" class="btn btn-default selected">Ingresos</button>
+    <button type="button" class="btn btn-default selected">Egresos</button>
+    <button type="button" class="btn btn-default selected">Pasivos</button>
+    <button type="button" class="btn btn-default selected">Movimientos</button>
+    <button type="button" class="btn btn-default selected">Ajustes</button>
   </div>
 </div>
 <div style="border: 1px solid #f4f4f4; padding:3px; float:left; margin-right: 20px;">
   <div class="btn-group">
-    <button type="button" class="btn btn-default">Pendientes</button>
-    <button type="button" class="btn btn-default">Realizados</button>
+    <button type="button" class="btn btn-default selected">Pendientes</button>
+    <button type="button" class="btn btn-default selected">Realizados</button>
   </div>
 </div>
 <div style="border: 1px solid #f4f4f4; padding:3px; float:left">
   <div class="btn-group">
-    <button type="button" class="btn btn-default">Cashflow</button>
+    <button type="button" class="btn btn-default selected">Cashflow</button>
     <button type="button" class="btn btn-default">Tipo de Entrada</button>
     <button type="button" class="btn btn-default">Cuenta</button>
     <button type="button" class="btn btn-default">Área</button>
