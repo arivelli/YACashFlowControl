@@ -167,7 +167,7 @@ button.btn.btn-selected {
 @section('content')
 
 <!-- Maru Code -->
-FILTRO
+<br />
 <div style="padding:3px; display:table; width:100%">
   <div style="float:left; margin-right:20px">
     <div class="btn-group">
@@ -216,7 +216,7 @@ FILTRO
 
 </div>
 <div style="clear:both"></div>
-AGRUPADOR
+<br />
 <div style="padding:3px; display:table; width:100%">
   <div style="float:left">
     <div class="btn-group">
@@ -229,8 +229,9 @@ AGRUPADOR
   </div>
 </div>
 <div style="clear:both"></div>
+<br /><br />
 
-<div style="font-size: 34px; line-height: 34px; font-weight: bold;">Semana: Tercera | Cuarta</div>
+<div style="font-size: 24px; line-height: 24px; font-weight: bold;">Semana: Tercera | Cuarta</div>
 
 
 <br />
