@@ -169,34 +169,38 @@ button.btn.btn-selected {
     <div class='title'><?php echo e($page_title); ?></div>
 </div>
 <!-- Maru Code -->
-<div style="border: 1px solid #f4f4f4; padding:3px; float:left; margin-right:20px">
-  <div class="btn-group">
-    <button type="button" class="btn btn-default">2015</button>
-    <button type="button" class="btn btn-default">2016</button>
-    <button type="button" class="btn btn-default">2017</button>
-    <button type="button" class="btn btn-default">2018</button>
-    <button type="button" class="btn btn-default">2019</button>
-    <button type="button" class="btn btn-info">2020</button>
-    <button type="button" class="btn btn-default">2021</button>
-    <button type="button" class="btn btn-default">2022</button>
+FILTRO
+<div style="border: 1px solid red; padding:3px;">
+  <div style="border: 1px solid red; padding:3px; float:left; margin-right:20px">
+    <div class="btn-group">
+      <button type="button" class="btn btn-default">2015</button>
+      <button type="button" class="btn btn-default">2016</button>
+      <button type="button" class="btn btn-default">2017</button>
+      <button type="button" class="btn btn-default">2018</button>
+      <button type="button" class="btn btn-default">2019</button>
+      <button type="button" class="btn btn-info">2020</button>
+      <button type="button" class="btn btn-default">2021</button>
+      <button type="button" class="btn btn-default">2022</button>
+    </div>
+  </div>
+  <div style="border: 1px solid #f4f4f4; padding:3px; float:left;">
+    <div class="btn-group">
+      <button type="button" class="btn btn-default">ENE</button>
+      <button type="button" class="btn btn-default">FEB</button>
+      <button type="button" class="btn btn-info">MAR</button>
+      <button type="button" class="btn btn-default">ABR</button>
+      <button type="button" class="btn btn-default">MAY</button>
+      <button type="button" class="btn btn-default">JUN</button>
+      <button type="button" class="btn btn-default">JUL</button>
+      <button type="button" class="btn btn-default">AGO</button>
+      <button type="button" class="btn btn-default">SEP</button>
+      <button type="button" class="btn btn-default">OCT</button>
+      <button type="button" class="btn btn-default">NOV</button>
+      <button type="button" class="btn btn-default">DIC</button>
+    </div>
   </div>
 </div>
-<div style="border: 1px solid #f4f4f4; padding:3px; float:left;">
-  <div class="btn-group">
-    <button type="button" class="btn btn-default">ENE</button>
-    <button type="button" class="btn btn-default">FEB</button>
-    <button type="button" class="btn btn-info">MAR</button>
-    <button type="button" class="btn btn-default">ABR</button>
-    <button type="button" class="btn btn-default">MAY</button>
-    <button type="button" class="btn btn-default">JUN</button>
-    <button type="button" class="btn btn-default">JUL</button>
-    <button type="button" class="btn btn-default">AGO</button>
-    <button type="button" class="btn btn-default">SEP</button>
-    <button type="button" class="btn btn-default">OCT</button>
-    <button type="button" class="btn btn-default">NOV</button>
-    <button type="button" class="btn btn-default">DIC</button>
-  </div>
-</div>
+
 <div style="border: 1px solid #f4f4f4; padding:3px; float:left; clear:left; margin-right: 20px;">
   <div class="btn-group">
     <button type="button" class="btn btn-info">Ingresos</button>
