@@ -157,7 +157,7 @@
     }
   }
 }
-.btn.btn-default.selected { background: red }
+button.btn.btn-default.selected { background: red }
 
 </style>
 @endpush
