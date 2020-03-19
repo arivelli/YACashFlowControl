@@ -207,7 +207,7 @@ FILTRO
     <button type="button" class="btn btn-info">Ajustes</button>
   </div>
 </div>
-<div style="float:left;">
+<div style="float:left; margin-top: 10px;">
   <div class="btn-group">
     <button type="button" class="btn btn-info">Pendientes</button>
     <button type="button" class="btn btn-info">Realizados</button>
@@ -215,14 +215,17 @@ FILTRO
 </div>
 
 </div>
+<div style="clear:both"></div>
 AGRUPADOR
-<div style="float:left">
-  <div class="btn-group">
-    <button type="button" class="btn btn-info">Cashflow</button>
-    <button type="button" class="btn btn-default">Tipo de Entrada</button>
-    <button type="button" class="btn btn-default">Cuenta</button>
-    <button type="button" class="btn btn-default">Área</button>
-    <button type="button" class="btn btn-default">Categoría</button>
+<div style="border: 1px solid red; padding:3px; display:table; width:100%">
+  <div style="float:left">
+    <div class="btn-group">
+      <button type="button" class="btn btn-danger">Cashflow</button>
+      <button type="button" class="btn btn-default">Tipo de Entrada</button>
+      <button type="button" class="btn btn-default">Cuenta</button>
+      <button type="button" class="btn btn-default">Área</button>
+      <button type="button" class="btn btn-default">Categoría</button>
+    </div>
   </div>
 </div>
 <div style="clear:both"></div>
