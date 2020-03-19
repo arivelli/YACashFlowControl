@@ -157,7 +157,7 @@
     }
   }
 }
-button.btn.btn-default.selected {
+button.btn.btn-selected {
     background: red;
 }
 
@@ -176,7 +176,7 @@ button.btn.btn-default.selected {
     <button type="button" class="btn btn-default">2017</button>
     <button type="button" class="btn btn-default">2018</button>
     <button type="button" class="btn btn-default">2019</button>
-    <button type="button" class="btn btn-default selected">2020</button>
+    <button type="button" class="btn btn-info">2020</button>
     <button type="button" class="btn btn-default">2021</button>
     <button type="button" class="btn btn-default">2022</button>
   </div>
