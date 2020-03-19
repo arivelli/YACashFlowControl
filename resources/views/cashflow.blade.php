@@ -168,7 +168,7 @@ button.btn.btn-selected {
 
 <!-- Maru Code -->
 FILTRO
-<div style="border: 1px solid red; padding:3px; display:table; width:100%">
+<div style="padding:3px; display:table; width:100%">
   <div style="float:left; margin-right:20px">
     <div class="btn-group">
       <button type="button" class="btn btn-default">2015</button>
@@ -217,7 +217,7 @@ FILTRO
 </div>
 <div style="clear:both"></div>
 AGRUPADOR
-<div style="border: 1px solid red; padding:3px; display:table; width:100%">
+<div style="padding:3px; display:table; width:100%">
   <div style="float:left">
     <div class="btn-group">
       <button type="button" class="btn btn-danger">Cashflow</button>
@@ -230,7 +230,7 @@ AGRUPADOR
 </div>
 <div style="clear:both"></div>
 
-Semana: Tercera | Cuarta
+<div style="font-size: 34px; line-height: 34px; font-weight: bold;">Semana: Tercera | Cuarta</div>
 
 
 <br />
