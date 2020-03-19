@@ -168,7 +168,7 @@ button.btn.btn-selected {
 
 <!-- Maru Code -->
 FILTRO
-<div style="border: 1px solid red; padding:3px; display:block">
+<div style="border: 1px solid red; padding:3px; display:table; width:100%">
   <div style="float:left; margin-right:20px">
     <div class="btn-group">
       <button type="button" class="btn btn-default">2015</button>
@@ -197,6 +197,7 @@ FILTRO
       <button type="button" class="btn btn-default">DIC</button>
     </div>
   </div>
+  <div style="float:right;">MARZO 2020</div>
 </div>
 
 <div style="float:left; clear:left; margin-right: 20px;">
