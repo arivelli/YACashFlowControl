@@ -164,7 +164,7 @@ button.btn.btn-selected {
 </style>
 @endpush
 
-
+@section('content')
 <div class='test'>
     <div class='title'><?php echo e($page_title); ?></div>
 </div>
@@ -230,7 +230,7 @@ FILTRO
 <!-- End Maru Code -->
 
 
-@section('content')
+
 
 
 
