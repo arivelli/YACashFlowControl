@@ -165,9 +165,7 @@ button.btn.btn-selected {
 @endpush
 
 @section('content')
-<div class='test'>
-    <div class='title'><?php echo e($page_title); ?></div>
-</div>
+
 <!-- Maru Code -->
 FILTRO
 <div style="border: 1px solid red; padding:3px; display:block">
@@ -232,7 +230,9 @@ FILTRO
 
 
 
-
+<div class='test'>
+    <div class='title'><?php echo e($page_title); ?></div>
+</div>
 
 <form name="filter" id="filter">
     <div id="filterYears">
