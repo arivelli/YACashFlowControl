@@ -164,14 +164,12 @@ button.btn.btn-selected {
 </style>
 @endpush
 
-@section('content')
-<div class='test'>
-    <div class='title'><?php echo e($page_title); ?></div>
-</div>
+
+
 <!-- Maru Code -->
 FILTRO
-<div style="border: 1px solid red; padding:3px;">
-  <div style="border: 1px solid red; padding:3px; float:left; margin-right:20px">
+<div style="border: 1px solid red; padding:3px; display:block">
+  <div style="float:left; margin-right:20px">
     <div class="btn-group">
       <button type="button" class="btn btn-default">2015</button>
       <button type="button" class="btn btn-default">2016</button>
@@ -183,7 +181,7 @@ FILTRO
       <button type="button" class="btn btn-default">2022</button>
     </div>
   </div>
-  <div style="border: 1px solid #f4f4f4; padding:3px; float:left;">
+  <div style="float:left;">
     <div class="btn-group">
       <button type="button" class="btn btn-default">ENE</button>
       <button type="button" class="btn btn-default">FEB</button>
@@ -201,7 +199,7 @@ FILTRO
   </div>
 </div>
 
-<div style="border: 1px solid #f4f4f4; padding:3px; float:left; clear:left; margin-right: 20px;">
+<div style="float:left; clear:left; margin-right: 20px;">
   <div class="btn-group">
     <button type="button" class="btn btn-info">Ingresos</button>
     <button type="button" class="btn btn-info">Egresos</button>
@@ -210,13 +208,13 @@ FILTRO
     <button type="button" class="btn btn-info">Ajustes</button>
   </div>
 </div>
-<div style="border: 1px solid #f4f4f4; padding:3px; float:left; margin-right: 20px;">
+<div style="float:left; margin-right: 20px;">
   <div class="btn-group">
     <button type="button" class="btn btn-info">Pendientes</button>
     <button type="button" class="btn btn-info">Realizados</button>
   </div>
 </div>
-<div style="border: 1px solid #f4f4f4; padding:3px; float:left">
+<div style="float:left">
   <div class="btn-group">
     <button type="button" class="btn btn-info">Cashflow</button>
     <button type="button" class="btn btn-default">Tipo de Entrada</button>
@@ -228,6 +226,13 @@ FILTRO
 <div style="clear:both"></div>
 
 <!-- End Maru Code -->
+
+
+@section('content')
+
+<div class='test'>
+    <div class='title'><?php echo e($page_title); ?></div>
+</div>
 
 <form name="filter" id="filter">
     <div id="filterYears">
