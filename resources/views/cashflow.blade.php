@@ -230,7 +230,7 @@ button.btn.btn-selected {
 </div>
 <div style="clear:both"></div>
 <br /><br />
-<div style="float:right; font-size: 34px; line-height: 34px; font-weight: bold;">MARZO 2020</div>
+<div style="font-size: 34px; line-height: 34px; font-weight: bold;">MARZO 2020</div>
 <div style="font-size: 24px; line-height: 24px; font-weight: bold;">Semana: Tercera | Cuarta</div>
 
 
