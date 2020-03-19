@@ -1,7 +1,7 @@
 @extends('crudbooster::admin_template')
 @push('top')
 <style rel="stylesheet" type="text/css" href="https://adminlte.io/themes/AdminLTE/plugins/iCheck/flat/_all.css" />
-<style rel="stylesheet" type="text/css" href="http://yacashflowcontrol.adri/public/css/cashflow.css" />
+<style rel="stylesheet" type="text/css" href="/public/css/cashflow.css" />
 <style>
     #filterEntryType .btn {
         width: 150px;
