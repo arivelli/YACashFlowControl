@@ -1,0 +1,15 @@
+{
+  "title": "Select 3",
+  "type": "select3",
+  "attribute": {
+    "optional": {
+      "querybuilder": "Sets the number of decimal points",
+      "queryBuilder_remote_key": "",
+      "style": "string inline stylesheet",
+      "help": "string help-block",
+      "placeholder": "string placeholder",
+      "readonly": "boolean",
+      "disabled": "boolean"
+    }
+  }
+}

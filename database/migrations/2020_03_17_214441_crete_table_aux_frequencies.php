@@ -15,9 +15,9 @@ class CreteTableAuxFrequencies extends Migration
     {
         //aux_frequencies
         Schema::create('aux_frequencies', function (Blueprint $table) {
-            $table->increments('id');
+            $table->tinyInteger('id')->autoIncrement();	
             $table->string('frequency');
-            $table->tinyInteger('active');
+            $table->tinyInteger('active')->default(1);
             $table->timestamps();
         });
     }

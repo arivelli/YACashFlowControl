@@ -4,6 +4,7 @@
     </label>
 
     <div class="{{$col_width?:'col-sm-10'}}">
+        <div class="form-control disabled">
         <?php
         echo $queryBuilder;
         if ($form['queryBuilder']) {
@@ -13,8 +14,7 @@
             echo $data->text;
         }
         ?>
-        <input type='hidden' name="{{$name}}" value='{{$value}}' />
-
-
+        <input type='hidden' id="{{$name}}" name="{{$name}}" value='{{$value}}' />
+        </div>
     </div>
 </div>

@@ -1,6 +1,6 @@
 @extends('crudbooster::admin_template')
-@push('top')
-<style rel="stylesheet" type="text/css" href="https://adminlte.io/themes/AdminLTE/plugins/iCheck/flat/_all.css" />
+
+@push('head')
 <style>
     #filterEntryType .btn {
         width: 150px;
