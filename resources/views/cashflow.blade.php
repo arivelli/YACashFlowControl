@@ -198,7 +198,7 @@ FILTRO
     </div>
   </div>
   <div style="float:right; font-size: 34px; line-height: 34px; font-weight: bold;">MARZO 2020</div>
-  <div style="float:left; clear:left; margin-right: 20px;">
+  <div style="float:left; clear:left; margin: 10px 20px 0 0;">
   <div class="btn-group">
     <button type="button" class="btn btn-info">Ingresos</button>
     <button type="button" class="btn btn-info">Egresos</button>
@@ -207,7 +207,7 @@ FILTRO
     <button type="button" class="btn btn-info">Ajustes</button>
   </div>
 </div>
-<div style="float:left; margin-right: 20px;">
+<div style="float:left;">
   <div class="btn-group">
     <button type="button" class="btn btn-info">Pendientes</button>
     <button type="button" class="btn btn-info">Realizados</button>
