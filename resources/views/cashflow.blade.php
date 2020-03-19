@@ -269,7 +269,7 @@
     <div class='title'><?php echo e($page_title); ?></div>
 </div>
 <!-- Maru Code -->
-<div style="border: 1px solid #f4f4f4; padding:3px; float:left">
+<div style="border: 1px solid #f4f4f4; padding:3px; float:left; margin-right:20px">
   <div class="btn-group">
     <button type="button" class="btn btn-default">2015</button>
     <button type="button" class="btn btn-default">2016</button>
@@ -297,7 +297,7 @@
     <button type="button" class="btn btn-default">DIC</button>
   </div>
 </div>
-<div style="border: 1px solid #f4f4f4; padding:3px; float:left; clear:left; margin-left: 20px;">
+<div style="border: 1px solid #f4f4f4; padding:3px; float:left; clear:left; margin-right: 20px;">
   <div class="btn-group">
     <button type="button" class="btn btn-default">Ingresos</button>
     <button type="button" class="btn btn-default">Egresos</button>
@@ -306,13 +306,13 @@
     <button type="button" class="btn btn-default">Ajustes</button>
   </div>
 </div>
-<div style="border: 1px solid #f4f4f4; padding:3px; float:left; margin-left: 20px;">
+<div style="border: 1px solid #f4f4f4; padding:3px; float:left; margin-right: 20px;">
   <div class="btn-group">
     <button type="button" class="btn btn-default">Pendientes</button>
     <button type="button" class="btn btn-default">Realizados</button>
   </div>
 </div>
-<div style="border: 1px solid #f4f4f4; padding:3px; float:left; margin-left: 20px">
+<div style="border: 1px solid #f4f4f4; padding:3px; float:left">
   <div class="btn-group">
     <button type="button" class="btn btn-default">Cashflow</button>
     <button type="button" class="btn btn-default">Tipo de Entrada</button>
@@ -321,6 +321,7 @@
     <button type="button" class="btn btn-default">Categoría</button>
   </div>
 </div>
+<div style="clear:both"></div>
 
 <!-- End Maru Code -->
 
