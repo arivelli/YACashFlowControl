@@ -138,8 +138,8 @@ function drawTable(table, caption) {
                 <th class="account_name"><a href="">Cuenta</a></th>
                 <th class="area"><a href="">Area</a></th>
                 <th class="category"><a href="">Categoría</a></th>
-                <th style="width:100px;text-align:right;"><a href="">Monto estimado</a></th>
-                <th style="width:100px;text-align:right;"><a href="">Monto operación</a></th>
+                <th style="width:120px;text-align:right;"><a href="">Monto estimado</a></th>
+                <th style="width:120px;text-align:right;"><a href="">Monto operación</a></th>
                 <th style="width:100px;text-align:right;">Acciones</th>
             </tr>
         </thead>
