@@ -140,7 +140,7 @@ function drawTable(table, caption) {
                 <th class="category"><a href="">Categoría</a></th>
                 <th style="width:100px;text-align:right;"><a href="">Monto estimado</a></th>
                 <th style="width:100px;text-align:right;"><a href="">Monto operación</a></th>
-                <th style="width:100px">Acciones2</th>
+                <th style="width:100px;text-align:right;">Acciones</th>
             </tr>
         </thead>
         <tbody>`;
