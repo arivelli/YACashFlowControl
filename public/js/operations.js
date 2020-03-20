@@ -1,5 +1,5 @@
 $(document).ready( () => {
-    if(select3) {
+    if(typeof select3 !== 'undefined') {
         $('#account_id').on('change',(e)=>{
             $('#currency').val( 
                 account_id_data.find(
@@ -8,3 +8,4 @@ $(document).ready( () => {
         })
     }
 });
+

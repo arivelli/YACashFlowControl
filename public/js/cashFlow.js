@@ -1,31 +1,17 @@
 function filterData() {
     //Get the filter from the form
-    let filter = $('#filter').serializeArray();
-    
-    //define the newFilter variables
-    let newFilter = {};
-    newFilter.entryType = [];
-    newFilter.status = [];
-    //Reorganize the data in a better way for arrays entryType and status
-    filter.forEach((f) => {
-        if (f.name === 'entryType' || f.name === 'status') {
-            newFilter[f.name].push(f.value);
-        } else {
-            newFilter[f.name] = f.value;
-        }
-    });
-    //get the settlementDate
-    newFilter.settlementDate = newFilter.year + newFilter.month;
-    window.cashFlow.settlement_date = newFilter.settlementDate;
-    
-    if(typeof window.cashFlow[newFilter.settlementDate] !== 'undefined'){
-        filterData2(newFilter);
+    let filter = window.cashFlow.filter;
+
+    window.cashFlow.settlement_date = filter.settlementDate;
+
+    if(typeof window.cashFlow[filter.settlementDate] !== 'undefined'){
+        filterData2(filter);
     } else {
-        $.ajax( "/cashFlowData/" + newFilter.settlementDate )
+        $.ajax( "/cashFlowData/" + filter.settlementDate )
         .done(function(res) {
-            window.cashFlow[newFilter.settlementDate] = [];
-            window.cashFlow[newFilter.settlementDate] = res;
-            filterData2(newFilter);
+            window.cashFlow[filter.settlementDate] = [];
+            window.cashFlow[filter.settlementDate] = res;
+            filterData2(filter);
         })
         .fail(function() {
             alert( "error" );
@@ -40,7 +26,7 @@ function filterData2(newFilter) {
     //Add the entryType filter only in case the amount of options selected is less than the total
     if (newFilter.entryType.length !== 5) {
         data = data.filter(function(entry) {
-            return (newFilter.entryType.indexOf(entry.entry_type.toString()) > -1);
+            return (newFilter.entryType.indexOf(entry.entry_type) > -1);
         });
     }
     //Add the status filter only in case the amount of options selected is less than the total
@@ -77,7 +63,8 @@ function filterData2(newFilter) {
         
 
     });
-    html = links.join(' | ') + '<hr>' + html;
+
+    $('.filterSubtitle').html(views[newFilter.view] + links.join(' | '))
     
     $('#tables_group').html(html);
     $('.'+newFilter.view).hide();
@@ -136,9 +123,9 @@ function drawTable(table, caption) {
     let total_operation_amount = 0;
     let html = `
     <br>
-    <a id="` + caption + `"></a><a href="#top">Subir</a>
+    <a id="` + caption + `"></a>
     <table id='table_dashboard' class="table table-hover table-striped table-bordered">
-        <caption>` + caption + `</caption>
+        <caption class="filterSubtitle">` + caption + `</caption>
         <thead>
             <tr class="active">
                 <th style="width:30px">&nbsp;</th>
@@ -157,23 +144,19 @@ function drawTable(table, caption) {
         </thead>
         <tbody>`;
     table.forEach((row, i) => {
-        operation_date = (row.operation_date != null) ? row.operation_date.substring(0,10) : '&nbsp;'
-        estimated_date = (row.estimated_date != null) ? row.estimated_date.substring(0,10) : '&nbsp;'
-        estimated_amount = moneyFormat(row.estimated_amount, row.currency);
-        operation_amount = moneyFormat(row.operation_amount, row.currency);
         html += `
         <tr>
             <td><input type="checkbox" class="checkbox" name="checkbox[]" value="` + row.operation_id + `"/></td>
-            <td>` + estimated_date + `</td>
-            <td>` + operation_date + `</td>
+            <td>` + dateFormat(row.estimated_date) + `</td>
+            <td>` + dateFormat(row.operation_date) + `</td>
             <td class="entry_type">` + getEntryType(row.entry_type) + `</td>
             <td><a href="/admin/app_entries/edit/` + row.entry_id + `?return_url=/cashFlow/` + row.settlement_date + `">` + row.concept + `</a></td>
             <td>` + row.detail + `</td>
             <td class="account_name">` + row.account_name + `</td>
             <td class="area">` + row.area + `</td>
             <td class="category">` + row.category + `</td>
-            <td class="right">` + estimated_amount + `</td>
-            <td class="right">` + operation_amount + `</td>
+            <td class="right">` + moneyFormat(row.estimated_amount, row.currency) + `</td>
+            <td class="right">` + moneyFormat(row.operation_amount, row.currency) + `</td>
             <td class="right">`;
         if(row.is_done != 1) {
             html += `
@@ -219,29 +202,38 @@ function drawTable(table, caption) {
                 <td>&nbsp;</td>
             </tr>
         </tfoot>
-    </table>`;
+    </table><a href="#top" style="float:right;">Subir</a>`;
     return html;
 }
 
 function moneyFormat(number, currency) {
-let res = '';
-if (number !== null) {
-    let newNumber = [];
-    number = number + '';
-    str = number.split("").reverse();
-    str.forEach((n,i)=>{
-        if (i === 2) {
-            newNumber.push(',');
-        } else if ( ( i - 2 ) / 3 == Math.round( (i - 2) / 3 ) && i > 3 ) {
-            newNumber.push('.');
-        }
-        newNumber.push(n);
-    });
-    currency = (typeof currency != 'undefined') ? currency : '';
-    res =  currency + ' ' + newNumber.reverse().join("");
+    let res = '';
+    if (number !== null) {
+        let newNumber = [];
+        number = number + '';
+        str = number.split("").reverse();
+        str.forEach((n,i)=>{
+            if (i === 2) {
+                newNumber.push(',');
+            } else if ( ( i - 2 ) / 3 == Math.round( (i - 2) / 3 ) && i > 3 ) {
+                newNumber.push('.');
+            }
+            newNumber.push(n);
+        });
+        currency = (typeof currency != 'undefined') ? currency : '';
+        res =  currency + ' ' + newNumber.reverse().join("");
+    }
+    return res;
 }
-return res;
+
+function dateFormat(date) {
+    if (typeof date === 'undefined' || date == '' || date == null){
+        return '&nbsp;';
+    }
+    dateParts = date.substring(0,10).split('-');
+    return dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0];
 }
+
 function getEntryType(type)
 {
     type = parseInt(type);
@@ -298,4 +290,77 @@ function set_dollar_value(){
         });
     }
 
+}
+
+function runFilter(event) {
+    let filter = window.cashFlow.filter;
+    let elem = event.currentTarget;
+
+    if(elem.name === 'year' || elem.name === 'month' || elem.name === 'view'){
+        filter[elem.name] = elem.value;
+    } else {
+        let value = elem.name === 'entryType' ? parseInt(elem.value) : elem.value;
+        if(filter[elem.name].indexOf( value ) === -1) {
+            filter[elem.name].push( value );
+        } else {
+            filter[elem.name] = filter[elem.name].filter(function(values, index, arr){ return values !== value;});
+        }
+    }
+    filter['settlementDate'] = filter.year + filter.month;
+    drawFilter();
+    filterData();
+}
+
+function drawFilter(){
+    let filter = window.cashFlow.filter;
+
+    //Remove all class for click
+    $('#filterForm button').removeClass('btn-info').addClass('btn-default');
+    $('button[name="view"]').removeClass('btn-danger');
+    
+    //Add click class
+    $('button[name="year"][value=' + filter.year + ']').addClass('btn-info').removeClass('btn-default');
+
+    $('button[name="month"][value=' + filter.month + ']').addClass('btn-info').removeClass('btn-default');
+
+    filter.entryType.forEach((eT)=>{
+        $('button[name="entryType"][value=' + eT + ']').addClass('btn-info').removeClass('btn-default');
+    })
+    filter.status.forEach((s)=>{
+        $('button[name="status"][value=' + s + ']').addClass('btn-info').removeClass('btn-default');
+    })
+    $('button[name="view"][value=' + filter.view + ']').addClass('btn-danger').removeClass('btn-default');
+
+    $('.filterTitle').html(months[filter.month] + ' ' + filter.year);
+    
+}
+
+$(function () {
+    $('.filterField').on('click', (e) => {
+        runFilter(e);
+    });
+    drawFilter();
+});
+
+const months = {
+    '01' : 'ENERO',
+    '02' : 'FEBRERO',
+    '03' : 'MARZO',
+    '04' : 'ABRIL',
+    '05' : 'MAYO',
+    '06' : 'JUNIO',
+    '07' : 'JULIO',
+    '08' : 'AGOSTO',
+    '09' : 'SEPTIEMBRE',
+    '10' : 'OCTUBRE',
+    '11' : 'NOVIEMBRE',
+    '12' : 'DICIEMBRE'
+}
+
+const views = {
+    'settlement_week' : 'Semana: ',
+    'entry_type' : 'Tipo: ',
+    'account_name' : 'Cuenta: ',
+    'area' : 'Area: ',
+    'category' : 'Categoría: '
 }

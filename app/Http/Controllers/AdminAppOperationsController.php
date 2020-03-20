@@ -399,6 +399,17 @@
 			$data['accounts'] = AppAccount::where('is_active', '=', 1)->orderby('name', 'ASC')->get();
 
 			$data['page_title'] = 'CashFlow';
+			$year = $data['settlement_year'];
+			$month = $data['settlement_month'];
+
+			$data['filter'] = json_encode([
+				'year' => $year,
+				'month' => $month,
+				'entryType' => [1,2,3,4,5],
+				'status' => ['Pendientes', 'Realizados'],
+				'view' => 'settlement_week',
+				'settlementDate' => $year . $month
+			]);
 
 			$this->cbView('cashflow',$data);
 		}
