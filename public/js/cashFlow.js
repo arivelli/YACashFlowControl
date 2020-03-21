@@ -1,3 +1,69 @@
+const months = {
+    '01': 'ENERO',
+    '02': 'FEBRERO',
+    '03': 'MARZO',
+    '04': 'ABRIL',
+    '05': 'MAYO',
+    '06': 'JUNIO',
+    '07': 'JULIO',
+    '08': 'AGOSTO',
+    '09': 'SEPTIEMBRE',
+    '10': 'OCTUBRE',
+    '11': 'NOVIEMBRE',
+    '12': 'DICIEMBRE'
+}
+
+const views = {
+    'settlement_week': 'Semana: ',
+    'entry_type': 'Tipo: ',
+    'account_name': 'Cuenta: ',
+    'area': 'Area: ',
+    'category': 'Categoría: '
+}
+
+function runFilter(event) {
+    let filter = window.cashFlow.filter;
+    let elem = event.currentTarget;
+
+    if (elem.name === 'year' || elem.name === 'month' || elem.name === 'view') {
+        filter[elem.name] = elem.value;
+    } else {
+        let value = elem.name === 'entryType' ? parseInt(elem.value) : elem.value;
+        if (filter[elem.name].indexOf(value) === -1) {
+            filter[elem.name].push(value);
+        } else {
+            filter[elem.name] = filter[elem.name].filter(function(values, index, arr) { return values !== value; });
+        }
+    }
+    filter['settlementDate'] = filter.year + filter.month;
+    drawFilter();
+    filterData();
+}
+
+function drawFilter() {
+    let filter = window.cashFlow.filter;
+
+    //Remove all class for click
+    $('#filterForm button').removeClass('btn-info').addClass('btn-default');
+    $('button[name="view"]').removeClass('btn-danger');
+
+    //Add click class
+    $('button[name="year"][value=' + filter.year + ']').addClass('btn-info').removeClass('btn-default');
+
+    $('button[name="month"][value=' + filter.month + ']').addClass('btn-info').removeClass('btn-default');
+
+    filter.entryType.forEach((eT) => {
+        $('button[name="entryType"][value=' + eT + ']').addClass('btn-info').removeClass('btn-default');
+    })
+    filter.status.forEach((s) => {
+        $('button[name="status"][value=' + s + ']').addClass('btn-info').removeClass('btn-default');
+    })
+    $('button[name="view"][value=' + filter.view + ']').addClass('btn-danger').removeClass('btn-default');
+
+    $('.filterTitle').html(months[filter.month] + ' ' + filter.year);
+
+}
+
 function filterData() {
     //Get the filter from the form
     let filter = window.cashFlow.filter;
@@ -7,7 +73,7 @@ function filterData() {
     if (typeof window.cashFlow[filter.settlementDate] !== 'undefined') {
         filterData2(filter);
     } else {
-        $.ajax("/cashFlowData/" + filter.settlementDate)
+        $.ajax("/admin/cashFlowData/" + filter.settlementDate)
             .done(function(res) {
                 window.cashFlow[filter.settlementDate] = [];
                 window.cashFlow[filter.settlementDate] = res;
@@ -41,10 +107,8 @@ function filterData2(newFilter) {
     }
 
     let groupedData = {};
-    if (newFilter.view != 'cashFlow') {
-        let groupByFunction = groupBy(newFilter.view);
-        groupedData = groupByFunction(data);
-    }
+    let groupByFunction = groupBy(newFilter.view);
+    groupedData = groupByFunction(data);
 
     let html = '';
     let links = [];
@@ -70,53 +134,13 @@ function filterData2(newFilter) {
     $('.' + newFilter.view).hide();
 }
 
-const groupBy = key => array =>
+const groupBy = (key) => array =>
     array.reduce((objectsByKeyValue, obj) => {
         const value = obj[key];
         objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
         return objectsByKeyValue;
     }, {});
 
-
-function showModalExecuteOperation(id) {
-    let operation = window.cashFlow[window.cashFlow.settlement_date].find((e) => { return e.operation_id == id });
-    $('#cancel-operation_concept').html(operation.concept);
-    $('#cancel-operation_detail').html(operation.detail);
-    $('#cancel-operation_operation_amount').val(operation.estimated_amount);
-    $('#cancel-operation_account_id').val(operation.account_id);
-    $('#cancel-operation_operation_id').val(operation.operation_id);
-    $('#cancel-operation_operation_date').val(operation.estimated_date);
-    set_dollar_value();
-
-    $('#cancel-operation_operation_amount').priceFormat({
-        'prefix': operation.currency + " ",
-        'centsSeparator': ",",
-        'thousandsSeparator': ".",
-        'centsLimit': 2
-    });
-    $('#modal-datamodal-cancel-operation').modal('show');
-}
-
-function executeOperation(id) {
-    let data = {};
-    var numberPattern = /\d+/g;
-
-    data.operation_amount = $('#cancel-operation_operation_amount').val().match(numberPattern).join('');
-    data.dollar_value = $('#cancel-operation_dollar_value').val().match(numberPattern).join('');
-    data.account_id = $('#cancel-operation_account_id').val();
-    data.operation_id = $('#cancel-operation_operation_id').val();
-    data.operation_date = $('#cancel-operation_operation_date').val();
-
-
-    $.post("/admin/app_operations/execute/" + id, data)
-        .done(function(res) {
-            alert("ok");
-        })
-        .fail(function() {
-            alert("error");
-        });
-
-}
 
 function drawTable(table, caption) {
 
@@ -281,7 +305,7 @@ function set_dollar_value() {
         $('#cancel-operation_dollar_value').trigger('keyup');
     } else {
         $.get({
-            url: '/dollarValue/getvalueof/' + quote_date,
+            url: '/admin/dollarValue/getvalueof/' + quote_date,
             success: (data) => {
                 $('#cancel-operation_dollar_value').val(data);
                 window.cashFlow.dollar_value[quote_date] = data;
@@ -292,48 +316,66 @@ function set_dollar_value() {
 
 }
 
-function runFilter(event) {
-    let filter = window.cashFlow.filter;
-    let elem = event.currentTarget;
+function showModalExecuteOperation(id) {
+    let operation = window.cashFlow[window.cashFlow.settlement_date].find((e) => { return e.operation_id == id });
+    $('#cancel-operation_concept').html(operation.concept);
+    $('#cancel-operation_detail').html(operation.detail);
+    $('#cancel-operation_operation_amount').val(operation.estimated_amount);
+    $('#cancel-operation_account_id').val(operation.account_id);
+    $('#cancel-operation_operation_id').val(operation.operation_id);
+    $('#cancel-operation_operation_date').val(operation.estimated_date);
+    set_dollar_value();
 
-    if (elem.name === 'year' || elem.name === 'month' || elem.name === 'view') {
-        filter[elem.name] = elem.value;
-    } else {
-        let value = elem.name === 'entryType' ? parseInt(elem.value) : elem.value;
-        if (filter[elem.name].indexOf(value) === -1) {
-            filter[elem.name].push(value);
-        } else {
-            filter[elem.name] = filter[elem.name].filter(function(values, index, arr) { return values !== value; });
-        }
-    }
-    filter['settlementDate'] = filter.year + filter.month;
-    drawFilter();
-    filterData();
+    $('#cancel-operation_operation_amount').priceFormat({
+        'prefix': operation.currency + " ",
+        'centsSeparator': ",",
+        'thousandsSeparator': ".",
+        'centsLimit': 2
+    });
+    $('#modal-datamodal-cancel-operation').modal('show');
 }
 
-function drawFilter() {
-    let filter = window.cashFlow.filter;
+function executeOperation(id) {
+    let data = {};
+    var numberPattern = /\d+/g;
 
-    //Remove all class for click
-    $('#filterForm button').removeClass('btn-info').addClass('btn-default');
-    $('button[name="view"]').removeClass('btn-danger');
+    data.operation_amount = $('#cancel-operation_operation_amount').val().match(numberPattern).join('');
+    data.dollar_value = $('#cancel-operation_dollar_value').val().match(numberPattern).join('');
+    data.account_id = $('#cancel-operation_account_id').val();
+    data.operation_id = $('#cancel-operation_operation_id').val();
+    data.operation_date = $('#cancel-operation_operation_date').val();
 
-    //Add click class
-    $('button[name="year"][value=' + filter.year + ']').addClass('btn-info').removeClass('btn-default');
 
-    $('button[name="month"][value=' + filter.month + ']').addClass('btn-info').removeClass('btn-default');
-
-    filter.entryType.forEach((eT) => {
-        $('button[name="entryType"][value=' + eT + ']').addClass('btn-info').removeClass('btn-default');
-    })
-    filter.status.forEach((s) => {
-        $('button[name="status"][value=' + s + ']').addClass('btn-info').removeClass('btn-default');
-    })
-    $('button[name="view"][value=' + filter.view + ']').addClass('btn-danger').removeClass('btn-default');
-
-    $('.filterTitle').html(months[filter.month] + ' ' + filter.year);
+    $.post("/admin/app_operations/execute/" + id, data)
+        .done(function(res) {
+            //Update the element on local array (in case we want to avoid the data reload)
+            let i = window.cashFlow[window.cashFlow.settlement_date].findIndex((e) => { return e.operation_id == id });
+            let o = window.cashFlow[window.cashFlow.settlement_date][i];
+            o.is_done = 1;
+            o.operation_amount = parseInt($('#cancel-operation_operation_amount').val().match(numberPattern).join(''));
+            o.dollar_value = parseInt($('#cancel-operation_dollar_value').val().match(numberPattern).join(''));
+            o.account_id = $('#cancel-operation_account_id').val();
+            o.account_name = $('#cancel-operation_account_id').children("option:selected").html()
+            o.operation_id = $('#cancel-operation_operation_id').val();
+            o.operation_date = $('#cancel-operation_operation_date').val();
+            filterData();
+            swal({
+                title : 'Operación concretada!',
+//                html: '<b>' + $('#cancel-operation_concept').html() + '</b>: ' + $('#cancel-operation_detail').html(),
+                text: $('#cancel-operation_concept').html() + ': ' + $('#cancel-operation_detail').html(),
+                type: 'success'
+            },
+            () => {
+                $('#modal-datamodal-cancel-operation').modal('hide');
+            }             
+            );
+        })
+        .fail(function() {
+            alert("error");
+        });
 
 }
+
 
 $(function() {
     $('.filterField').on('click', (e) => {
@@ -341,26 +383,3 @@ $(function() {
     });
     drawFilter();
 });
-
-const months = {
-    '01': 'ENERO',
-    '02': 'FEBRERO',
-    '03': 'MARZO',
-    '04': 'ABRIL',
-    '05': 'MAYO',
-    '06': 'JUNIO',
-    '07': 'JULIO',
-    '08': 'AGOSTO',
-    '09': 'SEPTIEMBRE',
-    '10': 'OCTUBRE',
-    '11': 'NOVIEMBRE',
-    '12': 'DICIEMBRE'
-}
-
-const views = {
-    'settlement_week': 'Semana: ',
-    'entry_type': 'Tipo: ',
-    'account_name': 'Cuenta: ',
-    'area': 'Area: ',
-    'category': 'Categoría: '
-}

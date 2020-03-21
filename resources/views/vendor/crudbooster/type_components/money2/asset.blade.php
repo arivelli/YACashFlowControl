@@ -17,7 +17,7 @@
                             'clearSufix' => $form['clearSufix'] ? : false,
                             'allowNegative' => $form['allowNegative'] ? : true,
                             'insertPlusSign' => $form['insertPlusSign'] ? : false,
-                            'clearOnEmpty' => $form['clearOnEmpty'] ? : false
+                            'clearOnEmpty' => $form['clearOnEmpty'] ? : true
                         ), 
                             (array) $form['priceformat_parameters']
                         )

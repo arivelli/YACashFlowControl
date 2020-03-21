@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAppOperationsTable extends Migration
+class CreateAppBalancesAccountsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,13 @@ class CreateAppOperationsTable extends Migration
      */
     public function up()
     {
-        /*Schema::create('app_operations', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('app_balances_accounts', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('account_id')->unsigned();
+            $table->integer('amount');
+            $table->string('notes', 100);
             $table->timestamps();
-        });*/
+        });
     }
 
     /**
@@ -26,6 +29,6 @@ class CreateAppOperationsTable extends Migration
      */
     public function down()
     {
-        //Schema::dropIfExists('app_operations');
+        Schema::dropIfExists('app_balances_accounts');
     }
 }

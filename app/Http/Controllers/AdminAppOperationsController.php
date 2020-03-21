@@ -38,10 +38,13 @@
 			$this->col = [];
 			
 			$this->col[] = ["label"=>"Fecha Estimada","name"=>"estimated_date"];
+			$this->col[] = ["label"=>"Fecha Operación","name"=>"operation_date"];
 			$this->col[] = ["label"=>"Cuenta","name"=>"account_id","join"=>"app_accounts,name"];
 			$this->col[] = ["label"=>"Entrada","name"=>"entry_id","join"=>"app_entries,concept"];
 			$this->col[] = ["label"=>"Detalle","name"=>"detail"];
-			$this->col[] = ["label"=>"Monto","name"=>"operation_amount"];
+			$this->col[] = ["label"=>"Moneda","name"=>"currency"];
+			$this->col[] = ["label"=>"Monto Estimado","name"=>"estimated_amount", "callback_php" => 'number_format($row->estimated_amount/100,2,",",".")'];
+			$this->col[] = ["label"=>"Monto Operación","name"=>"operation_amount", "callback_php" => 'number_format($row->operation_amount/100,2,",",".")'];
 			$this->col[] = ["label"=>"Hecho?","name"=>"is_done","callback_php"=>'($row->is_done ==1)? "Sí" : "No"'];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 			
@@ -79,9 +82,9 @@
 			$this->form[] = ['label'=>'Monto Estimado','name'=>'estimated_amount','type'=>'money2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			
 			$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|Sí;0|No'];
-			$this->form[] = ['label'=>'Fecha de Operación','name'=>'operation_date','type' => 'date', 'validation' => 'required|date_format:Y-m-d','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Monto de Operación','name'=>'operation_amount','type'=>'money2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Fecha de Operación','name'=>'operation_date','type' => 'date', 'validation' => 'date_format:Y-m-d','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Monto de Operación','name'=>'operation_amount','type'=>'money2','validation'=>'integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money2','validation'=>'integer|min:0','width'=>'col-sm-10'];
 			
 			$this->form[] = ['label'=>'Periodo cubierto','name'=>'settlement_date','type'=>'text','validation'=>'integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','width'=>'col-sm-10'];
@@ -342,8 +345,8 @@
 	    | 
 	    */
 	    public function hook_before_edit(&$postdata,$id) {        
-	        //Your code here
-
+			//Your code here
+			
 	    }
 
 	    /* 
@@ -463,17 +466,73 @@
 			
 			//print_r($validatedData);
 			//DB::enableQueryLog();
-			$res = \App\AppOperation::where('id', $id)
-            ->update([
-				'account_id' => $validatedData['account_id'],
-				'operation_date' => $validatedData['operation_date'],
-				'operation_amount' => $validatedData['operation_amount'],
-				'dollar_value' => $validatedData['dollar_value'],
-				'in_dollars' => round($validatedData['operation_amount'] / $validatedData['dollar_value'] * 100),
-				'is_done' => 1
-			]);
+			$operation = \App\AppOperation::find($id);
+			
+			$operation->account_id = $validatedData['account_id'];
+			$operation->operation_date = $validatedData['operation_date'];
+			$operation_date_parts = explode('-', $validatedData['operation_date']);
+			$operation->settlement_date = $operation_date_parts[0] . $operation_date_parts[1];
+			$operation->operation_amount = $validatedData['operation_amount'];
+			$operation->dollar_value = $validatedData['dollar_value'];
+			$operation->in_dollars = round($validatedData['operation_amount'] / $validatedData['dollar_value'] * 100);
+			$operation->is_done = 1;
+
+			$operation->save();
+
 			//dd(DB::getQueryLog());
-			print_r($res);
+			
+			$this->updateBalance($operation);
+			$this->checkAccountBalance($operation);
+
+		}
+		public function updateBalance(AppOperation $operation){
+			$groups = ['settlement_week','account_id', 'entry_type', 'area_id', 'category_id'];
+			foreach($groups as $group) {
+				$new_amount = \App\AppOperation::where([
+					['settlement_date', '=', $operation->settlement_date],
+					[$group, '=', $operation->$group]
+				])->sum('operation_amount');
+				
+				$balance = \App\AppBalanceReal::updateOrCreate([
+					'settlement_date' => $operation->settlement_date,
+					'grouped_by' => $group,
+					'foreign_id' => $operation->$group
+				],[
+					'amount' => $new_amount,
+					'last_operation_id' => $operation->id
+				]);
+			}
+			
+			
+		}
+
+		public function checkAccountBalance(AppOperation $operation){
+			//Get the latest balance of the account
+			$balanceAccount = \App\AppBalanceAccount::where([
+				['account_id', '=', $operation->account_id]
+			])->orderby('id','DESC')->first();
+
+			//if the date of the balance match with the operation date persist both amounts
+			if($balanceAccount->created_at->format('Ym') == $operation->settlement_date) {
+				$balanceReal = \App\AppBalanceReal::where([
+					['settlement_date', '=', $operation->settlement_date],
+					['grouped_by', '=', 'account_id'],
+					['foreign_id', '=', $operation->account_id]
+				])->first();
+					print_r([ $balanceReal->id ]);
+				$balanceInSync = new \App\AppBalanceInSync;
+				$balanceInSync->account_id = $operation->account_id;
+
+				$balanceInSync->operation_id = $operation->id;
+				$balanceInSync->balance_real_id = $balanceReal->id;
+				$balanceInSync->balance_real_amount = $balanceReal->amount;
+
+				$balanceInSync->balance_account_id = $balanceAccount->id;
+				$balanceInSync->balance_account_amount = $balanceAccount->amount;
+
+				$balanceInSync->in_sync = ($balanceAccount->amount/100 == $balanceReal->amount/100);
+				$balanceInSync->save();
+			}
 		}
 	}
 

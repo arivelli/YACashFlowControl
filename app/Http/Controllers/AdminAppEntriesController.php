@@ -10,7 +10,7 @@ use DatePeriod;
 use DateInterval;
 use App\Http\Controllers\ManageDollarValue;
 
-class AdminEntriesController extends \arivelli\crudbooster\controllers\CBController
+class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBController
 {
 
 	public function cbInit()
@@ -43,7 +43,7 @@ class AdminEntriesController extends \arivelli\crudbooster\controllers\CBControl
 		$this->col[] = ["label" => "Área", "name" => "area_id", "join" => "app_areas,area"];
 		$this->col[] = ["label" => "Concepto", "name" => "concept"];
 		$this->col[] = ["label" => "Moneda", "name" => "currency"];
-		$this->col[] = ["label" => "Monto real", "name" => "real_amount", "style" => "text-align:right", "callback_php" => 'number_format($row->real_amount/100,2,",",".")'];
+		$this->col[] = ["label" => "Monto real", "name" => "real_amount", "callback_php" => 'number_format($row->real_amount/100,2,",",".")'];
 		$this->col[] = ["label" => "Afecta capital?", "name" => "affect_capital", "callback_php" => '($row->affect_capital ==1)?"Sí" : "No"'];
 		$this->col[] = ["label" => "Es extraordinario?", "name" => "is_extraordinary", "callback_php" => '($row->is_extraordinary ==1)?"Sí" : "No"'];
 		$this->col[] = ["label" => "Hecho?", "name" => "is_done", "callback_php" => '($row->is_done ==1)?"Sí" : "No"'];
@@ -444,6 +444,9 @@ die();
 
 			$operation['entry_id'] = $data->entry_id;
 			$operation['account_id'] = $data->account_id;
+			$operation['entry_type'] = $data->entry_type;
+			$operation['area_id'] = $data->area_id;
+			$operation['category_id'] = $data->category_id;
 			$operation['plan_id'] = $data->plan_id;
 			$operation['currency'] = $data->currency;
 			$operation['estimated_amount'] = $data->amount;

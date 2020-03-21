@@ -3,7 +3,7 @@ let format = {
     'thousandsSeparator'    : '.',
     'centsSeparator'        : ',',
     'centsLimit'          	: 2,
-    'clearOnEmpty'         	: false,
+    'clearOnEmpty'         	: true,
     'limit'                 : false,
     'allowNegative'         : true
 }
