@@ -36,9 +36,14 @@ function runFilter(event) {
         }
     }
     filter['settlementDate'] = filter.year + filter.month;
+
+    window.history.pushState({ "filter" : filter }, "CashFlow", "/admin/cashFlow/" + $.param(filter));
+
     drawFilter();
     filterData();
 }
+
+
 
 function drawFilter() {
     let filter = window.cashFlow.filter;
@@ -378,8 +383,21 @@ function executeOperation(id) {
 
 
 $(function() {
+
+    //Set click event of the form
     $('.filterField').on('click', (e) => {
         runFilter(e);
     });
+
+    //draw the filter on initiate
     drawFilter();
+
+    //Take care of browser's back button
+    window.onpopstate = function(e){
+        if(e.state){
+            window.cashFlow.filter = e.state.filter
+            drawFilter();
+            filterData();
+        }
+    };    
 });

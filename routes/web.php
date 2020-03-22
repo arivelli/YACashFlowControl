@@ -19,7 +19,9 @@ Route::get('/compute_operations/{entry_id}','AdminAppEntriesController@hook_afte
 
 
 Route::get('/admin/cashFlow','AdminAppOperationsController@cashFlow')->name('cashFlow');
-Route::get('/admin/cashFlow/{settlement_date}','AdminAppOperationsController@cashFlow')->name('cashFlowWithDate');
+//Route::get('/admin/cashFlow/{settlement_date}','AdminAppOperationsController@cashFlow')->name('cashFlowWithDate');
+Route::get('/admin/cashFlow/{filter}','AdminAppOperationsController@cashFlow')->name('cashFlowWithFilter');
+
 Route::get('/admin/cashFlowData/{settlement_date}','AdminAppOperationsController@cashFlowData')->name('cashFlowData');
 
 Route::post('/admin/app_operations/execute/{operation_id}','AdminAppOperationsController@execute_operation')->name('execute_operation');

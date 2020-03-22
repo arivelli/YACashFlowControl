@@ -346,7 +346,9 @@
 	    */
 	    public function hook_before_edit(&$postdata,$id) {        
 			//Your code here
-			
+			if($postdata['is_done'] == true) {
+				$this->operation = $postdata;
+			}
 	    }
 
 	    /* 
@@ -358,7 +360,9 @@
 	    */
 	    public function hook_after_edit($id) {
 	        //Your code here 
-
+			if(null !== $this->operation){
+				$this->execute_operation($id, $this->operation);
+			}
 	    }
 
 	    /* 
@@ -389,35 +393,54 @@
 
 	    //By the way, you can still create your own method in here... :) 
 
-		public function cashFlow ($settlement_date = null) {
-			$now = new Datetime();
-			$settlement_date = $settlement_date ? $settlement_date : $now->format('Ym');
-			
-			$data['settlement_date'] = $settlement_date;
-			$data['settlement_year'] = substr($settlement_date,0,4);
-			$data['settlement_month'] = substr($settlement_date,4);
-
-			$data['cashFlow'] = $this->cashFlowData($settlement_date, true);
-			
-			$data['accounts'] = AppAccount::where('is_active', '=', 1)->orderby('name', 'ASC')->get();
-
-			$data['page_title'] = 'CashFlow';
-			$year = $data['settlement_year'];
-			$month = $data['settlement_month'];
-
-			$data['filter'] = json_encode([
-				'year' => $year,
-				'month' => $month,
+		public function cashFlow ($filter = null) {
+			$data = [];
+			$data['filter'] = [
+				'year' => (new Datetime())->format('Y'),
+				'month' => (new Datetime())->format('m'),
 				'entryType' => [1,2,3,4,5],
 				'status' => ['Pendientes', 'Realizados'],
 				'view' => 'settlement_week',
-				'settlementDate' => $year . $month
-			]);
+				'settlementDate' => (new Datetime())->format('Ym')
+			];
+			//Prepare the filter
+			if(null !== $filter){
+				$localFilter = [];
+				parse_str($filter, $localFilter );
+				if(null !== $localFilter['year']){
+					$data['filter']['year'] = $localFilter['year'];
+					$data['filter']['settlementDate'] = $localFilter['year'] . $localFilter['month'];
+				}
+				if(null !== $localFilter['month']){
+					$data['filter']['month'] = $localFilter['month'];
+					$data['filter']['settlementDate'] = $localFilter['year'] . $localFilter['month'];
+				}
+				if(null !== $localFilter['entryType']){
+					$data['filter']['entryType'] = array_map('intval', $localFilter['entryType']);
+				}
+				if(null !== $localFilter['status']){
+					$data['filter']['status'] = $localFilter['status'];
+				}
+				if(null !== $localFilter['view']){
+					$data['filter']['view'] = $localFilter['view'];
+				}
+			} 
+			$data['settlement_date'] = $data['filter']['settlementDate'];
+
+			//Get the data
+			$data['cashFlow'] = $this->cashFlowData($data['settlement_date'], true);
+
+			//Get account list
+			$data['accounts'] = AppAccount::where('is_active', '=', 1)->orderby('name', 'ASC')->get();
+
+			$data['page_title'] = 'CashFlow';
+
+			$data['filter'] = json_encode($data['filter']);
 
 			$this->cbView('cashflow',$data);
 		}
 
-		public function cashFlowData ($settlement_date = null, $is_internal = false) {
+		public function cashFlowData (int $settlement_date = null, bool $is_internal = false) {
 			$now = new Datetime();
 			$settlement_date = $settlement_date ? $settlement_date : $now->format('Ym');
 			
@@ -448,10 +471,15 @@
 				die();
 			}
 		}
+
+		/**
+		 * Mark the operation as done, update fields and trigger some calculations
+		 * 
+		 * 
+		 */
 		public function execute_operation($id, Request $request){
 
 			$validatedData = $request->validate([
-				
 				'account_id' => 'required|integer',
                 'operation_date' => 'required',
 				'operation_amount' => 'required|integer',
@@ -505,7 +533,11 @@
 			
 			
 		}
-
+/**
+ * If the operation date in on currently month compare amount to follow differences
+ * 
+ * @param $operation
+ */
 		public function checkAccountBalance(AppOperation $operation){
 			//Get the latest balance of the account
 			$balanceAccount = \App\AppBalanceAccount::where([

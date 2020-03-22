@@ -225,10 +225,9 @@ Columnas
 <script type="text/javascript" src="/js/cashFlow.js"></script>
 <script type="text/javascript">
   window.cashFlow = {};
-  window.cashFlow[{!!$settlement_date!!}] = {!!$cashFlow!!};
-  window.cashFlow.settlement_date = {!!$settlement_date!!};
   window.cashFlow.filter = {!!$filter!!};
-
+  window.cashFlow[{!!$settlement_date!!}] = {!!$cashFlow!!};
+  
   window.onload=function(){
       filterData();
   };

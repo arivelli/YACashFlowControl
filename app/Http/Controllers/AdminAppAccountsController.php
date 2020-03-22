@@ -3,8 +3,11 @@
 use Session;
 use DB;
 use CRUDBooster;
+use DateTime;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use App\Helpers\Format;
+use Symfony\Component\Console\Helper\Helper;
 
 class AdminAppAccountsController extends \arivelli\crudbooster\controllers\CBController {
 
@@ -36,7 +39,8 @@ class AdminAppAccountsController extends \arivelli\crudbooster\controllers\CBCon
 		$this->col[] = ["label"=>"Tipo","name"=>"type","callback_php"=>'$this->getAccountType($row->type)'];
 		$this->col[] = ["label"=>"Moneda","name"=>"currency"];
 		$this->col[] = ["label"=>"Última Revisión","name"=>"id","callback_php"=>'$this->getLastUpdateDate($row->id)'];
-		$this->col[] = ["label"=>"Saldo","name"=>"id","callback_php"=>'$this->getLastUpdateAmount($row->id)'];
+		$this->col[] = ["label"=>"Saldo remoto","name"=>"id","callback_php"=>'$this->getLastUpdateAmount($row->id)'];
+		$this->col[] = ["label"=>"Saldo en sistema","name"=>"id","callback_php"=>'$this->getBalanceReal($row->id)'];
 		$this->col[] = ["label"=>"Activo","name"=>"is_active","callback_php"=>'($row->is_active ==1)? "Sí" : "No"'];
 		# END COLUMNS DO NOT REMOVE THIS LINE
 
@@ -228,153 +232,160 @@ class AdminAppAccountsController extends \arivelli\crudbooster\controllers\CBCon
 	}
 
 
-		/*
-		| ---------------------------------------------------------------------- 
-		| Hook for button selected
-		| ---------------------------------------------------------------------- 
-		| @id_selected = the id selected
-		| @button_name = the name of button
-		|
-		*/
-		public function actionButtonSelected($id_selected,$button_name) {
-			//Your code here
-				
+	/*
+	| ---------------------------------------------------------------------- 
+	| Hook for button selected
+	| ---------------------------------------------------------------------- 
+	| @id_selected = the id selected
+	| @button_name = the name of button
+	|
+	*/
+	public function actionButtonSelected($id_selected,$button_name) {
+		//Your code here
+			
+	}
+
+
+	/*
+	| ---------------------------------------------------------------------- 
+	| Hook for manipulate query of index result 
+	| ---------------------------------------------------------------------- 
+	| @query = current sql query 
+	|
+	*/
+	public function hook_query_index(&$query) {
+		//Your code here
+			
+	}
+
+	/*
+	| ---------------------------------------------------------------------- 
+	| Hook for manipulate row of index table html 
+	| ---------------------------------------------------------------------- 
+	|
+	*/    
+	public function hook_row_index($column_index,&$column_value) {	        
+		//Your code here
+	}
+
+	/*
+	| ---------------------------------------------------------------------- 
+	| Hook for manipulate data input before add data is execute
+	| ---------------------------------------------------------------------- 
+	| @arr
+	|
+	*/
+	public function hook_before_add(&$postdata) {        
+		//Your code here
+
+	}
+
+	/* 
+	| ---------------------------------------------------------------------- 
+	| Hook for execute command after add public static function called 
+	| ---------------------------------------------------------------------- 
+	| @id = last insert id
+	| 
+	*/
+	public function hook_after_add($id) {        
+		//Your code here
+
+	}
+
+	/* 
+	| ---------------------------------------------------------------------- 
+	| Hook for manipulate data input before update data is execute
+	| ---------------------------------------------------------------------- 
+	| @postdata = input post data 
+	| @id       = current id 
+	| 
+	*/
+	public function hook_before_edit(&$postdata,$id) {        
+		//Your code here
+
+	}
+
+	/* 
+	| ---------------------------------------------------------------------- 
+	| Hook for execute command after edit public static function called
+	| ----------------------------------------------------------------------     
+	| @id       = current id 
+	| 
+	*/
+	public function hook_after_edit($id) {
+		//Your code here 
+
+	}
+
+	/* 
+	| ---------------------------------------------------------------------- 
+	| Hook for execute command before delete public static function called
+	| ----------------------------------------------------------------------     
+	| @id       = current id 
+	| 
+	*/
+	public function hook_before_delete($id) {
+		//Your code here
+
+	}
+
+	/* 
+	| ---------------------------------------------------------------------- 
+	| Hook for execute command after delete public static function called
+	| ----------------------------------------------------------------------     
+	| @id       = current id 
+	| 
+	*/
+	public function hook_after_delete($id) {
+		//Your code here
+
+	}
+
+	//By the way, you can still create your own method in here... :) 
+
+	public function getAccountType($type){
+		switch ($type) { 
+			case 1 : 
+				$res = "Caja de ahorro"; 
+				break; 
+			case 2 : 
+				$res = "Cuenta corriente"; 
+				break; 
+			case 3 : 
+				$res = "Efectivo"; 
+				break; 
+			case 4 : 
+				$res = "Tarjeta"; 
+				break; 
+			case 5 : 
+				$res = "Pasivo"; 
+				break; 
+			default : 
+				$res = ""; 
+				break; 
 		}
-
-
-		/*
-		| ---------------------------------------------------------------------- 
-		| Hook for manipulate query of index result 
-		| ---------------------------------------------------------------------- 
-		| @query = current sql query 
-		|
-		*/
-		public function hook_query_index(&$query) {
-			//Your code here
-				
-		}
-
-		/*
-		| ---------------------------------------------------------------------- 
-		| Hook for manipulate row of index table html 
-		| ---------------------------------------------------------------------- 
-		|
-		*/    
-		public function hook_row_index($column_index,&$column_value) {	        
-			//Your code here
-		}
-
-		/*
-		| ---------------------------------------------------------------------- 
-		| Hook for manipulate data input before add data is execute
-		| ---------------------------------------------------------------------- 
-		| @arr
-		|
-		*/
-		public function hook_before_add(&$postdata) {        
-			//Your code here
-
-		}
-
-		/* 
-		| ---------------------------------------------------------------------- 
-		| Hook for execute command after add public static function called 
-		| ---------------------------------------------------------------------- 
-		| @id = last insert id
-		| 
-		*/
-		public function hook_after_add($id) {        
-			//Your code here
-
-		}
-
-		/* 
-		| ---------------------------------------------------------------------- 
-		| Hook for manipulate data input before update data is execute
-		| ---------------------------------------------------------------------- 
-		| @postdata = input post data 
-		| @id       = current id 
-		| 
-		*/
-		public function hook_before_edit(&$postdata,$id) {        
-			//Your code here
-
-		}
-
-		/* 
-		| ---------------------------------------------------------------------- 
-		| Hook for execute command after edit public static function called
-		| ----------------------------------------------------------------------     
-		| @id       = current id 
-		| 
-		*/
-		public function hook_after_edit($id) {
-			//Your code here 
-
-		}
-
-		/* 
-		| ---------------------------------------------------------------------- 
-		| Hook for execute command before delete public static function called
-		| ----------------------------------------------------------------------     
-		| @id       = current id 
-		| 
-		*/
-		public function hook_before_delete($id) {
-			//Your code here
-
-		}
-
-		/* 
-		| ---------------------------------------------------------------------- 
-		| Hook for execute command after delete public static function called
-		| ----------------------------------------------------------------------     
-		| @id       = current id 
-		| 
-		*/
-		public function hook_after_delete($id) {
-			//Your code here
-
-		}
-
-
-
-		//By the way, you can still create your own method in here... :) 
-
-
-		public function getAccountType($type){
-			switch ($type) { 
-				case 1 : 
-					$res = "Caja de ahorro"; 
-					break; 
-				case 2 : 
-					$res = "Cuenta corriente"; 
-					break; 
-				case 3 : 
-					$res = "Efectivo"; 
-					break; 
-				case 4 : 
-					$res = "Tarjeta"; 
-					break; 
-				case 5 : 
-					$res = "Pasivo"; 
-					break; 
-				default : 
-					$res = ""; 
-					break; 
-			}
-				return $res;
-		}
-
+			return $res;
+	}
 
 	public function getLastUpdateDate($id) {
 		return \App\AppBalanceAccount::where('account_id', '=', $id)->orderby('id', 'desc')->first()->created_at;
 	}
+
 	public function getLastUpdateAmount($id) {
 		$amount = \App\AppBalanceAccount::where('account_id', '=', $id)->orderby('id', 'desc')->first()->amount;
 		$html = "<input type='text' style='text-align:right' class='accountAmount' value='{$amount}' onchange='setLastUpdateAmount({$id}, this.value);' onfocus='this.select();'>";
 		return $html;
 	}
+
+	public function getBalanceReal($id) {
+		$amount = \App\AppBalanceReal::where([
+			['settlement_date', '=', (new Datetime())->format('Ym')],
+			['grouped_by', '=', 'account_id'],
+			['foreign_id', '=', $id]
+		])->orderby('id', 'desc')->first()->amount;
+		return Format::int2money($amount);
+	}
+
 	public function setLastUpdateAmount(Request $request) {
 		$validatedData = $request->validate([
 			'account_id' => 'required|integer',
