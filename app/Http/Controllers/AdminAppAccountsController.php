@@ -40,7 +40,7 @@ class AdminAppAccountsController extends \arivelli\crudbooster\controllers\CBCon
 		$this->col[] = ["label"=>"Moneda","name"=>"currency"];
 		$this->col[] = ["label"=>"Última Revisión","name"=>"id","callback_php"=>'$this->getLastUpdateDate($row->id)'];
 		$this->col[] = ["label"=>"Saldo remoto","name"=>"id","callback_php"=>'$this->getLastUpdateAmount($row->id)'];
-		$this->col[] = ["label"=>"Saldo en sistema","name"=>"id","callback_php"=>'$this->getBalanceReal($row->id)'];
+		$this->col[] = ["label"=>"Saldo en sistema","name"=>"id","callback_php"=>'$this->getBalanceReal($row->id, $row->name)'];
 		$this->col[] = ["label"=>"Activo","name"=>"is_active","callback_php"=>'($row->is_active ==1)? "Sí" : "No"'];
 		# END COLUMNS DO NOT REMOVE THIS LINE
 
@@ -377,13 +377,18 @@ class AdminAppAccountsController extends \arivelli\crudbooster\controllers\CBCon
 		return $html;
 	}
 
-	public function getBalanceReal($id) {
+	public function getBalanceReal($id, $name) {
 		$amount = \App\AppBalanceReal::where([
 			['settlement_date', '=', (new Datetime())->format('Ym')],
 			['grouped_by', '=', 'account_id'],
 			['foreign_id', '=', $id]
 		])->orderby('id', 'desc')->first()->amount;
-		return Format::int2money($amount);
+		$filter = http_build_query([
+			'status' => ['Realizados'],
+			'view' => 'account_name'
+		]);
+		$link = '<a href="/admin/cashFlow/' . $filter . '#' . urlencode($name) . '">' . Format::int2money($amount) . '</a>';
+		return $link;
 	}
 
 	public function setLastUpdateAmount(Request $request) {

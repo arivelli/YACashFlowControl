@@ -129,14 +129,19 @@ function filterData2(newFilter) {
         }
         links.push('<a href="#' + caption + '">' + caption + '</a>');
         html += drawTable(groupedData[dataKey], caption);
-
-
     });
 
     $('.filterSubtitle').html(views[newFilter.view] + links.join(' | '))
-
     $('#tables_group').html(html);
     $('.' + newFilter.view).hide();
+ 
+    //In case of permLink and there are some anchor on url then wait 500millis and follow the anchor
+    if (window.cashFlow.ajaxNavigation != true && location.hash.indexOf('#') == 0) {
+        setTimeout(function(){
+            location.href=decodeURIComponent(location.hash).replace('+', ' ')
+        }, 500);
+    }
+
 }
 
 const groupBy = (key) => array =>
@@ -383,15 +388,20 @@ function executeOperation(id) {
 
 
 $(function() {
-
     //Set click event of the form
     $('.filterField').on('click', (e) => {
         runFilter(e);
+        window.cashFlow.ajaxNavigation = true;
     });
 
     //draw the filter on initiate
     drawFilter();
 
+    let filter = window.cashFlow.filter;
+    //Set default state
+    
+    window.history.pushState({ "filter" : filter }, "CashFlow", location.pathname + decodeURIComponent(location.hash).replace('+', '%20'));
+    
     //Take care of browser's back button
     window.onpopstate = function(e){
         if(e.state){
@@ -399,5 +409,7 @@ $(function() {
             drawFilter();
             filterData();
         }
-    };    
+    };
+
 });
+
