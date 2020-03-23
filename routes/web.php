@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return redirect('/cashFlow');
+    return redirect('/admin/cashFlow');
 });
 
 Route::get('/compute_operations/{entry_id}','AdminAppEntriesController@hook_after_add_child')->name('compute_operations');

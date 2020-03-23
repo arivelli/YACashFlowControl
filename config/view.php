@@ -15,6 +15,8 @@ return [
 
     'paths' => [
         realpath(base_path('resources/views')),
+        realpath(base_path('resources/views/vendor/crudbooster/type_components/child2')),
+        
     ],
 
     /*

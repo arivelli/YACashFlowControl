@@ -37,10 +37,13 @@
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
 			
+			$this->col[] = ["label"=>"Entrada","name"=>"entry_id","join"=>"app_entries,concept"];
+			$this->col[] = ["label"=>"Plan","name"=>"plan_id","join"=>"app_plans,plan"];
+
 			$this->col[] = ["label"=>"Fecha Estimada","name"=>"estimated_date"];
 			$this->col[] = ["label"=>"Fecha Operación","name"=>"operation_date"];
 			$this->col[] = ["label"=>"Cuenta","name"=>"account_id","join"=>"app_accounts,name"];
-			$this->col[] = ["label"=>"Entrada","name"=>"entry_id","join"=>"app_entries,concept"];
+			
 			$this->col[] = ["label"=>"Detalle","name"=>"detail"];
 			$this->col[] = ["label"=>"Moneda","name"=>"currency"];
 			$this->col[] = ["label"=>"Monto Estimado","name"=>"estimated_amount", "callback_php" => 'number_format($row->estimated_amount/100,2,",",".")'];
