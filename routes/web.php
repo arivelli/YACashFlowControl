@@ -16,6 +16,10 @@ Route::get('/', function () {
 });
 
 Route::get('/compute_operations/{entry_id}','AdminAppEntriesController@hook_after_add_child')->name('compute_operations');
+Route::post('/admin/app_entries/preview_plan','AdminAppEntriesController@preview_plan')->name('entries_preview_plan');
+
+Route::get('/admin/testDates','AdminEntriesController@testDates')->name('testDates');
+
 
 
 Route::get('/admin/cashFlow','AdminAppOperationsController@cashFlow')->name('cashFlow');
@@ -33,4 +37,4 @@ Route::post('/admin/app_accounts/setLastUpdateAmount','AdminAppAccountsControlle
 
 
 
-Route::get('/admin/testDates','AdminEntriesController@testDates')->name('testDates');
+

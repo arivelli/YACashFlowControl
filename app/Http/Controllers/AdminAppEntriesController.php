@@ -1,20 +1,26 @@
 <?php
+
 namespace App\Http\Controllers;
 
+use App\AppPlan;
 use Session;
-use Request;
+use Illuminate\Http\Request;
 use DB;
 use CRUDBooster;
 use DateTime;
 use DatePeriod;
 use DateInterval;
 use App\Http\Controllers\ManageDollarValue;
+use GuzzleHttp\Psr7\Request as Psr7Request;
+use Illuminate\Http\Request as HttpRequest;
 
 class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBController
 {
+	private $compute_operations_flag = false;
 
 	public function cbInit()
 	{
+		setlocale(LC_ALL, 'es_AR.utf8');
 
 		# START CONFIGURATION DO NOT REMOVE THIS LINE
 		$this->title_field = "id";
@@ -59,17 +65,28 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		$columns[] = ['label' => 'Moneda', 'name' => 'currency_plan', 'type' => 'radio', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'value' => '$'];
 		$columns[] = ['label' => 'Tipo', 'name' => 'account_type', 'type' => 'radio', 'width' => 'col-sm-10', 'dataenum' => '1|Caja de ahorro;2|Cuenta corriente;3|Efectivo;4|Tarjeta;5|Pasivo', 'value' => '3'];
 		$columns[] = ['label' => 'Cuenta', 'name' => 'account_id', 'type' => 'select3', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'queryBuilder' => $queryBuilder, 'default' => '-- Cuenta --', 'value' => 1];
-		$columns[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['-1|Recurrente', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18, 24, 36, 60, 120, 240], 'default' => '-- Plan --', 'value' => 1];
+		$columns[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['-1|Recurrente', '1|Pago único', '2|2 Cuotas', '3|3 Cuotas', '4|4 Cuotas', '5|5 Cuotas', '6|6 Cuotas', '7|7 Cuotas', '8|8 Cuotas', '9|9 Cuotas', '10|10 Cuotas', '11|11 Cuotas', '12|12 Cuotas', '18|18 Cuotas', '24|24 Cuotas', '36|36 Cuotas', '60|60 Cuotas', '120|120 Cuotas', '240|240 Cuotas'], 'default' => '-- Plan --', 'value' => 1];
 		$columns[] = ['label' => 'Frecuencia', 'name' => 'frequency', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Semanal', '2|Mensual', '3|Bimestral', '4|Trimestral', '5|Cuatrimestral', '6|Semestral', '7|Anual'], 'default' => '-- Frecuencia --'];
+
+		$columns[] = ['label' => 'Formato de Detalle', 'name' => 'detail_format', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Período desde dd/mm hasta dd/mm', '2|Cuota anualizada (Cuota NN/TT)', '3|Rango mensual (MM AA - MM AA)'], 'default' => '-- Formato de detalle --'];
 		$columns[] = ['label' => 'Monto por operación', 'name' => 'amount', 'type' => 'money2', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
-		$columns[] = ['label' => 'Primera ejecución', 'name' => 'first_execution', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10', 'value' => $now->format('Y-m-d')];
-		$columns[] = ['label' => 'Completa?', 'name' => 'is_completed', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 1];
+		$columns[] = ['label' => 'Primera ejecución', 'name' => 'first_execution', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10', 'value' => $now->format('Y-m-d'), 'help' => 'Si la fecha de primera ejecución es el día 1ro se tomará el mes completo'];
+
+		$columns[] = ['label' => 'Fecha Estimada', 'name' => 'estimated_based_on', 'type' => 'radio', 'width' => 'col-sm-10', 'dataenum' => '1|Basada en fecha de comienzo del período;2|Basada en fecha de fin del período', 'value' => '1'];
+		$columns[] = ['label' => 'Desplazamiento', 'name' => 'estimated_offset', 'type' => 'text', 'validation' => '', 'width' => 'col-sm-10', 'help' => 'ver DateInterval https://www.php.net/manual/es/class.dateinterval.php Algunos ejemplos sencillos: -|P1Y2M5D|1 es 1 año 2 meses y 5 días hábiles antes', 'value' => '-|P5D|1'];
+
+		$columns[] = ['label' => 'Recordatorio', 'name' => 'notification_to', 'type' => 'checkbox', 'width' => 'col-sm-10', 'dataenum' => '1|Administradores;2|Dueño;3|Cliente'];
+		$columns[] = ['label' => 'Anticipación', 'name' => 'notification_offset', 'type' => 'text', 'width' => 'col-sm-10', 'help' => 'ver DateInterval https://www.php.net/manual/es/class.dateinterval.php'];
+
+		$columns[] = ['label' => 'Completa?', 'name' => 'is_completed', 'type' => 'radio', 'validation' => '', 'disabled'=>true, 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 1];
 		$columns[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
+
+		$columns[] = ['label' => 'Procesar operaciones?', 'name' => 'compute_operations_flag', 'type' => 'radio', 'ethereal'=>true,  'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 0];
 
 		# START FORM DO NOT REMOVE THIS LINE
 		$this->form = [];
 		$this->form[] = ['label' => 'Fecha', 'name' => 'date', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10'];
-		$this->form[] = ['label' => 'Tipo', 'name' => 'entry_type', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'dataenum' => '1|Ingreso;2|Egreso;3|Pasivo;4|Movimiento;5|Ajuste', 'default' => '-- Tipo --'];
+		$this->form[] = ['label' => 'Tipo', 'name' => 'entry_type', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'dataenum' => '1|Ingreso;2|Egreso;3|Pasivo (y compra con tarjeta);4|Movimiento;5|Ajuste', 'default' => '-- Tipo --'];
 		$this->form[] = ['label' => 'Área', 'name' => 'area_id', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'datatable' => 'app_areas,area', 'datatable_where' => 'is_active=1', 'default' => '-- Área --'];
 		$this->form[] = ['label' => 'Categoría', 'name' => 'category_id', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'datatable' => 'app_categories,category', 'datatable_where' => 'is_active=1', 'default' => '-- Categoría --'];
 		$this->form[] = ['label' => 'Concepto', 'name' => 'concept', 'type' => 'text', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10'];
@@ -113,7 +130,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		$this->form[9]['value'] = 0;
 		$this->form[10]['value'] = 1;
 		$this->form[11]['value'] = 0;
-		
+
 
 		$this->sub_module = array();
 
@@ -235,7 +252,10 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 	        | $this->load_js[] = asset("myfile.js");
 	        |
 	        */
-		$this->load_js = array(asset("/js/entries.js"));
+		$this->load_js = array(
+			asset("/js/entries.js"),
+			asset("/js/helpers/numbers.js"),
+		);
 
 
 
@@ -312,20 +332,48 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 	public function hook_before_add(&$postdata)
 	{
 		//Your code here
-		//unset($postdata['plan']);
-
+	
 	}
 
 	public function hook_before_add_child($postdata, &$childPostdata)
 	{
-		//Your code here
-		//get_object_vars()
-		print_r($postdata);
+		if(null !== $childPostdata[0]){
+			$childPostdata = $childPostdata[0];
+		}
+		$this->compute_operations_flag = $childPostdata['compute_operations_flag'];
+		unset($childPostdata['compute_operations_flag']);
+		unset($childPostdata['notification_to']);
+	}
 
-print_r($childPostdata);
-die();
- }
+	public function hook_before_edit_child($postdata, &$childPostdata) {
+		$this->hook_before_add_child($postdata, $childPostdata);
+	}
 
+	public function hook_after_add_child($id, $childId)
+	{
+		if($this->compute_operations_flag) {
+			$query = DB::table('app_plans')
+				->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
+				->join('app_entries', 'app_entries.id', '=', 'app_plans.entry_id')
+				->where([
+					['app_entries.id', '=', $id],
+					['app_plans.is_proccesed', '=', 0]
+				])
+				->get();
+	
+			foreach ($query as $plan) {
+				$operations = $this->compute_operations($plan);
+				//print_r($operations);
+				foreach ($operations as $operation) {
+					DB::table('app_operations')->insert($operation);
+				}
+			}
+		}
+	}
+
+	public function hook_after_edit_child($id, $childId) {
+		$this->hook_after_add_child($id, $childId);
+	}
 	/* 
 	    | ---------------------------------------------------------------------- 
 	    | Hook for execute command after add public static function called 
@@ -336,22 +384,7 @@ die();
 	public function hook_after_add($id)
 	{
 		
-		$query = DB::table('app_plans')
-			->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
-			->join('app_entries', 'app_entries.id', '=', 'app_plans.entry_id')
-			->where([
-				['app_entries.id', '=', $id],
-				['app_plans.is_proccesed', '=', 0]
-			])
-			->get();
 
-		foreach ($query as $plan) {
-			$operations = $this->compute_operations($plan);
-			//print_r($operations);
-			foreach ($operations as $operation) {
-				DB::table('app_operations')->insert($operation);
-			}
-		}
 	}
 	/*
 	public function hook_after_add_child($entry_id)
@@ -368,8 +401,7 @@ die();
 	    */
 	public function hook_before_edit(&$postdata, $id)
 	{
-		//Your code here
-		//unset($postdata['plan']);
+		$this->hook_before_add($postdata, $id);
 	}
 
 	/* 
@@ -381,7 +413,6 @@ die();
 	    */
 	public function hook_after_edit($id)
 	{
-		//Your code here 
 		$this->hook_after_add($id);
 	}
 
@@ -410,10 +441,10 @@ die();
 		//Your code here
 
 	}
-
+	//By the way, you can still create your own method in here... :) 
 	public function compute_operations($data)
 	{
-		setlocale(LC_ALL, 'es_AR.UTF-8');
+		setlocale(LC_ALL, 'es_AR.utf8');
 		$frequency_data = [
 			1 => new DateInterval('P1W'), //Semanal
 			2 => new DateInterval('P1M'), //Mensual
@@ -432,6 +463,9 @@ die();
 			5 => 'Quinta'
 		];
 
+		//Get Holidays
+		$holidays = \App\AuxHoliday::where('date', '>', $data->first_execution)->pluck('date')->all();
+
 		$i = 0;
 		$operations = [];
 
@@ -440,7 +474,7 @@ die();
 		$now = new DateTime();
 
 		while (true) {
-			$cuota = $i + 1;
+			$installment = $i + 1;
 
 			$operation['entry_id'] = $data->entry_id;
 			$operation['account_id'] = $data->account_id;
@@ -450,12 +484,46 @@ die();
 			$operation['plan_id'] = $data->plan_id;
 			$operation['currency'] = $data->currency;
 			$operation['estimated_amount'] = $data->amount;
-			$operation['estimated_date'] = $operation_date->format("Y-m-d H:i:s");
-			$operation['settlement_date'] = $operation_date->format('Ym');
-			$operation['settlement_week'] = $this->get_week_of_month( $operation_date );
+
+			//Estimated date based on the begining of the period
+			$estimated_based_on = clone ($operation_date);
+
+			//Estimated date based on the end of the period
+			if ($data->estimated_based_on == 2) {
+				$estimated_based_on->add($frequency_data[$data->frequency]);
+			}
+
+			//Apply offset
+			if ($data->estimated_offset != "") {
+				$estimated_offset = explode('|', $data->estimated_offset);
+				//Add or substract period
+				if ($estimated_offset[0] == '+') {
+					$method = 'add';
+				} else {
+					$method = 'sub';
+				}
+				//Apply the offset for correlated days
+				if ($estimated_offset[2] == 0) {
+					$estimated_based_on->$method(new DateInterval($estimated_offset[1]));
+				} else {
+					//Apply the days of offset just on working days (Only allowed for days periods)
+					$days = (int) str_replace('P', '', str_replace('D', '', $estimated_offset[1]));
+					for ($j = 0; $j < $days; $j++) {
+						$estimated_based_on->$method(new DateInterval('P1D'));
+						if ($estimated_based_on->format('N') > 5 || in_array($estimated_based_on->format('Y-m-d'), $holidays)) {
+							$j--;
+						}
+					}
+				}
+			}
+
+			$operation['estimated_date'] = $estimated_based_on->format("Y-m-d H:i:s");
+			$operation['settlement_date'] = $estimated_based_on->format('Ym');
+			$operation['settlement_week'] = $this->get_week_of_month($estimated_based_on);
+
 
 			//If the operation was in the past is marked as done (with all the required fields)
-			if ($operation_date->format('Ymd') <= $now->format('Ymd')) {
+			/*if ($operation_date->format('Ymd') <= $now->format('Ymd')) {
 				$operation['is_done'] = 1;
 				$operation['operation_amount'] = $data->amount;
 				$operation['operation_date'] = $operation_date->format("Y-m-d H:i:s");
@@ -466,7 +534,8 @@ die();
 				}
 			} else {
 				$operation['is_done'] = 0;
-			}
+			}*/
+			$operation['is_done'] = 0;
 
 			//For recursive plan
 			if ($data->plan === -1) {
@@ -480,21 +549,56 @@ die();
 					$week_of_month = $this->get_week_of_month($operation_date);
 					$operation['detail'] = strftime("{$ordinal_numbers[$week_of_month]} semana de %B de %Y", $operation_date->getTimestamp());
 				} else {
+					//Calculate the end of the period
 					$toDate = clone $operation_date;
 					$toDate->add($frequency_data[$data->frequency]);
-					$operation['detail'] =  strftime("Período desde el %e de %B de %Y", $operation_date->getTimestamp())
-						. strftime(" hasta el %e de %B de %Y", $toDate->getTimestamp());
+
+
+					//Apply format to the detail
+					if ($data->detail_format === 1) {
+
+						$operation['detail'] =  strftime("Período desde el %e de %B de %Y", $operation_date->getTimestamp())
+							. strftime(" hasta el %e de %B de %Y", $toDate->getTimestamp());
+						//Cuota anualizada (Cuota NN/TT)
+					} else if ($data->detail_format === 2) {
+						
+						switch ($data->frequency) {
+							case 2; //12 installments for monthly 
+								$installments = 12;
+								break;
+							case 3; //6 installments for bimonthly 
+								$installments = 6;
+								break;
+							case 4; //4 installments for three months
+								$installments = 4;
+								break;
+							case 5; //3 installments for a quarter
+								$installments = 3;
+								break;
+							case 6; //2 installments for Semestral
+								$installments = 2;
+								break;
+						}
+						$operation['detail'] = "CUOTA {$installment}/{$installments} " . $operation_date->format('Y');
+						//Rango mensual (MM AA - MM AA)
+					} else {
+						if ($data->frequency === 2) {
+							$operation['detail'] = strtoupper(strftime('%B %Y', $operation_date->format('U')));
+						} else {
+							$operation['detail'] = strtoupper(strftime('%B %Y', $operation_date->format('U'))) . ' - ' . strtoupper(strftime('%B %Y', $toDate->format('U')));
+						}
+					}
 				}
 			} elseif ($data->plan === 1) {
 				$operation['detail'] = 'Pago único';
 			} else {
-				$operation['detail'] = "Cuota {$cuota}/{$data->plan}";
+				$operation['detail'] = "CUOTA {$installment}/{$data->plan}";
 			}
 
 
 			$operation['created_by'] = CRUDBooster::myId();
 
-			$operation['number'] = $cuota;
+			$operation['number'] = $installment;
 			array_push($operations, $operation);
 			unset($operation);
 			$i++;
@@ -513,7 +617,6 @@ die();
 		return $operations;
 	}
 
-	//By the way, you can still create your own method in here... :) 
 
 	public function get_entry_type($type)
 	{
@@ -549,7 +652,42 @@ die();
 		return $week_of_month;
 	}
 
-	public function testDates(){
+	public function preview_plan(Request $request)
+	{
+		$plan = new AppPlan();
+		$plan->first_execution = $request->input('child-first_execution');
+
+		$plan->entry_id = 0;
+		$plan->account_id = (int) $request->input('child-account_id');
+		$plan->entry_type = (int) $request->input('entry_type');
+		$plan->area_id = (int) $request->input('area_id');
+		$plan->category_id = (int) $request->input('category_id');
+		$plan->plan = (int) $request->input('child-plan');
+		$plan->currency = $request->input('child-currency_plan');
+		$plan->amount = $request->input('child-amount');
+		$plan->detail_format = (int) $request->input('child-detail_format');
+		$plan->estimated_based_on = (int) $request->input('child-estimated_based_on');
+		$plan->estimated_offset = $request->input('child-estimated_offset');
+		$plan->frequency = (int) $request->input('child-frequency');
+
+		$operations = $this->compute_operations($plan);
+		$html = '<table>';
+
+		foreach ($operations as $operation) {
+			$html .= '<tr>';
+			$html .= "<td>{$operation['detail']}</td>";
+
+			$html .= '<td>' . strftime('%d-%m-%Y', (new Datetime($operation['estimated_date']))->format('U')) . '</td>';
+			$html .= "<td>{$operation['estimated_amount']}</td>";
+			$html .= '</tr>';
+		}
+		$html .= '</table>';
+
+		echo $html;
+	}
+
+	public function testDates()
+	{
 		setlocale(LC_ALL, 'es_AR.UTF-8');
 		$date = new DateTime('2019-01-01');
 		$ordinal_numbers = [
@@ -560,15 +698,14 @@ die();
 			5 => 'Quinta'
 		];
 		$month = 1;
-		for ($i = 0; $i < 360 ; $i++){
+		for ($i = 0; $i < 360; $i++) {
 			$week_of_month =  $this->get_week_of_month($date);
 			echo strftime("{$ordinal_numbers[$week_of_month]} semana - %A %e de %B de %Y", $date->getTimestamp()) . ' - ' . $date->format('Y-m-d') . '<br>';
 			$date->add(new DateInterval('P1D'));
-			if($month != $date->format('m')){
+			if ($month != $date->format('m')) {
 				echo '<hr>';
 			}
 			$month = $date->format('m');
 		}
-		
 	}
 }

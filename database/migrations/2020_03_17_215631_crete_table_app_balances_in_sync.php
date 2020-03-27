@@ -16,8 +16,7 @@ class CreteTableAppBalancesInSync extends Migration
         Schema::create('app_balances_in_sync', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('account_id')->unsigned();
-            
-            
+                        
             $table->integer('operation_id')->unsigned();
             $table->integer('balance_real_id')->unsigned();
             $table->integer('balance_real_amount');

@@ -437,6 +437,8 @@
 			$data['accounts'] = AppAccount::where('is_active', '=', 1)->orderby('name', 'ASC')->get();
 
 			$data['page_title'] = 'CashFlow';
+			$data['page_icon'] = 'fa fa-dollar';
+			//$data['module'] = $this;
 
 			$data['filter'] = json_encode($data['filter']);
 

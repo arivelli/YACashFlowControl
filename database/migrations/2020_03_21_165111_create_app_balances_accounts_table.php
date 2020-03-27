@@ -19,6 +19,9 @@ class CreateAppBalancesAccountsTable extends Migration
             $table->integer('amount');
             $table->string('notes', 100);
             $table->timestamps();
+
+            $table->index('account_id');
+            $table->foreign('account_id')->references('id')->on('app_accounts');
         });
     }
 

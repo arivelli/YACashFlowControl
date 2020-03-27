@@ -1,89 +1,54 @@
-let format = {
-    'prefix' 				: '$ ',
-    'thousandsSeparator'    : '.',
-    'centsSeparator'        : ',',
-    'centsLimit'          	: 2,
-    'clearOnEmpty'         	: true,
-    'limit'                 : false,
-    'allowNegative'         : true
-}
-
-function applyCurrency(prefix) {
-    format.prefix = prefix + ' ';
-    $('#real_amount').priceFormat(format);
-    $('#one_pay_amount').priceFormat(format);
-}
 
 $(document).ready(function(){
 
-    applyCurrency();
-
-    $('input[type=radio][name=currency]').on('change', function() {
-        applyCurrency($(this).val());
-    });
  
-    $('#entry_type').on('change', function(){
-        switch($(this).val())  {
-            case '1':
-                $($('#area_id')[0].parentNode.parentNode).show();
-                $($('#category_id')[0].parentNode.parentNode).hide();
-                break;
-            case '2':
-                $($('#area_id')[0].parentNode.parentNode).show();
-                if($('#area_id').val() === '6'){
-                    $($('#category_id')[0].parentNode.parentNode).show();
-                } else {
-                    $($('#category_id')[0].parentNode.parentNode).hide();
-                }
-                break;
-            case '3':
-            case '4':
-            case '5':
-                $($('#area_id')[0].parentNode.parentNode).hide();
-                $($('#category_id')[0].parentNode.parentNode).hide();
-                break;
-        }
+    //Set default props
+    $($('input[type=radio][name=child-currency_plan]')[0].parentNode.parentNode.parentNode).hide();
+    //Capture all form events and adjust the form
+    $( ":input" ).on('change', (e) => {
+        adjustForm();
+    })
 
-    });
-
-    $('#area_id').on('change', function(){
-        if($(this).val() === '6'){
-            $($('#category_id')[0].parentNode.parentNode).show();
-        } else {
-            $($('#category_id')[0].parentNode.parentNode).hide();
-        }
-    });
-    
-    //set format prefix based on selected currency for plan->amount
-    format.prefix = $('input[type=radio][name=child-currency_plan]').val();
-    $('#planamount').priceFormat(format);
-    //Filter available accountd based on currency and account type selected
-    filterAccounts( $('input[type=radio][name=child-currency_plan]:checked').val(), $('input[type=radio][name=child-account_type]:checked').val());
-
-    $('input[type=radio][name=child-currency_plan]').on('change load', function(){
-        format.prefix = $(this).val() + ' ';
-        $('#planamount').priceFormat(format);
-        filterAccounts( $('input[type=radio][name=child-currency_plan]:checked').val(), $('input[type=radio][name=child-account_type]:checked').val());
-    });
-
-    $('input[type=radio][name=child-account_type]').on('change', function(){
-        filterAccounts( $('input[type=radio][name=child-currency_plan]:checked').val(), $('input[type=radio][name=child-account_type]:checked').val());
-    });
-    
-    $('#planplan').on('change', function(){
-        if($(this).val() == 1){
-            $($('#planfrequency')[0].parentNode.parentNode).hide();
-        } else {
-            $($('#planfrequency')[0].parentNode.parentNode).show();
+    window.entries = {};
+    $($('#real_amount')[0]).on("keyup keydown", (e) => {
+        const we = window.entries;
+        if (Number.isInteger(parseInt(e.key))) {
+            switch (e.type) {
+                case 'keydown':
+                    let real_amount = money2int( $('#real_amount').val() );
+                    let one_pay_amount = money2int( $('#one_pay_amount').val() );
+                    we.one_pay_amount = ($('#one_pay_amount').val() == '' || one_pay_amount == real_amount);
+                    if ($('#planesplan').val() == 1) {
+                        let planesamount = money2int($('#planesamount').val() );
+                        we.planesamount = ($('#planesamount').val() == '' || planesamount == real_amount);
+                    }
+                    break;
+                case 'keyup':
+                    if (we.one_pay_amount === true) {
+                        $('#one_pay_amount').val($('#real_amount').val());
+                        we.one_pay_amount = false;
+                    }
+                    if (we.planesamount === true) {
+                        $('#planesamount').val($('#real_amount').val());
+                        we.planesamount = false;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     });
-    
-    //$($('#planfrequency')[0].parentNode.parentNode).hide();
-    $('#concept').focus();
+    adjustForm();
+    //$('#concept').focus();
 })
 
+
+
 function filterAccounts(currency, type) {
-    if(typeof currency != 'undefined' && typeof type != 'undefined') {
+    if (typeof currency != 'undefined' && typeof type != 'undefined' && (currency != window.entries.currency || type != window.entries.type)) {
+        window.entries.currency = currency;
+        window.entries.type = type;
+
         let accountList = '';
         let selected = ' selected';
         child_account_id.forEach( (account, i) => {
@@ -92,10 +57,119 @@ function filterAccounts(currency, type) {
                 selected = '';
             }
         });
-        $('#planaccount_id').html(accountList);
+        $('#planesaccount_id').html(accountList);
     }
 }
 
+function adjustForm() {
+    
+    //Show/Hide area/category depending on entryType
+    switch($('#entry_type').val())  {
+        case '1':
+            $($('#area_id')[0].parentNode.parentNode).show();
+            $($('#category_id')[0].parentNode.parentNode).hide();
+            break;
+        case '2':
+            $($('#area_id')[0].parentNode.parentNode).show();
+            //Show Categories only for area = Personal
+            if($('#area_id').val() === '6'){
+                $($('#category_id')[0].parentNode.parentNode).show();
+            } else {
+                $($('#category_id')[0].parentNode.parentNode).hide();
+            }
+            break;
+        //Hide both on Pasivo, Movimiento and Ajuste
+        case '3':
+        case '4':
+        case '5':
+            $($('#area_id')[0].parentNode.parentNode).hide();
+            $($('#category_id')[0].parentNode.parentNode).hide();
+            break;
+    }
+
+    
+    //Set the right money format to all the amount fields
+    let currency = $('input[type=radio][name=currency]:checked').val();
+    format.prefix = currency + ' ';
+    $('#real_amount').priceFormat(format);
+    $('#one_pay_amount').priceFormat(format);
+    $('#planesamount').priceFormat(format);
+    
+    //Update the proper field inside plan form
+    $('input[type=radio][name=child-currency_plan][value="'+currency+'"]').prop("checked",true)
+
+    //Based on date update the dollar value
+    $('#dollar_value').val( get_dollar_value_of( $('#date').val() ) )
+    $('#dollar_value').priceFormat(format);
+
+    //PLANS
+
+    //Filter available account types based on entry types
+    //'1|Caja de ahorro;2|Cuenta corriente;3|Efectivo;4|Tarjeta;5|Pasivo';
+    //In case of 'Ingreso' or 'Egreso' only allow 1,2,3
+    if ($('#entry_type').val() == 1 || $('#entry_type').val() == 2) {
+        $($('input[type=radio][name=child-account_type][value=1]')[0].parentNode).show()
+        $($('input[type=radio][name=child-account_type][value=2]')[0].parentNode).show()
+        $($('input[type=radio][name=child-account_type][value=3]')[0].parentNode).show()
+        $($('input[type=radio][name=child-account_type][value=4]')[0].parentNode).hide()
+        $($('input[type=radio][name=child-account_type][value=5]')[0].parentNode).hide()
+    //In case of Pasivo only allow 4,5
+    } else if ($('#entry_type').val() == 3) {
+        $($('input[type=radio][name=child-account_type][value=1]')[0].parentNode).hide()
+        $($('input[type=radio][name=child-account_type][value=2]')[0].parentNode).hide()
+        $($('input[type=radio][name=child-account_type][value=3]')[0].parentNode).hide()
+        $($('input[type=radio][name=child-account_type][value=4]')[0].parentNode).show()
+        $($('input[type=radio][name=child-account_type][value=5]')[0].parentNode).show()
+    //In case of 'Movimiento' or 'Ajuste' allow all
+    } else {
+        $($('input[type=radio][name=child-account_type][value=1]')[0].parentNode).show()
+        $($('input[type=radio][name=child-account_type][value=2]')[0].parentNode).show()
+        $($('input[type=radio][name=child-account_type][value=3]')[0].parentNode).show()
+        $($('input[type=radio][name=child-account_type][value=4]')[0].parentNode).show()
+        $($('input[type=radio][name=child-account_type][value=5]')[0].parentNode).show()
+    }
+
+    //Filter available accounts based on currency and account type selected
+    filterAccounts($('input[type=radio][name=currency]:checked').val(), $('input[type=radio][name=child-account_type]:checked').val());
+
+    //Show/Hide Frequency and detail format fields depending on Plan 
+    if($('#planesplan').val() == 1){
+        $($('#planesfrequency')[0].parentNode.parentNode).hide();
+        $($('#planesdetail_format')[0].parentNode.parentNode).hide();
+    } else if ($('#planesplan').val() == -1) {
+        $($('#planesfrequency')[0].parentNode.parentNode).show();
+        $($('#planesdetail_format')[0].parentNode.parentNode).show();
+    } else {
+        $($('#planesfrequency')[0].parentNode.parentNode).show();
+        $($('#planesdetail_format')[0].parentNode.parentNode).hide();
+    }
+    
+    //
+    
+    //Show/Hide notification fields depending on planesnotification_to 
+    if ($('.planesnotification_to').serializeArray().length > 0) {
+        $($('#planesnotification_offset')[0].parentNode.parentNode).show()
+    } else {
+        $($('#planesnotification_offset')[0].parentNode.parentNode).hide()
+    }
+}
+
+/**
+ * PREVIEW OF OPERATIONS
+ */
+
+function showModalPreviewOperation(id) {
+
+    $.post("/admin/app_entries/preview_plan/", $('form#form').serialize())
+        .done(function (res) {
+            $('#preview-operation_detail').html(res);
+            $('#modal-datamodal-preview-operation').modal('show');
+        })
+        .fail(function() {
+            alert("error");
+        });
+
+}
 
 //Agregar filtro por tipo de cuenta: efectivo, tarjetas o bancos (incluye CA, CC, tanto para transferencias como debitos, depositos  y cheques)
     //Hacer vista de saldos por cuentas
