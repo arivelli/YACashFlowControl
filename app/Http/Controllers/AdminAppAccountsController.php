@@ -48,6 +48,10 @@ class AdminAppAccountsController extends \arivelli\crudbooster\controllers\CBCon
 		$this->form = [];
 		$this->form[] = ['label'=>'Nombre','name'=>'name','type'=>'text','validation'=>'required|min:5|max:25','width'=>'col-sm-10'];
 		$this->form[] = ['label'=>'Tipo','name'=>'type','type'=>'select','validation'=>'required|integer|min:0','width'=>'col-sm-10','dataenum'=>'1|Caja de ahorro;2|Cuenta corriente;3|Efectivo;4|Tarjeta;5|Pasivo','default'=>'-- Tipo de cuenta --'];
+
+		$this->form[] = ['label'=>'Entrada','name'=>'entry_id','type'=>'select','validation'=>'integer|min:1','width'=>'col-sm-10','datatable'=>'app_entries,concept','datatable_where'=>'category_id=27','default'=>'-- Entrada --'];
+		$this->form[] = ['label'=>'Plan','name'=>'plan_id','type'=>'select','validation'=>'integer|min:1','width'=>'col-sm-10','dataenum'=>'','default'=>'-- Plan --'];
+
 		$this->form[] = ['label'=>'Banco','name'=>'bank','type'=>'text','width'=>'col-sm-10'];
 		$this->form[] = ['label'=>'CBU','name'=>'cbu','type'=>'text','width'=>'col-sm-10'];
 		$this->form[] = ['label'=>'Número','name'=>'number','type'=>'text','width'=>'col-sm-10'];

@@ -52,8 +52,8 @@
 			# END COLUMNS DO NOT REMOVE THIS LINE
 			
 			$queryBuilderPlan = DB::table('app_plans')
-			->join('aux_frequencies','app_plans.frequency','=','aux_frequencies.id')
-			//->join('app_plans','app_plans.frequency','=','aux_frequencies.id')
+			->join('aux_frequencies','app_plans.frequency_id','=','aux_frequencies.id')
+			//->join('app_plans','app_plans.frequency_id','=','aux_frequencies.id')
 			->selectRAW('IF( app_plans.plan = 1, "Única operación", 
 			CONCAT(
 				  IF( app_plans.plan = -1, 

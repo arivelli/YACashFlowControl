@@ -505,6 +505,7 @@
                                     $('#{{$name.$c["name"]}}').val(p.find(".{{$c['name']}} input").val()).trigger("keyup");
                                 @endif
                             @endforeach
+                            $('#child2_form').show();
                         }
 
                         function validateForm{{$name}}() {
@@ -568,9 +569,9 @@
                             
                             @endforeach
                             trRow += "<td>" +
-                                "<a href='#panel-form-{{$name}}' onclick='viewRow{{$name}}(this)' class='btn btn-xs btn-primary btn-detail'><i class='fa fa-eye'></i></a> " +
-                                "<a href='#panel-form-{{$name}}' onclick='editRow{{$name}}(this);$(\"#child2_form\").show();' class='btn btn-warning btn-xs'><i class='fa fa-pencil'></i></a> " +
-                                "<a href='javascript:void(0)' onclick='deleteRow{{$name}}(this)' class='btn btn-danger btn-xs'><i class='fa fa-trash'></i></a></td>";
+                                "<a href='#panel-form-{{$name}}' onclick='viewRow{{$name}}(this);' class='btn btn-xs btn-primary btn-detail'><i class='fa fa-eye'></i></a> " +
+                                "<a href='#panel-form-{{$name}}' onclick='editRow{{$name}}(this);' class='btn btn-warning btn-xs'><i class='fa fa-pencil'></i></a> " +
+                                "<a href='javascript:void(0)' onclick='deleteRow{{$name}}(this);' class='btn btn-danger btn-xs'><i class='fa fa-trash'></i></a></td>";
                             trRow += '</tr>';
                             $('#table-{{$name}} tbody .trNull').remove();
                             if (currentRow == null) {
@@ -582,6 +583,7 @@
                             }
                             $('#btn-add-table-{{$name}}').val('{{trans("crudbooster.button_add_to_table")}}');
                             $('#btn-reset-form-{{$name}}').click();
+                            $('#child2_form').hide();
                         }
                     </script>
                 @endpush
@@ -589,10 +591,12 @@
             <div class="panel-footer">
                 <input type='button' class='btn btn-default' id="btn-reset-form-{{$name}}" onclick="resetForm{{$name}}()"
                        value='{{trans("crudbooster.button_reset")}}'/>
-                <input type='button' id='btn-add-table-{{$name}}' class='btn btn-primary' onclick="addToTable{{$name}}(); $('#child2_form').hide();"
+                <input type='button' id='btn-add-table-{{$name}}' class='btn btn-primary' onclick="addToTable{{$name}}();"
                        value='{{trans("crudbooster.button_add_to_table")}}'/>
                 <input type='button' id='btn-preview-{{$name}}' class='btn btn-primary' onclick="showModalPreviewOperation()"
                        value='Previsualizar'/>
+                    <input type='button' class='btn btn-default' id="btn-reset-form-{{$name}}" onclick="$('#child2_form').hide();"
+                       value='Cancelar'/>
             </div>
         </div>
     </div>

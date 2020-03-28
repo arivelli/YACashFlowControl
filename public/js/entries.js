@@ -1,45 +1,46 @@
 
 $(document).ready(function(){
-
+    if ($('form#form.form-horizontal').length > 0) {
  
-    //Set default props
-    $($('input[type=radio][name=child-currency_plan]')[0].parentNode.parentNode.parentNode).hide();
-    //Capture all form events and adjust the form
-    $( ":input" ).on('change', (e) => {
-        adjustForm();
-    })
+        //Set default props
+        $($('input[type=radio][name=child-currency_plan]')[0].parentNode.parentNode.parentNode).hide();
+        //Capture all form events and adjust the form
+        $(":input").on('change', (e) => {
+            adjustForm();
+        })
 
-    window.entries = {};
-    $($('#real_amount')[0]).on("keyup keydown", (e) => {
-        const we = window.entries;
-        if (Number.isInteger(parseInt(e.key))) {
-            switch (e.type) {
-                case 'keydown':
-                    let real_amount = money2int( $('#real_amount').val() );
-                    let one_pay_amount = money2int( $('#one_pay_amount').val() );
-                    we.one_pay_amount = ($('#one_pay_amount').val() == '' || one_pay_amount == real_amount);
-                    if ($('#planesplan').val() == 1) {
-                        let planesamount = money2int($('#planesamount').val() );
-                        we.planesamount = ($('#planesamount').val() == '' || planesamount == real_amount);
-                    }
-                    break;
-                case 'keyup':
-                    if (we.one_pay_amount === true) {
-                        $('#one_pay_amount').val($('#real_amount').val());
-                        we.one_pay_amount = false;
-                    }
-                    if (we.planesamount === true) {
-                        $('#planesamount').val($('#real_amount').val());
-                        we.planesamount = false;
-                    }
-                    break;
-                default:
-                    break;
+        window.entries = {};
+        $($('#real_amount')[0]).on("keyup keydown", (e) => {
+            const we = window.entries;
+            if (Number.isInteger(parseInt(e.key))) {
+                switch (e.type) {
+                    case 'keydown':
+                        let real_amount = money2int($('#real_amount').val());
+                        let one_pay_amount = money2int($('#one_pay_amount').val());
+                        we.one_pay_amount = ($('#one_pay_amount').val() == '' || one_pay_amount == real_amount);
+                        if ($('#planesplan').val() == 1) {
+                            let planesamount = money2int($('#planesamount').val());
+                            we.planesamount = ($('#planesamount').val() == '' || planesamount == real_amount);
+                        }
+                        break;
+                    case 'keyup':
+                        if (we.one_pay_amount === true) {
+                            $('#one_pay_amount').val($('#real_amount').val());
+                            we.one_pay_amount = false;
+                        }
+                        if (we.planesamount === true) {
+                            $('#planesamount').val($('#real_amount').val());
+                            we.planesamount = false;
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
-        }
-    });
-    adjustForm();
-    //$('#concept').focus();
+        });
+        adjustForm();
+        //$('#concept').focus();
+    }
 })
 
 
@@ -70,16 +71,16 @@ function adjustForm() {
             $($('#category_id')[0].parentNode.parentNode).hide();
             break;
         case '2':
+        case '3':
             $($('#area_id')[0].parentNode.parentNode).show();
             //Show Categories only for area = Personal
-            if($('#area_id').val() === '6'){
+            if($('#area_id').val() === '6' || $('#area_id').val() === '10'){
                 $($('#category_id')[0].parentNode.parentNode).show();
             } else {
                 $($('#category_id')[0].parentNode.parentNode).hide();
             }
             break;
         //Hide both on Pasivo, Movimiento and Ajuste
-        case '3':
         case '4':
         case '5':
             $($('#area_id')[0].parentNode.parentNode).hide();
@@ -132,15 +133,15 @@ function adjustForm() {
     //Filter available accounts based on currency and account type selected
     filterAccounts($('input[type=radio][name=currency]:checked').val(), $('input[type=radio][name=child-account_type]:checked').val());
 
-    //Show/Hide Frequency and detail format fields depending on Plan 
+    //Show/Hide Frequency and Detail format fields depending on Plan 
     if($('#planesplan').val() == 1){
-        $($('#planesfrequency')[0].parentNode.parentNode).hide();
+        $($('#planesfrequency_id')[0].parentNode.parentNode).hide();
         $($('#planesdetail_format')[0].parentNode.parentNode).hide();
     } else if ($('#planesplan').val() == -1) {
-        $($('#planesfrequency')[0].parentNode.parentNode).show();
+        $($('#planesfrequency_id')[0].parentNode.parentNode).show();
         $($('#planesdetail_format')[0].parentNode.parentNode).show();
     } else {
-        $($('#planesfrequency')[0].parentNode.parentNode).show();
+        $($('#planesfrequency_id')[0].parentNode.parentNode).show();
         $($('#planesdetail_format')[0].parentNode.parentNode).hide();
     }
     

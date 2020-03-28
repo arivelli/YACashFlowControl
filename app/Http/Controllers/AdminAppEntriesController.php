@@ -66,7 +66,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		$columns[] = ['label' => 'Tipo', 'name' => 'account_type', 'type' => 'radio', 'width' => 'col-sm-10', 'dataenum' => '1|Caja de ahorro;2|Cuenta corriente;3|Efectivo;4|Tarjeta;5|Pasivo', 'value' => '3'];
 		$columns[] = ['label' => 'Cuenta', 'name' => 'account_id', 'type' => 'select3', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'queryBuilder' => $queryBuilder, 'default' => '-- Cuenta --', 'value' => 1];
 		$columns[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['-1|Recurrente', '1|Pago único', '2|2 Cuotas', '3|3 Cuotas', '4|4 Cuotas', '5|5 Cuotas', '6|6 Cuotas', '7|7 Cuotas', '8|8 Cuotas', '9|9 Cuotas', '10|10 Cuotas', '11|11 Cuotas', '12|12 Cuotas', '18|18 Cuotas', '24|24 Cuotas', '36|36 Cuotas', '60|60 Cuotas', '120|120 Cuotas', '240|240 Cuotas'], 'default' => '-- Plan --', 'value' => 1];
-		$columns[] = ['label' => 'Frecuencia', 'name' => 'frequency', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Semanal', '2|Mensual', '3|Bimestral', '4|Trimestral', '5|Cuatrimestral', '6|Semestral', '7|Anual'], 'default' => '-- Frecuencia --'];
+		$columns[] = ['label' => 'Frecuencia', 'name' => 'frequency_id', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Semanal', '2|Mensual', '3|Bimestral', '4|Trimestral', '5|Cuatrimestral', '6|Semestral', '7|Anual'], 'default' => '-- Frecuencia --'];
 
 		$columns[] = ['label' => 'Formato de Detalle', 'name' => 'detail_format', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Período desde dd/mm hasta dd/mm', '2|Cuota anualizada (Cuota NN/TT)', '3|Rango mensual (MM AA - MM AA)'], 'default' => '-- Formato de detalle --'];
 		$columns[] = ['label' => 'Monto por operación', 'name' => 'amount', 'type' => 'money2', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
@@ -337,6 +337,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 
 	public function hook_before_add_child($postdata, &$childPostdata)
 	{
+		
 		if(null !== $childPostdata[0]){
 			$childPostdata = $childPostdata[0];
 		}
@@ -351,6 +352,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 
 	public function hook_after_add_child($id, $childId)
 	{
+		
 		if($this->compute_operations_flag) {
 			$query = DB::table('app_plans')
 				->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
@@ -519,7 +521,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 
 			$operation['estimated_date'] = $estimated_based_on->format("Y-m-d H:i:s");
 			$operation['settlement_date'] = $estimated_based_on->format('Ym');
-			$operation['settlement_week'] = $this->get_week_of_month($estimated_based_on);
+			$operation['settlement_week'] = Format::get_week_of_month($estimated_based_on);
 
 
 			//If the operation was in the past is marked as done (with all the required fields)
@@ -544,14 +546,14 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 					break;
 				}
 
-				if ($data->frequency === 1) {
+				if ($data->frequency_id === 1) {
 
-					$week_of_month = $this->get_week_of_month($operation_date);
+					$week_of_month = Format::get_week_of_month($operation_date);
 					$operation['detail'] = strftime("{$ordinal_numbers[$week_of_month]} semana de %B de %Y", $operation_date->getTimestamp());
 				} else {
 					//Calculate the end of the period
 					$toDate = clone $operation_date;
-					$toDate->add($frequency_data[$data->frequency]);
+					$toDate->add($frequency_data[$data->frequency_id]);
 
 
 					//Apply format to the detail
@@ -562,7 +564,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 						//Cuota anualizada (Cuota NN/TT)
 					} else if ($data->detail_format === 2) {
 						
-						switch ($data->frequency) {
+						switch ($data->frequency_id) {
 							case 2; //12 installments for monthly 
 								$installments = 12;
 								break;
@@ -582,7 +584,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 						$operation['detail'] = "CUOTA {$installment}/{$installments} " . $operation_date->format('Y');
 						//Rango mensual (MM AA - MM AA)
 					} else {
-						if ($data->frequency === 2) {
+						if ($data->frequency_id === 2) {
 							$operation['detail'] = strtoupper(strftime('%B %Y', $operation_date->format('U')));
 						} else {
 							$operation['detail'] = strtoupper(strftime('%B %Y', $operation_date->format('U'))) . ' - ' . strtoupper(strftime('%B %Y', $toDate->format('U')));
@@ -611,7 +613,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 				break;
 			}
 
-			$operation_date->add($frequency_data[$data->frequency]);
+			$operation_date->add($frequency_data[$data->frequency_id]);
 		}
 
 		return $operations;
@@ -639,18 +641,6 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		}
 		return $res;
 	}
-	public function get_week_of_month($date)
-	{
-		$day_of_month			= $date->format("j");
-		$day_of_week			= $date->format("N");
-		$first_day_of_month		= new DateTime($date->format("Y-m-01"));
-		$week_of_month			= ceil($day_of_month / 7);
-		//Si el día de la semana del primer día del mes es mayor que el día de la semana de la fecha, incremento la semana del mes
-		if ($first_day_of_month->format("N") > $day_of_week) {
-			$week_of_month++;
-		}
-		return $week_of_month;
-	}
 
 	public function preview_plan(Request $request)
 	{
@@ -668,7 +658,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		$plan->detail_format = (int) $request->input('child-detail_format');
 		$plan->estimated_based_on = (int) $request->input('child-estimated_based_on');
 		$plan->estimated_offset = $request->input('child-estimated_offset');
-		$plan->frequency = (int) $request->input('child-frequency');
+		$plan->frequency_id = (int) $request->input('child-frequency_id');
 
 		$operations = $this->compute_operations($plan);
 		$html = '<table>';
@@ -699,7 +689,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		];
 		$month = 1;
 		for ($i = 0; $i < 360; $i++) {
-			$week_of_month =  $this->get_week_of_month($date);
+			$week_of_month =  Format::get_week_of_month($date);
 			echo strftime("{$ordinal_numbers[$week_of_month]} semana - %A %e de %B de %Y", $date->getTimestamp()) . ' - ' . $date->format('Y-m-d') . '<br>';
 			$date->add(new DateInterval('P1D'));
 			if ($month != $date->format('m')) {

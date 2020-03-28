@@ -12,11 +12,41 @@ function setLastUpdateAmount(account_id, amount) {
     });
     
 }
-$(function() {
-    $('.accountAmount').priceFormat({
-        'prefix': "$ ",
-        'centsSeparator': ",",
-        'thousandsSeparator': ".",
-        'centsLimit': 2
-    });
+$(function () {
+    if ($('form#form.form-horizontal').length > 0) {
+        $('.accountAmount').priceFormat({
+            'prefix': "$ ",
+            'centsSeparator': ",",
+            'thousandsSeparator': ".",
+            'centsLimit': 2
+        });
+        $('#type').on('change', () => {
+            showHideEntries();
+        });
+        $('#entry_id').on('change', () => {
+            
+            $.ajax("/admin/app_plans/getPlanByEntryId/" + $('#entry_id').val())
+                .done(function (res) {
+                    let html = '';
+                    res.forEach((p) => {
+                        html += '<option value="'+p.value+'">'+p.label+'</option>';
+                    });
+                    $('#plan_id').html(html);
+            })
+            .fail(function() {
+                alert("error");
+            });
+        });
+        showHideEntries();
+    }
 })
+
+function showHideEntries() {
+    if ($('#type').val() === "4") {
+        $($('#entry_id')[0].parentNode.parentNode).show();
+        $($('#plan_id')[0].parentNode.parentNode).show();
+    } else { 
+        $($('#entry_id')[0].parentNode.parentNode).hide();
+        $($('#plan_id')[0].parentNode.parentNode).hide();
+    }
+}

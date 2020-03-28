@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAppAccountsTable extends Migration
+class CreateAuxFrequenciesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateAppAccountsTable extends Migration
      */
     public function up()
     {
-        /*Schema::create('app_accounts', function (Blueprint $table) {
-            $table->increments('id');
+        Schema::create('aux_frequencies', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->timestamps();
-        });*/
+        });
     }
 
     /**
@@ -26,6 +26,6 @@ class CreateAppAccountsTable extends Migration
      */
     public function down()
     {
-        //Schema::dropIfExists('app_accounts');
+        Schema::dropIfExists('aux_frequencies');
     }
 }

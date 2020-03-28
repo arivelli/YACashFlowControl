@@ -210,20 +210,6 @@ function drawTable(table, caption) {
         <tfoot>
             <tr>
                 <td>&nbsp;</td>
-                <td>Fecha estimada</td>
-                <td>Fecha operación</td>
-                <td class="entry_type">Tipo</td>
-                <td>Concepto</td>
-                <td>Detalle</td>
-                <td class="account_name">Cuenta</td>
-                <td class="area">Area</td>
-                <td class="category">Categoría</td>
-                <td class="right">Monto estimado</td>
-                <td class="right">Monto operación</td>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td class="entry_type">&nbsp;</td>

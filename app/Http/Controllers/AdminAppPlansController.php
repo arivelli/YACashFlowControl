@@ -335,9 +335,39 @@
 
 	    }
 
-
-
 	    //By the way, you can still create your own method in here... :) 
-
+		public function getPlanByEntryId($entry_id){
+			$plan_types = [
+				 -1 => 'Recurrente',
+				  1 => 'Pago único',
+				  2 => '2 Cuotas',
+				  3 => '3 Cuotas',
+				  4 => '4 Cuotas',
+				  5 => '5 Cuotas',
+				  6 => '6 Cuotas',
+				  7 => '7 Cuotas',
+				  8 => '8 Cuotas',
+				  9 => '9 Cuotas',
+				 10 => '10 Cuotas',
+				 11 => '11 Cuotas',
+				 12 => '12 Cuotas',
+				 18 => '18 Cuotas',
+				 24 => '24 Cuotas',
+				 36 => '36 Cuotas',
+				 60 => '60 Cuotas',
+				120 => '120 Cuotas',
+				240 => '240 Cuotas'
+			];
+			$plans = \App\AppPlan::where('entry_id', '=', $entry_id)->get();
+			$plans_arr = [];
+			foreach ($plans as $plan){
+				$plans_arr[] = [
+					'value' => $plan->id,
+					'label' => $plan_types[$plan->plan] . ' (' .$plan->frequency->frequency . ')'
+				];
+			}
+			
+			return response()->json($plans_arr);
+		}
 
 	}
