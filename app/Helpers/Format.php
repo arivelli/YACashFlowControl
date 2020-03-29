@@ -1,6 +1,10 @@
 <?php
 namespace App\Helpers;
 
+setlocale(LC_ALL, 'es_AR.utf8');
+
+use DateTime;
+
 class Format {
     static public function int2money(Int $n = null, String $m = '$'){
         if (null !== $n) {

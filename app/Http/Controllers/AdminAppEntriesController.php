@@ -11,8 +11,10 @@ use DateTime;
 use DatePeriod;
 use DateInterval;
 use App\Http\Controllers\ManageDollarValue;
+use App\Helpers\Format;
 use GuzzleHttp\Psr7\Request as Psr7Request;
 use Illuminate\Http\Request as HttpRequest;
+use App\Http\Controllers\Processes\CreditCardSummaries;
 
 class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBController
 {
@@ -69,7 +71,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		$columns[] = ['label' => 'Frecuencia', 'name' => 'frequency_id', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Semanal', '2|Mensual', '3|Bimestral', '4|Trimestral', '5|Cuatrimestral', '6|Semestral', '7|Anual'], 'default' => '-- Frecuencia --'];
 
 		$columns[] = ['label' => 'Formato de Detalle', 'name' => 'detail_format', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Período desde dd/mm hasta dd/mm', '2|Cuota anualizada (Cuota NN/TT)', '3|Rango mensual (MM AA - MM AA)'], 'default' => '-- Formato de detalle --'];
-		$columns[] = ['label' => 'Monto por operación', 'name' => 'amount', 'type' => 'money2', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
+		$columns[] = ['label' => 'Monto por operación', 'name' => 'amount', 'type' => 'money2', 'validation' => 'required|integer', 'width' => 'col-sm-10'];
 		$columns[] = ['label' => 'Primera ejecución', 'name' => 'first_execution', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10', 'value' => $now->format('Y-m-d'), 'help' => 'Si la fecha de primera ejecución es el día 1ro se tomará el mes completo'];
 
 		$columns[] = ['label' => 'Fecha Estimada', 'name' => 'estimated_based_on', 'type' => 'radio', 'width' => 'col-sm-10', 'dataenum' => '1|Basada en fecha de comienzo del período;2|Basada en fecha de fin del período', 'value' => '1'];
@@ -91,8 +93,8 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		$this->form[] = ['label' => 'Categoría', 'name' => 'category_id', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'datatable' => 'app_categories,category', 'datatable_where' => 'is_active=1', 'default' => '-- Categoría --'];
 		$this->form[] = ['label' => 'Concepto', 'name' => 'concept', 'type' => 'text', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10'];
 		$this->form[] = ['label' => 'Moneda', 'name' => 'currency', 'type' => 'radio', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'default' => '-- Moneda --'];
-		$this->form[] = ['label' => 'Monto real', 'name' => 'real_amount', 'type' => 'money2', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
-		$this->form[] = ['label' => 'Monto en un pago', 'name' => 'one_pay_amount', 'type' => 'money2', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
+		$this->form[] = ['label' => 'Monto real', 'name' => 'real_amount', 'type' => 'money2', 'validation' => 'required|integer', 'width' => 'col-sm-10'];
+		$this->form[] = ['label' => 'Monto en un pago', 'name' => 'one_pay_amount', 'type' => 'money2', 'validation' => 'required|integer', 'width' => 'col-sm-10'];
 		$this->form[] = ['label' => 'Cotización dolar', 'name' => 'dollar_value', 'type' => 'money2', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
 		$this->form[] = ['label' => 'Afecta capital?', 'name' => 'affect_capital', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
 		$this->form[] = ['label' => 'Es Extraordinario', 'name' => 'is_extraordinary', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
@@ -354,7 +356,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 	{
 		
 		if($this->compute_operations_flag) {
-			$query = DB::table('app_plans')
+			$plans = DB::table('app_plans')
 				->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
 				->join('app_entries', 'app_entries.id', '=', 'app_plans.entry_id')
 				->where([
@@ -363,11 +365,22 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 				])
 				->get();
 	
-			foreach ($query as $plan) {
+			foreach ($plans as $plan) {
+				//Get the accout
+				$account = \App\AppAccount::find( $plan->account_id );
+				if($account->type == 4) {
+					$CCSumary = new CreditCardSummaries($account);
+				}
+					
 				$operations = $this->compute_operations($plan);
 				//print_r($operations);
 				foreach ($operations as $operation) {
 					DB::table('app_operations')->insert($operation);
+					if($account->type == 4) {
+						$CPeriod = $CCSumary->getPeriodFromOperation($operation['estimated_date']);
+						$CCSumary->updatePeriod($CPeriod);
+					}
+
 				}
 			}
 		}
