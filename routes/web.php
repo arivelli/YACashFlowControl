@@ -38,5 +38,6 @@ Route::post('/admin/app_accounts/setLastUpdateAmount','AdminAppAccountsControlle
 Route::get('/admin/app_accounts_periods/operations/{id}','AdminAppAccountsPeriodsController@getOperationsByPeriod')->name('account_periods_getOperationsByPeriod');
 Route::get('/admin/app_accounts_periods/updatePeriod/{id}','AdminAppAccountsPeriodsController@updatePeriod')->name('account_periods_updatePeriod');
 
+Route::get('/admin/reports/balance/{year?}','AdminAppReportsController@balances')->name('reports_balances');
 
 
