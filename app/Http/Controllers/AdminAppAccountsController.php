@@ -98,7 +98,24 @@ class AdminAppAccountsController extends \arivelli\crudbooster\controllers\CBCon
 		| @showIf 	   = If condition when action show. Use field alias. e.g : [id] == 1
 		| 
 		*/
+		$prepared_params = str_replace('----', '[id]', http_build_query([
+			"filter_column" => [
+				"app_accounts_periods.account_id" => [
+					"type" => "=",
+					"value" => '----',
+				],
+				'app_accounts_periods.settlement_date' => [
+					"sorting"=>"asc"
+				]
+			]
+		] ));
+
 		$this->addaction = array();
+		$this->addaction[]=[
+			'label'=>'Períodos',
+			'url' => '/admin/app_accounts_periods?' . $prepared_params,
+			'color' => 'info'
+		];
 
 
 		/* 

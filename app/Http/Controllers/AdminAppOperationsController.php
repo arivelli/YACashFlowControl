@@ -1,20 +1,22 @@
 <?php namespace App\Http\Controllers;
 
 	use Session;
-	use Illuminate\Http\Request;
+	//use Illuminate\Http\Request;
+	use Illuminate\Support\Facades\Request;
 	use DB;
 	use CRUDBooster;
 	use DateTime;
 	use DatePeriod;
 	use DateInterval;
 	use App\Http\Controllers\ManageDollarValue;
+	use Illuminate\Foundation\Validation\ValidatesRequests;
 	use App\AppAccount;
 	use App\AppOperation;
 
 	class AdminAppOperationsController extends \arivelli\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
-
+			
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
 			$this->title_field = "id";
 			$this->limit = "20";
@@ -86,7 +88,7 @@
 			
 			$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|Sí;0|No'];
 			$this->form[] = ['label'=>'Fecha de Operación','name'=>'operation_date','type' => 'date', 'validation' => 'date_format:Y-m-d','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Monto de Operación','name'=>'operation_amount','type'=>'money2','validation'=>'integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Monto de Operación','name'=>'operation_amount','type'=>'money2','validation'=>'integer','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money2','validation'=>'integer|min:0','width'=>'col-sm-10'];
 			
 			$this->form[] = ['label'=>'Periodo cubierto','name'=>'settlement_date','type'=>'text','validation'=>'integer|min:0','width'=>'col-sm-10'];
@@ -185,7 +187,11 @@
 	        | @color = Default is none. You can use bootstrap success,info,warning,danger,primary.        
 	        | 
 	        */
-	        $this->table_row_color = array();     	          
+	        $this->table_row_color = array();
+			if(is_array(Request::get('table_row_color'))) {
+				$this->table_row_color = Request::get('table_row_color');
+			}
+			
 
 	        
 	        /*
@@ -195,9 +201,11 @@
 	        | @label, @count, @icon, @color 
 	        |
 	        */
-	        $this->index_statistic = array();
-
-
+			$this->index_statistic = array();
+			if(is_array(Request::get('index_statistic'))) {
+				$this->index_statistic = Request::get('index_statistic');
+			}
+			
 
 	        /*
 	        | ---------------------------------------------------------------------- 
@@ -219,7 +227,9 @@
 	        |
 	        */
 	        $this->pre_index_html = null;
-	        
+	        if(null !== Request::get('pre_index_html')) {
+				$this->pre_index_html = Request::get('pre_index_html');
+			}
 	        
 	        
 	        /*

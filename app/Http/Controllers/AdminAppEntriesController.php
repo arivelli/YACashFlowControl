@@ -46,7 +46,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		# START COLUMNS DO NOT REMOVE THIS LINE
 		$this->col = [];
 		$this->col[] = ["label" => "Fecha", "name" => "date"];
-		$this->col[] = ["label" => "Tipo", "name" => "entry_type", "callback_php" => '$this->get_entry_type($row->entry_type)'];
+		$this->col[] = ["label" => "Tipo", "name" => "entry_type", "callback_php" => '$this->get_entry_type($row->entry_type);'];
 		$this->col[] = ["label" => "Categoría", "name" => "category_id", "join" => "app_categories,category"];
 		$this->col[] = ["label" => "Área", "name" => "area_id", "join" => "app_areas,area"];
 		$this->col[] = ["label" => "Concepto", "name" => "concept"];

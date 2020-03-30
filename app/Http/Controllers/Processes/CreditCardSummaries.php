@@ -75,4 +75,15 @@ class CreditCardSummaries {
         ];
     }
 
+    public function getPeriodFromid($id){
+        $to = \App\AppAccountPeriod::find($id);
+        $from = \App\AppAccountPeriod::where([['account_id', '=', $to->account_id], ['settlement_date', '<', $to->settlement_date]])->orderby('settlement_date', 'DESC')->first();
+        return [
+            'from' => null !== $from ? $from->closed_date : '2000-01-01',
+            'to' => null !== $to ? $to->closed_date : '2100-12-31',
+            'settlement_date' => $to ? $to->settlement_date : 210012,
+            'estimated_date' => $to ? $to->estimated_date : '2100-12-31'
+        ];
+    }
+
 }

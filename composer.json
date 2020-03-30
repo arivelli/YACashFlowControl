@@ -10,19 +10,21 @@
     "require": {
         "php": ">=7.1.1",
         "arivelli/crudbooster": "^5.4",
+        "consoletvs/charts": "6.*",
         "doctrine/dbal": "^2.10",
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "5.8.*",
-        "spatie/laravel-backup": "^6.8"
+        "spatie/laravel-backup": "^6.8",
+        "xethron/migrations-generator": "^2.0"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.2",
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "^1",
         "phpunit/phpunit": "^5",
         "spatie/laravel-web-tinker": "^1.7",
         "symfony/css-selector": "3.1.*",
-        "symfony/dom-crawler": "3.1.*",
-        "xethron/migrations-generator": "^2.0"
+        "symfony/dom-crawler": "3.1.*"
     },
     "autoload": {
         "classmap": [

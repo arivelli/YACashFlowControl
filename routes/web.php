@@ -35,6 +35,8 @@ Route::get('/admin/dollarValue/getvalueof/{date?}','ManageDollarValue@get_value_
 
 Route::post('/admin/app_accounts/setLastUpdateAmount','AdminAppAccountsController@setLastUpdateAmount')->name('setLastUpdateAmount');
 
+Route::get('/admin/app_accounts_periods/operations/{id}','AdminAppAccountsPeriodsController@getOperationsByPeriod')->name('account_periods_getOperationsByPeriod');
+Route::get('/admin/app_accounts_periods/updatePeriod/{id}','AdminAppAccountsPeriodsController@updatePeriod')->name('account_periods_updatePeriod');
 
 
 

@@ -28,5 +28,16 @@ class Format {
 			$week_of_month++;
 		}
 		return $week_of_month;
-	}
+    }
+    static function settlement_date2date($st){
+        $year = substr($st,0,4);
+        $month = substr($st,4,2);
+        return new DateTime("{$year}-{$month}-01");
+    }
+    static function settlement_date2Period($st){
+        $year = substr($st,0,4);
+        $month = substr($st,4,2);
+        //return (new DateTime("{$year}-{$month}-01"))->format('d-m-Y');
+        return strtoupper(strftime('%B %Y', (new DateTime("{$year}-{$month}-01"))->format('U')));
+    }
 }
