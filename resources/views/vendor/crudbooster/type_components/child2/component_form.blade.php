@@ -1,4 +1,4 @@
-<div class='row' style="display:none;" id="child2_form">
+<div class='row' style="display:none;" id="child2_form{{$form['table']}}">
     <div class='col-sm-12'>
         <div class="panel panel-default">
             <div class="panel-heading"><i class="fa fa-pencil-square-o"></i> {{trans("crudbooster.text_form")}}</div>
@@ -505,7 +505,7 @@
                                     $('#{{$name.$c["name"]}}').val(p.find(".{{$c['name']}} input").val()).trigger("keyup");
                                 @endif
                             @endforeach
-                            $('#child2_form').show();
+                            $('#child2_form{{$form['table']}}').show();
                         }
 
                         function validateForm{{$name}}() {
@@ -583,7 +583,7 @@
                             }
                             $('#btn-add-table-{{$name}}').val('{{trans("crudbooster.button_add_to_table")}}');
                             $('#btn-reset-form-{{$name}}').click();
-                            $('#child2_form').hide();
+                            $('#child2_form{{$form['table']}}').hide();
                         }
                     </script>
                 @endpush
@@ -595,7 +595,7 @@
                        value='{{trans("crudbooster.button_add_to_table")}}'/>
                 <input type='button' id='btn-preview-{{$name}}' class='btn btn-primary' onclick="showModalPreviewOperation()"
                        value='Previsualizar'/>
-                    <input type='button' class='btn btn-default' id="btn-reset-form-{{$name}}" onclick="$('#child2_form').hide();"
+                    <input type='button' class='btn btn-default' id="btn-hide-form-{{$name}}" onclick="$('#child2_form{{$form['table']}}').hide();"
                        value='Cancelar'/>
             </div>
         </div>

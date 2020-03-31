@@ -22,8 +22,10 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 
 	public function cbInit()
 	{
-		setlocale(LC_ALL, 'es_AR.utf8');
-
+		//setlocale(LC_ALL, 'es_AR.utf8');
+		//echo CRUDBooster::getCurrentMethod();
+		//'postEditSave' 'postAddSave'
+		//die();
 		# START CONFIGURATION DO NOT REMOVE THIS LINE
 		$this->title_field = "id";
 		$this->limit = "20";
@@ -64,26 +66,36 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 			->orderby('currency')
 			->where('is_active', '=', '1');
 		$now = new Datetime();
-		$columns[] = ['label' => 'Moneda', 'name' => 'currency_plan', 'type' => 'radio', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'value' => '$'];
-		$columns[] = ['label' => 'Tipo', 'name' => 'account_type', 'type' => 'radio', 'width' => 'col-sm-10', 'dataenum' => '1|Caja de ahorro;2|Cuenta corriente;3|Efectivo;4|Tarjeta;5|Pasivo', 'value' => '3'];
-		$columns[] = ['label' => 'Cuenta', 'name' => 'account_id', 'type' => 'select3', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'queryBuilder' => $queryBuilder, 'default' => '-- Cuenta --', 'value' => 1];
-		$columns[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['-1|Recurrente', '1|Pago único', '2|2 Cuotas', '3|3 Cuotas', '4|4 Cuotas', '5|5 Cuotas', '6|6 Cuotas', '7|7 Cuotas', '8|8 Cuotas', '9|9 Cuotas', '10|10 Cuotas', '11|11 Cuotas', '12|12 Cuotas', '18|18 Cuotas', '24|24 Cuotas', '36|36 Cuotas', '60|60 Cuotas', '120|120 Cuotas', '240|240 Cuotas'], 'default' => '-- Plan --', 'value' => 1];
-		$columns[] = ['label' => 'Frecuencia', 'name' => 'frequency_id', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Semanal', '2|Mensual', '3|Bimestral', '4|Trimestral', '5|Cuatrimestral', '6|Semestral', '7|Anual'], 'default' => '-- Frecuencia --'];
 
-		$columns[] = ['label' => 'Formato de Detalle', 'name' => 'detail_format', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Período desde dd/mm hasta dd/mm', '2|Cuota anualizada (Cuota NN/TT)', '3|Rango mensual (MM AA - MM AA)'], 'default' => '-- Formato de detalle --'];
-		$columns[] = ['label' => 'Monto por operación', 'name' => 'amount', 'type' => 'money2', 'validation' => 'required|integer', 'width' => 'col-sm-10'];
-		$columns[] = ['label' => 'Primera ejecución', 'name' => 'first_execution', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10', 'value' => $now->format('Y-m-d'), 'help' => 'Si la fecha de primera ejecución es el día 1ro se tomará el mes completo'];
+		//Prepare columns to plans child
+		$plans[] = ['label' => 'Moneda', 'name' => 'currency_plan', 'type' => 'radio', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'value' => '$'];
+		$plans[] = ['label' => 'Tipo', 'name' => 'account_type', 'type' => 'radio', 'width' => 'col-sm-10', 'dataenum' => '1|Caja de ahorro;2|Cuenta corriente;3|Efectivo;4|Tarjeta;5|Pasivo', 'value' => '3'];
+		$plans[] = ['label' => 'Cuenta', 'name' => 'account_id', 'type' => 'select3', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'queryBuilder' => $queryBuilder, 'default' => '-- Cuenta --', 'value' => 1];
+		$plans[] = ['label' => 'Plan', 'name' => 'plan', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['-1|Recurrente', '1|Pago único', '2|2 Cuotas', '3|3 Cuotas', '4|4 Cuotas', '5|5 Cuotas', '6|6 Cuotas', '7|7 Cuotas', '8|8 Cuotas', '9|9 Cuotas', '10|10 Cuotas', '11|11 Cuotas', '12|12 Cuotas', '18|18 Cuotas', '24|24 Cuotas', '36|36 Cuotas', '60|60 Cuotas', '120|120 Cuotas', '240|240 Cuotas'], 'default' => '-- Plan --', 'value' => 1];
+		$plans[] = ['label' => 'Frecuencia', 'name' => 'frequency_id', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Semanal', '2|Mensual', '3|Bimestral', '4|Trimestral', '5|Cuatrimestral', '6|Semestral', '7|Anual'], 'default' => '-- Frecuencia --'];
 
-		$columns[] = ['label' => 'Fecha Estimada', 'name' => 'estimated_based_on', 'type' => 'radio', 'width' => 'col-sm-10', 'dataenum' => '1|Basada en fecha de comienzo del período;2|Basada en fecha de fin del período', 'value' => '1'];
-		$columns[] = ['label' => 'Desplazamiento', 'name' => 'estimated_offset', 'type' => 'text', 'validation' => '', 'width' => 'col-sm-10', 'help' => 'ver DateInterval https://www.php.net/manual/es/class.dateinterval.php Algunos ejemplos sencillos: -|P1Y2M5D|1 es 1 año 2 meses y 5 días hábiles antes', 'value' => '-|P5D|1'];
+		$plans[] = ['label' => 'Formato de Detalle', 'name' => 'detail_format', 'type' => 'select', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => ['1|Período desde dd/mm hasta dd/mm', '2|Cuota anualizada (Cuota NN/TT)', '3|Rango mensual (MM AA - MM AA)'], 'default' => '-- Formato de detalle --'];
+		$plans[] = ['label' => 'Monto por operación', 'name' => 'amount', 'type' => 'money2', 'validation' => 'required|integer', 'width' => 'col-sm-10'];
+		$plans[] = ['label' => 'Primera ejecución', 'name' => 'first_execution', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10', 'value' => $now->format('Y-m-d')];
 
-		$columns[] = ['label' => 'Recordatorio', 'name' => 'notification_to', 'type' => 'checkbox', 'width' => 'col-sm-10', 'dataenum' => '1|Administradores;2|Dueño;3|Cliente'];
-		$columns[] = ['label' => 'Anticipación', 'name' => 'notification_offset', 'type' => 'text', 'width' => 'col-sm-10', 'help' => 'ver DateInterval https://www.php.net/manual/es/class.dateinterval.php'];
+		$plans[] = ['label' => 'Fecha Estimada', 'name' => 'estimated_based_on', 'type' => 'radio', 'width' => 'col-sm-10', 'dataenum' => '1|Basada en fecha de comienzo del período;2|Basada en fecha de fin del período', 'value' => '1'];
+		$plans[] = ['label' => 'Desplazamiento', 'name' => 'estimated_offset', 'type' => 'text', 'validation' => '', 'width' => 'col-sm-10', 'help' => 'ver DateInterval https://www.php.net/manual/es/class.dateinterval.php Algunos ejemplos sencillos: -|P1Y2M5D|1 es 1 año 2 meses y 5 días hábiles antes', 'value' => '-|P5D|1'];
 
-		$columns[] = ['label' => 'Completa?', 'name' => 'is_completed', 'type' => 'radio', 'validation' => '', 'disabled'=>true, 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 1];
-		$columns[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
+		$plans[] = ['label' => 'Recordatorio', 'name' => 'notification_to', 'type' => 'checkbox', 'width' => 'col-sm-10', 'dataenum' => '1|Administradores;2|Dueño;3|Cliente'];
+		$plans[] = ['label' => 'Anticipación', 'name' => 'notification_offset', 'type' => 'text', 'width' => 'col-sm-10', 'help' => 'ver DateInterval https://www.php.net/manual/es/class.dateinterval.php'];
 
-		$columns[] = ['label' => 'Procesar operaciones?', 'name' => 'compute_operations_flag', 'type' => 'radio', 'ethereal'=>true,  'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 0];
+		$plans[] = ['label' => 'Completa?', 'name' => 'is_completed', 'type' => 'radio', 'validation' => '', 'disabled'=>true, 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 1];
+		$plans[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
+
+		$plans[] = ['label' => 'Procesar operaciones?', 'name' => 'compute_operations_flag', 'type' => 'radio', 'ethereal'=>true,  'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 0];
+
+		//Prepare columns to operations child
+		$operations[] = ['label' => 'Cuenta', 'name' => 'account_id', 'type' => 'select3', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'queryBuilder' => $queryBuilder, 'default' => '-- Cuenta --', 'value' => 1];
+		$operations[] = ['label' => 'Fecha estimada', 'name' => 'estimated_date', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10', 'value' => $now->format('Y-m-d')];
+		$operations[] = ['label' => 'Monto estimado', 'name' => 'estimated_amount', 'type' => 'money2', 'validation' => 'required|integer', 'width' => 'col-sm-10'];
+		$operations[] = ['label' => 'Hecho?', 'name' => 'is_done', 'type' => 'radio', 'validation' => '', 'disabled'=>true, 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 1];
+		$operations[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
+
 
 		# START FORM DO NOT REMOVE THIS LINE
 		$this->form = [];
@@ -100,9 +112,11 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		$this->form[] = ['label' => 'Es Extraordinario', 'name' => 'is_extraordinary', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
 		$this->form[] = ['label' => 'Hecho?', 'name' => 'is_done', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
 		$this->form[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
-		$this->form[] = ['label' => 'Planes', 'name' => 'plan', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_plans', 'foreign_key' => 'entry_id', 'columns' => $columns];
+		
 		# END FORM DO NOT REMOVE THIS LINE
-
+		$this->form[] = ['label' => 'Planes', 'name' => 'plan', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_plans', 'foreign_key' => 'entry_id', 'columns' => $plans];
+		//$this->form[] = ['label' => 'Operaciones', 'name' => 'operations', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_operations', 'foreign_key' => 'id', 'columns' => $operations];
+		
 
 		# OLD START FORM
 		//$this->form = [];

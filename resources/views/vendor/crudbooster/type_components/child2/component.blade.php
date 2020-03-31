@@ -16,7 +16,7 @@ $name = str_slug($form['label'], '');
             <div id='panel-form-{{$name}}' class="panel panel-default">
                 <div class="panel-heading">
                     <i class='fa fa-bars'></i> {{$form['label']}} 
-                    <input type="button" name="add" value="Añadir" class="btn btn-success" onclick="resetForm{{$name}}();$('#child2_form').show()">
+                <input type="button" name="add" value="Añadir" class="btn btn-success" onclick="resetForm{{$name}}();$('#child2_form{{$form['table']}}').show()">
                 </div>
                 <div class="panel-body">
 

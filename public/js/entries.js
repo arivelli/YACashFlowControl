@@ -65,26 +65,41 @@ function filterAccounts(currency, type) {
 function adjustForm() {
     
     //Show/Hide area/category depending on entryType
-    switch($('#entry_type').val())  {
+    switch ($('#entry_type').val()) {
+        //Ingreso
         case '1':
-            $($('#area_id')[0].parentNode.parentNode).show();
-            $($('#category_id')[0].parentNode.parentNode).hide();
+            $('#form-group-area_id').show();
+            $('#form-group-category_id').hide();
+            $('#form-group-affect_capital').show();
+            $('#form-group-is_extraordinary').show();
+            $('#form-group-planes').show();
+            $('#form-group-operaciones').hide();
             break;
+        //Egreso
         case '2':
+        //Pasivo
         case '3':
-            $($('#area_id')[0].parentNode.parentNode).show();
+            $('#form-group-area_id').show();
             //Show Categories only for area = Personal
             if($('#area_id').val() === '6' || $('#area_id').val() === '10'){
-                $($('#category_id')[0].parentNode.parentNode).show();
+                $('#form-group-category_id').show();
             } else {
-                $($('#category_id')[0].parentNode.parentNode).hide();
+                $('#form-group-category_id').hide();
             }
+            $('#form-group-affect_capital').show();
+            $('#form-group-is_extraordinary').show();
+            $('#form-group-planes').show();
+            $('#form-group-operaciones').hide();
             break;
-        //Hide both on Pasivo, Movimiento and Ajuste
+        //Hide both on Movimiento and Ajuste
         case '4':
         case '5':
-            $($('#area_id')[0].parentNode.parentNode).hide();
-            $($('#category_id')[0].parentNode.parentNode).hide();
+            $('#form-group-area_id').show();
+            $('#form-group-category_id').hide();
+            $('#form-group-affect_capital').hide();
+            $('#form-group-is_extraordinary').hide();
+            $('#form-group-planes').hide();
+            $('#form-group-operaciones').show();
             break;
     }
 
@@ -149,9 +164,9 @@ function adjustForm() {
     
     //Show/Hide notification fields depending on planesnotification_to 
     if ($('.planesnotification_to').serializeArray().length > 0) {
-        $($('#planesnotification_offset')[0].parentNode.parentNode).show()
+        $($('#planesnotification_offset').parents('div.form-group')[0]).show()
     } else {
-        $($('#planesnotification_offset')[0].parentNode.parentNode).hide()
+        $($('#planesnotification_offset').parents('div.form-group')[0]).hide()
     }
 }
 

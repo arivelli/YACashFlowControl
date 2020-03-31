@@ -102,6 +102,18 @@
                     });
                 </script>
                 @endpush
+
+                <div class="form-group">
+                    <div class="col-sm-12">
+                    <label class="control-label col-sm-3">Notas
+                    </label>
+                    <div class="input-group col-sm-9">
+                        <input type="text" title="{{$form['label']}}" class="form-control cancel-operation"
+                        name="cancel-operation_notes" id="cancel-operation_notes" value="">
+                    </div>
+                    </div>
+                </div>
+
                 <input type="hidden" id="cancel-operation_operation_id" value="">
                 <button class='btn btn-sm btn-default' class="close" data-dismiss="modal" >Cancelar</button>
                 <button class='btn btn-sm btn-success' onclick="executeOperation( $('#cancel-operation_operation_id').val() ); return false">Concretar</button>

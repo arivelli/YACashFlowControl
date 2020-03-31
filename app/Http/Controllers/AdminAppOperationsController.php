@@ -492,13 +492,14 @@
 		 * 
 		 * 
 		 */
-		public function execute_operation($id, Request $request){
-
+		public function execute_operation($id, \Illuminate\Http\Request $request) {
+			
 			$validatedData = $request->validate([
 				'account_id' => 'required|integer',
                 'operation_date' => 'required',
-				'operation_amount' => 'required|integer',
+				'operation_amount' => '',
 				'dollar_value' => 'required|integer',
+				'notes' => ''
             ]);
 
             /*if ($validator->fails()) {
@@ -507,19 +508,18 @@
                             ->withInput();
 			}*/
 			
-			//print_r($validatedData);
-			//DB::enableQueryLog();
+			
 			$operation = \App\AppOperation::find($id);
 			
 			$operation->account_id = $validatedData['account_id'];
 			$operation->operation_date = $validatedData['operation_date'];
 			$operation_date_parts = explode('-', $validatedData['operation_date']);
 			$operation->settlement_date = $operation_date_parts[0] . $operation_date_parts[1];
-			$operation->operation_amount = $validatedData['operation_amount'];
+			$operation->operation_amount = (null !== $validatedData['operation_amount']) ? $validatedData['operation_amount'] : 0 ;
 			$operation->dollar_value = $validatedData['dollar_value'];
-			$operation->in_dollars = round($validatedData['operation_amount'] / $validatedData['dollar_value'] * 100);
+			$operation->in_dollars = (null !== $validatedData['operation_amount']) ? round($validatedData['operation_amount'] / $validatedData['dollar_value'] * 100) : 0;
 			$operation->is_done = 1;
-
+			$operation->notes = $validatedData['notes'] ? $validatedData['notes'] : '';
 			$operation->save();
 
 			//dd(DB::getQueryLog());
