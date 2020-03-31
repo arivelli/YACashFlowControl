@@ -22,10 +22,8 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 
 	public function cbInit()
 	{
-		//setlocale(LC_ALL, 'es_AR.utf8');
-		//echo CRUDBooster::getCurrentMethod();
-		//'postEditSave' 'postAddSave'
-		//die();
+		setlocale(LC_ALL, 'es_AR.utf8');
+		
 		# START CONFIGURATION DO NOT REMOVE THIS LINE
 		$this->title_field = "id";
 		$this->limit = "20";
@@ -114,7 +112,14 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		$this->form[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
 		
 		# END FORM DO NOT REMOVE THIS LINE
-		$this->form[] = ['label' => 'Planes', 'name' => 'plan', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_plans', 'foreign_key' => 'entry_id', 'columns' => $plans];
+		//echo CRUDBooster::getCurrentMethod();
+		//'postEditSave' 'postAddSave'
+		//die();
+		/*
+		if(CRUDBooster::getCurrentMethod() != 'postEditSave' && CRUDBooster::getCurrentMethod() != 'postAddSave' && $request->post('entry_type') != '4' ) {
+			$this->form[] = ['label' => 'Planes', 'name' => 'plan', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_plans', 'foreign_key' => 'entry_id', 'columns' => $plans];
+		}
+		*/
 		//$this->form[] = ['label' => 'Operaciones', 'name' => 'operations', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_operations', 'foreign_key' => 'id', 'columns' => $operations];
 		
 
