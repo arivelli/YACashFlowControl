@@ -73,7 +73,6 @@ function adjustForm() {
             $('#form-group-affect_capital').show();
             $('#form-group-is_extraordinary').show();
             $('#form-group-planes').show();
-            $('#form-group-operaciones').hide();
             break;
         //Egreso
         case '2':
@@ -89,7 +88,6 @@ function adjustForm() {
             $('#form-group-affect_capital').show();
             $('#form-group-is_extraordinary').show();
             $('#form-group-planes').show();
-            $('#form-group-operaciones').hide();
             break;
         //Hide both on Movimiento and Ajuste
         case '4':
@@ -99,7 +97,6 @@ function adjustForm() {
             $('#form-group-affect_capital').hide();
             $('#form-group-is_extraordinary').hide();
             $('#form-group-planes').hide();
-            $('#form-group-operaciones').show();
             break;
     }
 

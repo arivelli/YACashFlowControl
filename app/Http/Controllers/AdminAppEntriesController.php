@@ -85,42 +85,56 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		$plans[] = ['label' => 'Completa?', 'name' => 'is_completed', 'type' => 'radio', 'validation' => '', 'disabled'=>true, 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 1];
 		$plans[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
 
-		$plans[] = ['label' => 'Procesar operaciones?', 'name' => 'compute_operations_flag', 'type' => 'radio', 'ethereal'=>true,  'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 0];
+		$plans[] = ['label' => 'Procesar operaciones?', 'name' => 'is_proccesed', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '0|si;1|no', 'value' => 0];
 
 		//Prepare columns to operations child
-		$operations[] = ['label' => 'Cuenta', 'name' => 'account_id', 'type' => 'select3', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'queryBuilder' => $queryBuilder, 'default' => '-- Cuenta --', 'value' => 1];
-		$operations[] = ['label' => 'Fecha estimada', 'name' => 'estimated_date', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10', 'value' => $now->format('Y-m-d')];
-		$operations[] = ['label' => 'Monto estimado', 'name' => 'estimated_amount', 'type' => 'money2', 'validation' => 'required|integer', 'width' => 'col-sm-10'];
-		$operations[] = ['label' => 'Hecho?', 'name' => 'is_done', 'type' => 'radio', 'validation' => '', 'disabled'=>true, 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 1];
-		$operations[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
-
+		$queryBuilderAccount = DB::table('app_accounts')
+		->select('id', 'name AS title', 'type', 'currency')
+		->orderby('type')
+		->orderby('currency')
+		->where('is_active', '=', '1');
+		$operations[] = ['label'=>'Moneda','name'=>'currency','type'=>'hidden','validation'=>'required'];
+		$operations[] = ['label'=>'Cuenta', 'name' => 'account_id', 'type' => 'select3', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'queryBuilder' => $queryBuilderAccount, 'default' => '-- Cuenta --', 'value' => 1];
+		$operations[] = ['label'=>'Detalle','name'=>'detail','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+		$operations[] = ['label'=>'Fecha Estimada','name'=>'estimated_date','type' => 'date', 'validation' => 'required|date_format:Y-m-d','width'=>'col-sm-10'];
+		$operations[] = ['label'=>'Monto Estimado','name'=>'estimated_amount','type'=>'money2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+		$operations[] = ['label'=>'Fecha de Operación','name'=>'operation_date','type' => 'date', 'validation' => 'date_format:Y-m-d','width'=>'col-sm-10'];
+		$operations[] = ['label'=>'Monto de Operación','name'=>'operation_amount','type'=>'money2','validation'=>'integer','width'=>'col-sm-10'];
+		$operations[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money2','validation'=>'integer|min:0','width'=>'col-sm-10'];
+		$operations[] = ['label'=>'Periodo cubierto','name'=>'settlement_date','type'=>'text','validation'=>'integer|min:0','width'=>'col-sm-10'];
+		$operations[] = ['label'=>'Notas','name'=>'notes','type'=>'text','width'=>'col-sm-10'];
+		$operations[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|Sí;0|No'];
 
 		# START FORM DO NOT REMOVE THIS LINE
 		$this->form = [];
-		$this->form[] = ['label' => 'Fecha', 'name' => 'date', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10'];
-		$this->form[] = ['label' => 'Tipo', 'name' => 'entry_type', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'dataenum' => '1|Ingreso;2|Egreso;3|Pasivo (y compra con tarjeta);4|Movimiento;5|Ajuste', 'default' => '-- Tipo --'];
-		$this->form[] = ['label' => 'Área', 'name' => 'area_id', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'datatable' => 'app_areas,area', 'datatable_where' => 'is_active=1', 'default' => '-- Área --'];
-		$this->form[] = ['label' => 'Categoría', 'name' => 'category_id', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'datatable' => 'app_categories,category', 'datatable_where' => 'is_active=1', 'default' => '-- Categoría --'];
-		$this->form[] = ['label' => 'Concepto', 'name' => 'concept', 'type' => 'text', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10'];
-		$this->form[] = ['label' => 'Moneda', 'name' => 'currency', 'type' => 'radio', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'default' => '-- Moneda --'];
-		$this->form[] = ['label' => 'Monto real', 'name' => 'real_amount', 'type' => 'money2', 'validation' => 'required|integer', 'width' => 'col-sm-10'];
-		$this->form[] = ['label' => 'Monto en un pago', 'name' => 'one_pay_amount', 'type' => 'money2', 'validation' => 'required|integer', 'width' => 'col-sm-10'];
-		$this->form[] = ['label' => 'Cotización dolar', 'name' => 'dollar_value', 'type' => 'money2', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
-		$this->form[] = ['label' => 'Afecta capital?', 'name' => 'affect_capital', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
-		$this->form[] = ['label' => 'Es Extraordinario', 'name' => 'is_extraordinary', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
-		$this->form[] = ['label' => 'Hecho?', 'name' => 'is_done', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
-		$this->form[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
+		$this->form[0] = ['label' => 'Fecha', 'name' => 'date', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10'];
+		$this->form[1] = ['label' => 'Tipo', 'name' => 'entry_type', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'dataenum' => '1|Ingreso;2|Egreso;3|Pasivo (y compra con tarjeta);4|Movimiento;5|Ajuste', 'default' => '-- Tipo --'];
+		$this->form[2] = ['label' => 'Área', 'name' => 'area_id', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'datatable' => 'app_areas,area', 'datatable_where' => 'is_active=1', 'default' => '-- Área --'];
+		$this->form[3] = ['label' => 'Categoría', 'name' => 'category_id', 'type' => 'select', 'validation' => 'required', 'width' => 'col-sm-10', 'datatable' => 'app_categories,category', 'datatable_where' => 'is_active=1', 'default' => '-- Categoría --'];
+		$this->form[4] = ['label' => 'Concepto', 'name' => 'concept', 'type' => 'text', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10'];
+		$this->form[5] = ['label' => 'Moneda', 'name' => 'currency', 'type' => 'radio', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'default' => '-- Moneda --'];
+		$this->form[6] = ['label' => 'Monto real', 'name' => 'real_amount', 'type' => 'money2', 'validation' => 'required|integer', 'width' => 'col-sm-10'];
+		$this->form[7] = ['label' => 'Monto en un pago', 'name' => 'one_pay_amount', 'type' => 'money2', 'validation' => 'required|integer', 'width' => 'col-sm-10'];
+		$this->form[8] = ['label' => 'Cotización dolar', 'name' => 'dollar_value', 'type' => 'money2', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
+		$this->form[9] = ['label' => 'Afecta capital?', 'name' => 'affect_capital', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
+		$this->form[10] = ['label' => 'Es Extraordinario', 'name' => 'is_extraordinary', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
+		$this->form[11] = ['label' => 'Hecho?', 'name' => 'is_done', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
+		$this->form[12] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
+		$this->form[13] = ['label' => 'Planes', 'name' => 'plan', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_plans', 'foreign_key' => 'entry_id', 'columns' => $plans];
+		$this->form[14] = ['label' => 'Operaciones', 'name' => 'operations', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_operations', 'foreign_key' => 'entry_id', 'columns' => $operations];
 		
 		# END FORM DO NOT REMOVE THIS LINE
-		//echo CRUDBooster::getCurrentMethod();
-		//'postEditSave' 'postAddSave'
-		//die();
-		/*
-		if(CRUDBooster::getCurrentMethod() != 'postEditSave' && CRUDBooster::getCurrentMethod() != 'postAddSave' && $request->post('entry_type') != '4' ) {
-			$this->form[] = ['label' => 'Planes', 'name' => 'plan', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_plans', 'foreign_key' => 'entry_id', 'columns' => $plans];
+		//$this->form[14] = ['label' => 'Operaciones', 'name' => 'operations', 'type' => 'submodule', 'width' => 'col-sm-10', 'controller' => 'AdminAppOperationsController', 'foreign_key' => 'entry_id'];
+//		$this->form[] = array('label'=>'Operaciones','controller'=>'AdminAppOperationsController', 'foreign_key'=>'entry_id');
+		
+
+
+		$entry_type = \Illuminate\Support\Facades\Request::post('entry_type');
+		if(CRUDBooster::getCurrentMethod() == 'postEditSave' || CRUDBooster::getCurrentMethod() == 'postAddSave' ) {
+			if($entry_type  > '3') {
+				unset($this->form[13]);
+			}
 		}
-		*/
-		//$this->form[] = ['label' => 'Operaciones', 'name' => 'operations', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_operations', 'foreign_key' => 'id', 'columns' => $operations];
 		
 
 		# OLD START FORM
@@ -154,7 +168,14 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 
 
 		$this->sub_module = array();
-
+		$this->sub_module[] = [
+			'label'=>'Operaciones',
+			'path'=>'app_operations',
+			'parent_columns'=>'concept,entry_type,area_id,category_id',
+			'parent_columns_alias' => 'Entrada,Tipo de entrada,Area,Categoría',
+			'foreign_key'=>'entry_id',
+			'button_color'=>'success',
+			'button_icon'=>'fa fa-bars'];
 
 		/* 
 	        | ---------------------------------------------------------------------- 
@@ -358,55 +379,51 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 
 	public function hook_before_add_child($postdata, &$childPostdata)
 	{
-		
-		if(null !== $childPostdata[0]){
-			$childPostdata = $childPostdata[0];
+		for ($i = 0; $i<count($childPostdata); $i++){
+			unset($childPostdata[$i]['notification_to']);
 		}
-		$this->compute_operations_flag = $childPostdata['compute_operations_flag'];
-		unset($childPostdata['compute_operations_flag']);
-		unset($childPostdata['notification_to']);
 	}
 
 	public function hook_before_edit_child($postdata, &$childPostdata) {
 		$this->hook_before_add_child($postdata, $childPostdata);
 	}
 
-	public function hook_after_add_child($id, $childId)
+	public function hook_after_add_child($id, array $childrenIds)
 	{
 		
-		if($this->compute_operations_flag) {
-			$plans = DB::table('app_plans')
-				->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
-				->join('app_entries', 'app_entries.id', '=', 'app_plans.entry_id')
-				->where([
-					['app_entries.id', '=', $id],
-					['app_plans.is_proccesed', '=', 0]
-				])
-				->get();
-	
-			foreach ($plans as $plan) {
-				//Get the accout
-				$account = \App\AppAccount::find( $plan->account_id );
-				if($account->type == 4) {
-					$CCSumary = new CreditCardSummaries($account);
-				}
-					
-				$operations = $this->compute_operations($plan);
-				//print_r($operations);
-				foreach ($operations as $operation) {
-					DB::table('app_operations')->insert($operation);
-					if($account->type == 4) {
-						$CPeriod = $CCSumary->getPeriodFromOperation($operation['estimated_date']);
-						$CCSumary->updatePeriod($CPeriod);
-					}
+		
+		$plans = DB::table('app_plans')
+			->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
+			->join('app_entries', 'app_entries.id', '=', 'app_plans.entry_id')
+			->where([
+				['app_entries.id', '=', $id],
+				['app_plans.is_proccesed', '=', 0],
+			])
+			->get();
 
+		foreach ($plans as $plan) {
+			//Get the accout
+			$account = \App\AppAccount::find( $plan->account_id );
+			if($account->type == 4 || $account->type == 5) {
+				$CCSumary = new CreditCardSummaries($account);
+			}
+				
+			$operations = $this->compute_operations($plan);
+			//print_r($operations);
+			foreach ($operations as $operation) {
+				DB::table('app_operations')->insert($operation);
+				if($account->type == 4 || $account->type == 5) {
+					$CPeriod = $CCSumary->getPeriodFromOperation($operation['estimated_date']);
+					$CCSumary->updatePeriod($CPeriod);
 				}
 			}
+			\App\AppPlan::find($plan->plan_id)->update(['is_proccesed'=>1]);
 		}
+		
 	}
 
-	public function hook_after_edit_child($id, $childId) {
-		$this->hook_after_add_child($id, $childId);
+	public function hook_after_edit_child($id, array $childrenIds) {
+		$this->hook_after_add_child($id, $childrenIds);
 	}
 	/* 
 	    | ---------------------------------------------------------------------- 
