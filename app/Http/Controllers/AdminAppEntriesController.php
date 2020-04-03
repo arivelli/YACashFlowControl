@@ -15,6 +15,7 @@ use App\Helpers\Format;
 use GuzzleHttp\Psr7\Request as Psr7Request;
 use Illuminate\Http\Request as HttpRequest;
 use App\Http\Controllers\Processes\CreditCardSummaries;
+use App\Http\Controllers\Processes\PassiveSummaries;
 
 class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBController
 {
@@ -404,18 +405,25 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		foreach ($plans as $plan) {
 			//Get the accout
 			$account = \App\AppAccount::find( $plan->account_id );
-			if($account->type == 4 || $account->type == 5) {
-				$CCSumary = new CreditCardSummaries($account);
+			if($account->type == 4 ) {
+				$CCSummary = new CreditCardSummaries($account);
+			} else if($account->type == 5){
+				$PassiveSummary = new PassiveSummaries($account);
 			}
 				
 			$operations = $this->compute_operations($plan);
 			//print_r($operations);
 			foreach ($operations as $operation) {
-				DB::table('app_operations')->insert($operation);
-				if($account->type == 4 || $account->type == 5) {
-					$CPeriod = $CCSumary->getPeriodFromOperation($operation['estimated_date']);
-					$CCSumary->updatePeriod($CPeriod);
+				//DB::table('app_operations')->insert($operation);
+				$id = \App\AppOperation::insertGetId($operation);
+				if($account->type == 4 ) {
+					$CPeriod = $CCSummary->getPeriodFromOperation($operation['estimated_date']);
+					$CCSummary->updatePeriod($CPeriod);
+				} else if($account->type == 5){
+					$op = \App\AppOperation::find($id);
+					$PassiveSummary->updatePeriod($op);
 				}
+
 			}
 			\App\AppPlan::find($plan->plan_id)->update(['is_proccesed'=>1]);
 		}

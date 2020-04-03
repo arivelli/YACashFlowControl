@@ -42,7 +42,7 @@ $(function () {
 })
 
 function showHideEntries() {
-    if ($('#type').val() === "4") {
+    if ($('#type').val() === "4" || $('#type').val() === "5" ) {
         $($('#entry_id')[0].parentNode.parentNode).show();
         $($('#plan_id')[0].parentNode.parentNode).show();
     } else { 
