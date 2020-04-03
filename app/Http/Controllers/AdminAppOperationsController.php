@@ -35,12 +35,17 @@
 			$this->button_export = false;
 			$this->table = "app_operations";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
-
+			$this->frequencies = [
+				1=>'Semanal', 2=>'Mensual', 3=>'Bimestral', 4=>'Trimestral', 5=>'Cuatrimestral', 6=>'Semestral', 7=>'Anual'
+			];
+			$this->plans = [
+				-1=>'Recurrente', 1=>'Pago único', 2=>'2 Cuotas', 3=>'3 Cuotas', 4=>'4 Cuotas', 5=>'5 Cuotas', 6=>'6 Cuotas', 7=>'7 Cuotas', 8=>'8 Cuotas', 9=>'9 Cuotas', 10=>'10 Cuotas', 11=>'11 Cuotas', 12=>'12 Cuotas', 18=>'18 Cuotas', 24=>'24 Cuotas', 36=>'36 Cuotas', 60=>'60 Cuotas', 120=>'120 Cuotas', 240=>'240 Cuotas'
+			];
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
 			
-			$this->col[] = ["label"=>"Entrada","name"=>"entry_id","join"=>"app_entries,concept"];
-			$this->col[] = ["label"=>"Plan","name"=>"plan_id","join"=>"app_plans,plan"];
+			$this->col[] = ["label"=>"Entrada","name"=>"entry_id","join"=>"app_entries,concept", "callback_php"=> '\'<a href="/admin/app_entries/edit/\'.$row->entry_id.\'">\'.$row->app_entries_concept.\'</a>\''];
+			$this->col[] = ["label"=>"Plan","name"=>"plan_id","join"=>"app_plans,plan", 'callback_php'=> ' ($row->app_plans_plan)? $this->plans[$row->app_plans_plan] . " (" . $this->frequencies[$row->app_plans_frequency_id] . ")" : "";'];
 
 			$this->col[] = ["label"=>"Fecha Estimada","name"=>"estimated_date"];
 			$this->col[] = ["label"=>"Fecha Operación","name"=>"operation_date"];
@@ -85,14 +90,13 @@
 			$this->form[] = ['label'=>'Detalle','name'=>'detail','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Fecha Estimada','name'=>'estimated_date','type' => 'date', 'validation' => 'required|date_format:Y-m-d','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Monto Estimado','name'=>'estimated_amount','type'=>'money2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-			
-			$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|Sí;0|No'];
 			$this->form[] = ['label'=>'Fecha de Operación','name'=>'operation_date','type' => 'date', 'validation' => 'date_format:Y-m-d','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Monto de Operación','name'=>'operation_amount','type'=>'money2','validation'=>'integer','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money2','validation'=>'integer|min:0','width'=>'col-sm-10'];
 			
 			$this->form[] = ['label'=>'Periodo cubierto','name'=>'settlement_date','type'=>'text','validation'=>'integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Notas','name'=>'notes','type'=>'text','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|Sí;0|No'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
@@ -126,7 +130,9 @@
 	        */
 	        $this->sub_module = array();
 
-
+			if(Request::get('index_return')) {
+				$this->index_return = Request::get('index_return');
+			}
 	        /* 
 	        | ---------------------------------------------------------------------- 
 	        | Add More Action Button / Menu

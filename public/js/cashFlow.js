@@ -179,13 +179,17 @@ function drawTable(table, caption) {
         </thead>
         <tbody>`;
     table.forEach((row, i) => {
+        if (row.entry_type == 2) {
+            row.estimated_amount = row.estimated_amount * -1;
+            row.operation_amount = row.operation_amount * -1;
+        }
         html += `
         <tr>
             <td><input type="checkbox" class="checkbox" name="checkbox[]" value="` + row.operation_id + `"/></td>
             <td>` + dateFormat(row.estimated_date) + `</td>
             <td>` + dateFormat(row.operation_date) + `</td>
             <td class="entry_type">` + getEntryType(row.entry_type) + `</td>
-            <td><a href="/admin/app_entries/edit/` + row.entry_id + `?return_url=/cashFlow/` + row.settlement_date + `">` + row.concept + `</a></td>
+            <td><a href="/admin/app_entries/edit/` + row.entry_id + `?return_url=/admin/cashFlow/` + row.settlement_date + `">` + row.concept + `</a></td>
             <td>` + row.detail + `</td>
             <td class="account_name">` + row.account_name + `</td>
             <td class="area">` + row.area + `</td>
@@ -198,7 +202,7 @@ function drawTable(table, caption) {
             <a href="javascript: void showModalExecuteOperation(` + row.operation_id + `)" class="btn btn-success btn-xs"><i class="fa fa-money"></i></a>`;
         }
         html += `
-            <a href="/admin/app_operations/edit/` + row.operation_id + `?return_url=/cashFlow/` + row.settlement_date + `" class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i></a>
+            <a href="/admin/app_operations/edit/` + row.operation_id + `?return_url=/admin/cashFlow/` + row.settlement_date + `" class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i></a>
             <a href="javascript:void(0)" onclick="deleteRow{{$name}}(this)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>
         </td>`;
         html += '</tr>';

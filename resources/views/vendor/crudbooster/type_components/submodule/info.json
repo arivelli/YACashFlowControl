@@ -1,0 +1,18 @@
+{
+  "title": "SubModule",
+  "type": "submodule",
+  "attribute": {
+    "required": {
+      "controller": "//Controller class of subModule",
+      "foreign_key": "//foreign key"
+    },
+    "optional": {
+
+      "style": "//string inline stylesheet",
+      "help": "//string help-block",
+      "placeholder": "//string placeholder",
+      "readonly": "//boolean",
+      "disabled": "//boolean"
+    }
+  }
+}

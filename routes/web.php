@@ -15,29 +15,36 @@ Route::get('/', function () {
     return redirect('/admin/cashFlow');
 });
 
-Route::get('/compute_operations/{entry_id}','AdminAppEntriesController@hook_after_add_child')->name('compute_operations');
-Route::post('/admin/app_entries/preview_plan','AdminAppEntriesController@preview_plan')->name('entries_preview_plan');
+//Group for admin directory
+Route::group([
+    'middleware' => ['web', '\arivelli\crudbooster\middlewares\CBBackend'],
+    'prefix' => config('crudbooster.ADMIN_PATH')
+   // 'namespace' => 'App\Http\Controllers',
+],  function () {
+    //CASHFLOW
+    Route::get('/cashFlow','AdminAppOperationsController@cashFlow')->name('cashFlow');
+    Route::get('/cashFlow/{filter}','AdminAppOperationsController@cashFlow')->name('cashFlowWithFilter');
+    Route::get('/cashFlowData/{settlement_date}','AdminAppOperationsController@cashFlowData')->name('cashFlowData');
 
-Route::get('/admin/testDates','AdminAppEntriesController@testDates')->name('testDates');
+    //ENTRIES
+    Route::post('/app_entries/preview_plan','AdminAppEntriesController@preview_plan')->name('entries_preview_plan');
+    //Route::get('/testDates','AdminAppEntriesController@testDates')->name('testDates');
 
-Route::get('/admin/app_plans/getPlanByEntryId/{entry_id}','AdminAppPlansController@getPlanByEntryId')->name('plans_getPlanByEntryId');
+    //PLANS
+    Route::get('/app_plans/getPlanByEntryId/{entry_id}','AdminAppPlansController@getPlanByEntryId')->name('plans_getPlanByEntryId');
 
-Route::get('/admin/cashFlow','AdminAppOperationsController@cashFlow')->name('cashFlow');
-//Route::get('/admin/cashFlow/{settlement_date}','AdminAppOperationsController@cashFlow')->name('cashFlowWithDate');
-Route::get('/admin/cashFlow/{filter}','AdminAppOperationsController@cashFlow')->name('cashFlowWithFilter');
+    //OPERATIONS
+    Route::post('/app_operations/execute/{operation_id}','AdminAppOperationsController@execute_operation')->name('execute_operation');
+    //Route::get('/compute_operations/{entry_id}','AdminAppEntriesController@hook_after_add_child')->name('compute_operations');
 
-Route::get('/admin/cashFlowData/{settlement_date}','AdminAppOperationsController@cashFlowData')->name('cashFlowData');
+    Route::get('/dollarValue/update','ManageDollarValue@update_table')->name('dollarValue_updateTable');
+    Route::get('/dollarValue/getvalueof/{date?}','ManageDollarValue@get_value_of')->name('dollarValue_getValueOf');
 
-Route::post('/admin/app_operations/execute/{operation_id}','AdminAppOperationsController@execute_operation')->name('execute_operation');
+    //ACCOUNTS
+    Route::post('/app_accounts/setLastUpdateAmount','AdminAppAccountsController@setLastUpdateAmount')->name('setLastUpdateAmount');
+    Route::get('/app_accounts_periods/operations/{id}','AdminAppAccountsPeriodsController@getOperationsByPeriod')->name('account_periods_getOperationsByPeriod');
+    Route::get('/app_accounts_periods/updatePeriod/{id}','AdminAppAccountsPeriodsController@updatePeriod')->name('account_periods_updatePeriod');
 
-Route::get('/admin/dollarValue/update','ManageDollarValue@update_table')->name('dollarValue_updateTable');
-Route::get('/admin/dollarValue/getvalueof/{date?}','ManageDollarValue@get_value_of')->name('dollarValue_getValueOf');
-
-Route::post('/admin/app_accounts/setLastUpdateAmount','AdminAppAccountsController@setLastUpdateAmount')->name('setLastUpdateAmount');
-
-Route::get('/admin/app_accounts_periods/operations/{id}','AdminAppAccountsPeriodsController@getOperationsByPeriod')->name('account_periods_getOperationsByPeriod');
-Route::get('/admin/app_accounts_periods/updatePeriod/{id}','AdminAppAccountsPeriodsController@updatePeriod')->name('account_periods_updatePeriod');
-
-Route::get('/admin/reports/balance/{year?}','AdminAppReportsController@balances')->name('reports_balances');
-
-
+    //REPORTS
+    Route::get('/reports/balance/{year?}','AdminAppReportsController@balances')->name('reports_balances');
+});

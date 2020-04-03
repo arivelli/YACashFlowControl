@@ -41,7 +41,8 @@ class AdminAppAccountsPeriodsController extends \arivelli\crudbooster\controller
 		$this->col[] = ["label"=>"Vencimiento","name"=>"estimated_date"];
 		
 		$this->col[] = ["label"=>"Periodo","name"=>"settlement_date",'callback_php'=>'$this->settlement_date2Period($row->settlement_date);'];
-		$this->col[] = ["label"=>"Cierre","name"=>"closed_amount"];
+		
+		$this->col[] = ["label"=>"Cierre","name"=>"closed_amount", "callback_php" => '\App\Helpers\Format::int2money($row->closed_amount)'];
 		$this->col[] = ["label"=>"Resumen","name"=>"closed_amount", 'callback_php'=>'$this->getOperationAmount($row)'];
 		$this->col[] = ["label"=>"Confirmado?","name"=>"app_accounts_periods.is_checked","callback_php"=>'($row->is_checked ==1)? "Sí" : "No"'];
 		$this->col[] = ["label"=>"Pagado?","name"=>"app_accounts_periods.is_paid","callback_php"=>'($row->is_paid ==1)? "Sí" : "No"'];

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AppPlan extends Model
 {
+    protected $fillable = ['is_proccesed'];
     //    
     public function frequency()
     {
