@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "arivelli/crudbooster",
-            "version": "v5.4.34",
+            "version": "v5.4.35",
             "source": {
                 "type": "git",
                 "url": "https://github.com/arivelli/crudbooster.git",
-                "reference": "43818d6a14419f82771a672b72bb8faa02003e8d"
+                "reference": "bb66d8d13f3c1cdead4cac5be453e0eab5a581cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/arivelli/crudbooster/zipball/43818d6a14419f82771a672b72bb8faa02003e8d",
-                "reference": "43818d6a14419f82771a672b72bb8faa02003e8d",
+                "url": "https://api.github.com/repos/arivelli/crudbooster/zipball/bb66d8d13f3c1cdead4cac5be453e0eab5a581cf",
+                "reference": "bb66d8d13f3c1cdead4cac5be453e0eab5a581cf",
                 "shasum": ""
             },
             "require": {
@@ -52,9 +52,9 @@
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/arivelli/crudbooster/tree/v5.4.34"
+                "source": "https://github.com/arivelli/crudbooster/tree/v5.4.35"
             },
-            "time": "2020-03-31T18:29:34+00:00"
+            "time": "2020-04-03T02:44:07+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1117,6 +1117,7 @@
                 "serialize",
                 "tokenizer"
             ],
+            "abandoned": "opis/closure",
             "time": "2018-03-21T22:21:57+00:00"
         },
         {

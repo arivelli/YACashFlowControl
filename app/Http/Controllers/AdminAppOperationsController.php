@@ -85,11 +85,11 @@
 			$this->form = [];
 			$this->form[] = ['label'=>'Entrada','name'=>'entry_id','type'=>'fixed','validation'=>'integer|min:0','width'=>'col-sm-10','queryBuilder' => $queryBuilderEntry];
 			$this->form[] = ['label'=>'Plan','name'=>'plan_id','type'=>'fixed','validation'=>'integer|min:0','width'=>'col-sm-10', 'queryBuilder' => $queryBuilderPlan, 'queryBuilder_remote_key' => 'app_plans.id'];
-			$this->form[] = ['label'=>'Moneda','name'=>'currency','type'=>'hidden','validation'=>'required'];
+			$this->form[] = ['label'=>'Moneda','name' => 'currency', 'type' => 'radio', 'validation' => 'required|min:1|max:4', 'width' => 'col-sm-10', 'dataenum' => '$;U$S', 'default' => '-- Moneda --'];
 			$this->form[] = ['label'=>'Cuenta', 'name' => 'account_id', 'type' => 'select3', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'queryBuilder' => $queryBuilderAccount, 'default' => '-- Cuenta --', 'value' => 1];
 			$this->form[] = ['label'=>'Detalle','name'=>'detail','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Fecha Estimada','name'=>'estimated_date','type' => 'date', 'validation' => 'required|date_format:Y-m-d','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Monto Estimado','name'=>'estimated_amount','type'=>'money2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Monto Estimado','name'=>'estimated_amount','type'=>'money2','validation'=>'required|integer','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Fecha de Operación','name'=>'operation_date','type' => 'date', 'validation' => 'date_format:Y-m-d','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Monto de Operación','name'=>'operation_amount','type'=>'money2','validation'=>'integer','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money2','validation'=>'integer|min:0','width'=>'col-sm-10'];

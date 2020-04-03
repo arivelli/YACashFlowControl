@@ -396,6 +396,7 @@ class AdminAppAccountsPeriodsController extends \arivelli\crudbooster\controller
 		$CCSummary = new CreditCardSummaries($to->account);
 		
 		$filter = [
+			"limit" => 200,
 			"filter_column" => [
 				"app_operations.account_id" => [
 					"type" => "=",
