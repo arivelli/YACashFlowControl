@@ -33,7 +33,7 @@ class CreditCardSummaries {
             ['account_id', '=', $account_id],
             ['estimated_date', '>', $period['from']],
             ['estimated_date', '<=', $period['to']]
-        ])->get(['estimated_date','estimated_amount','detail']);
+        ])->get();
 
         return $operations;
     }
