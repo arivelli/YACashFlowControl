@@ -105,23 +105,14 @@
 
                 <div class="form-group">
                     <div class="col-sm-12" style="padding: 5px 0 !important">
-                    <label class="control-label col-sm-3">Notas
-                    </label>
-                    <div class="input-group col-sm-9">
-                        <input type="text" title="{{$form['label']}}" class="form-control cancel-operation"
-                        name="cancel-operation_notes" id="cancel-operation_notes" value=""  style="width:238px" />
-                    </div>
+                        <label class="control-label col-sm-3">Notas</label>
+                        <div class="input-group col-sm-9"><input type="text" title="{{$form['label']}}" class="form-control cancel-operation" name="cancel-operation_notes" id="cancel-operation_notes" value=""  style="width:238px" /></div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="col-sm-12" style="padding: 5px 0 !important">
-                        <input type="hidden" id="cancel-operation_operation_id" value="">
-                        <div class="input-group col-sm-9">
-                        <button class='btn btn-sm btn-default' class="close" data-dismiss="modal" >Cancelar</button>
-                         <button class='btn btn-sm btn-success' onclick="executeOperation( $('#cancel-operation_operation_id').val() ); return false">Concretar</button>
-                         </div>
-                    </div>
-                </div>
+
+                <input type="hidden" id="cancel-operation_operation_id" value="">
+                <button class='btn btn-sm btn-default' class="close" data-dismiss="modal" >Cancelar</button>
+                <button class='btn btn-sm btn-success' onclick="executeOperation( $('#cancel-operation_operation_id').val() ); return false">Concretar</button>
               </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
