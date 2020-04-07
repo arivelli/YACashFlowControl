@@ -53,7 +53,7 @@
                     @endpush
 
                 <div class="form-group">
-                    <div class="col-sm-12">
+                    <div class="col-sm-12" style="padding-left:0 !important">
                     <label class="control-label col-sm-3">Cuenta
                         <span class='text-danger' title='{!! trans('crudbooster.this_field_is_required') !!}'>*</span>
                     </label>
@@ -68,7 +68,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <div class="col-sm-12">
+                    <div class="col-sm-12" style="padding-left:0 !important">
                     <label class="control-label col-sm-3">Monto
                         <span class='text-danger' title='{!! trans('crudbooster.this_field_is_required') !!}'>*</span>
                     </label>
@@ -82,7 +82,7 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="col-sm-12">
+                    <div class="col-sm-12" style="padding-left:0 !important">
                     <label class="control-label col-sm-3">Cotización Dolar
                         <span class='text-danger' title='{!! trans('crudbooster.this_field_is_required') !!}'>*</span>
                     </label>
@@ -104,7 +104,7 @@
                 @endpush
 
                 <div class="form-group">
-                    <div class="col-sm-12">
+                    <div class="col-sm-12" style="padding-left:0 !important">
                     <label class="control-label col-sm-3">Notas
                     </label>
                     <div class="input-group col-sm-9">
