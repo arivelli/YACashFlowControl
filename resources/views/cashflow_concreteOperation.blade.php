@@ -21,7 +21,7 @@
                     <div class="input-group col-sm-9">
                         <span class="input-group-addon open-datetimepicker"><a><i class='fa fa-calendar '></i></a></span>
                         <input type='text' title="Fecha" readonly class='form-control notfocus input_date cancel-operation'
-                            name="cancel-operation_operation_date" id="cancel-operation_operation_date" value='{{ $col['value'] }}'/> 
+                            name="cancel-operation_operation_date" id="cancel-operation_operation_date" value='{{ $col['value'] }}' style="width:100px"/> 
                     </div>
                     </div>
                 </div>
