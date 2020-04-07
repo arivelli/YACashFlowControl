@@ -10,7 +10,7 @@
             <div class="modal-body">
 
                 <div class="form-group">
-                    <div class="col-sm-12">
+                    <div class="col-sm-12" style="padding-left:0 !important">
                     <label class="control-label col-sm-3">Fecha
                         <span class='text-danger' title='{!! trans('crudbooster.this_field_is_required') !!}'>*</span>
                     </label>
