@@ -415,12 +415,12 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 			//print_r($operations);
 			foreach ($operations as $operation) {
 				//DB::table('app_operations')->insert($operation);
-				$id = \App\AppOperation::insertGetId($operation);
+				$op = \App\AppOperation::create($operation);
+				dd($op);
 				if($account->type == 4 ) {
 					$CPeriod = $CCSummary->getPeriodFromOperation($operation['estimated_date']);
 					$CCSummary->updatePeriod($CPeriod);
 				} else if($account->type == 5){
-					$op = \App\AppOperation::find($id);
 					$PassiveSummary->updatePeriod($op);
 				}
 

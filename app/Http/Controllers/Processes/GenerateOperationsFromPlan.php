@@ -11,6 +11,7 @@ use CreditCardSummaries;
 use DateInterval;
 use DateTime;
 use App\Helpers\Format;
+use App\Helpers\DatetimeOperations;
 use CRUDBooster;
 
 class GenerateOperationsFromPlan {
@@ -79,12 +80,7 @@ class GenerateOperationsFromPlan {
 				} else {
 					//Apply the days of offset just on working days (Only allowed for days periods)
 					$days = (int) str_replace('P', '', str_replace('D', '', $estimated_offset[1]));
-					for ($j = 0; $j < $days; $j++) {
-						$estimated_based_on->$method(new DateInterval('P1D'));
-						if ($estimated_based_on->format('N') > 5 || in_array($estimated_based_on->format('Y-m-d'), $holidays)) {
-							$j--;
-						}
-					}
+					$estimated_based_on = DatetimeOperations::moveWorkingDays($estimated_based_on, $method, $days);
 				}
 			}
 

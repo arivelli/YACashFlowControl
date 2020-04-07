@@ -114,7 +114,8 @@ class AdminAppAccountsController extends \arivelli\crudbooster\controllers\CBCon
 		$this->addaction[]=[
 			'label'=>'Períodos',
 			'url' => '/admin/app_accounts_periods?' . $prepared_params,
-			'color' => 'info'
+			'color' => 'info',
+			'showIf' => '[type]==4'
 		];
 
 

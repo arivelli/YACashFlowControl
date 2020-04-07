@@ -61,7 +61,7 @@ class ExecuteOperations {
 
             //3) Mark all the passive operation of the period as paid
             $CCSummary = new CreditCardSummaries($account);
-            $period = $CCSummary->getPeriodFromid($accountPeriod->id);
+            $period = $CCSummary->getPeriodFromId($accountPeriod->id);
             $periodOperations = $CCSummary->getOperationsOfPeriod($period);
             foreach($periodOperations as $PO) {
                 $PO->operation_date = $PO->estimated_date;
