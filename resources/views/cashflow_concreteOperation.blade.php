@@ -21,7 +21,7 @@
                     <div class="input-group col-sm-9">
                         <span class="input-group-addon open-datetimepicker"><a><i class='fa fa-calendar '></i></a></span>
                         <input type='text' title="Fecha" readonly class='form-control notfocus input_date cancel-operation'
-                            name="cancel-operation_operation_date" id="cancel-operation_operation_date" value='{{ $col['value'] }}' style="width:100px"/> 
+                            name="cancel-operation_operation_date" id="cancel-operation_operation_date" value='{{ $col['value'] }}' style="width:200px" /> 
                     </div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                         <span class='text-danger' title='{!! trans('crudbooster.this_field_is_required') !!}'>*</span>
                     </label>
                     <div class="input-group col-sm-9">
-                    <select id='cancel-operation_account_id' name='cancel-operation_account_id' class='form-control select cancel-operation'>
+                    <select id='cancel-operation_account_id' name='cancel-operation_account_id' class='form-control select cancel-operation'  style="width:200px">
                         @foreach ($accounts as $account)
                             <option value='{!! $account->id !!}'>{{$account->name}}</option>
                         @endforeach
@@ -74,7 +74,7 @@
                     </label>
                     <div class="input-group col-sm-9">
                         <input type="text" title="{{$form['label']}}" class="form-control inputMoney cancel-operation"
-                               name="cancel-operation_operation_amount" id="cancel-operation_operation_amount" value="">
+                               name="cancel-operation_operation_amount" id="cancel-operation_operation_amount" value=""  style="width:200px" />
                         <!-- <div class="text-danger">{!! $errors->first($name)?'<i class="fa fa-info-circle"></i> '.$errors->first($name):'' !!}</div>
                         <p class="help-block">{{ @$form['help'] }}</p> -->
                     </div>
@@ -88,7 +88,7 @@
                     </label>
                     <div class="input-group col-sm-9">
                         <input type="text" title="{{$form['label']}}" class="form-control cancel-operation"
-                        name="cancel-operation_dollar_value" id="cancel-operation_dollar_value" value="">
+                        name="cancel-operation_dollar_value" id="cancel-operation_dollar_value" value=""  style="width:200px" />
                     </div>
                     </div>
                 </div>
@@ -109,7 +109,7 @@
                     </label>
                     <div class="input-group col-sm-9">
                         <input type="text" title="{{$form['label']}}" class="form-control cancel-operation"
-                        name="cancel-operation_notes" id="cancel-operation_notes" value="">
+                        name="cancel-operation_notes" id="cancel-operation_notes" value=""  style="width:200px" />
                     </div>
                     </div>
                 </div>
