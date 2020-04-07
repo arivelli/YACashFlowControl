@@ -114,7 +114,7 @@
                     <div style="padding: 5px 0 !important">
                         <label class="control-label col-sm-3" ></label>
                         <div class="input-group col-sm-9" style="padding: 5px 0 !important"><input type="hidden" id="cancel-operation_operation_id" value="" />
-                <button class='btn btn-sm btn-default' class="close" data-dismiss="modal" style="padding: 0 10px !important">Cancelar</button>
+                <button class='btn btn-sm btn-default' class="close" data-dismiss="modal" style="margin-right: 10px !important">Cancelar</button>
                 <button class='btn btn-sm btn-success' onclick="executeOperation( $('#cancel-operation_operation_id').val() ); return false">Concretar</button></div>
                     </div>
                 </div>
