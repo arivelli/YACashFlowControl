@@ -10,7 +10,7 @@
             <div class="modal-body">
 
                 <div class="form-group">
-                    <div class="col-sm-12" style="padding-left:0 !important">
+                    <div class="col-sm-12" style="padding: 5px 0 !important">
                     <label class="control-label col-sm-3">Fecha
                         <span class='text-danger' title='{!! trans('crudbooster.this_field_is_required') !!}'>*</span>
                     </label>
@@ -53,12 +53,12 @@
                     @endpush
 
                 <div class="form-group">
-                    <div class="col-sm-12" style="padding-left:0 !important">
+                    <div class="col-sm-12" style="padding: 5px 0 !important">
                     <label class="control-label col-sm-3">Cuenta
                         <span class='text-danger' title='{!! trans('crudbooster.this_field_is_required') !!}'>*</span>
                     </label>
                     <div class="input-group col-sm-9">
-                    <select id='cancel-operation_account_id' name='cancel-operation_account_id' class='form-control select cancel-operation'  style="width:200px">
+                    <select id='cancel-operation_account_id' name='cancel-operation_account_id' class='form-control select cancel-operation'  style="width:238px">
                         @foreach ($accounts as $account)
                             <option value='{!! $account->id !!}'>{{$account->name}}</option>
                         @endforeach
@@ -68,13 +68,13 @@
                 </div>
                 
                 <div class="form-group">
-                    <div class="col-sm-12" style="padding-left:0 !important">
+                    <div class="col-sm-12" style="padding: 5px 0 !important">
                     <label class="control-label col-sm-3">Monto
                         <span class='text-danger' title='{!! trans('crudbooster.this_field_is_required') !!}'>*</span>
                     </label>
                     <div class="input-group col-sm-9">
                         <input type="text" title="{{$form['label']}}" class="form-control inputMoney cancel-operation"
-                               name="cancel-operation_operation_amount" id="cancel-operation_operation_amount" value=""  style="width:200px" />
+                               name="cancel-operation_operation_amount" id="cancel-operation_operation_amount" value=""  style="width:238px" />
                         <!-- <div class="text-danger">{!! $errors->first($name)?'<i class="fa fa-info-circle"></i> '.$errors->first($name):'' !!}</div>
                         <p class="help-block">{{ @$form['help'] }}</p> -->
                     </div>
@@ -82,13 +82,13 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="col-sm-12" style="padding-left:0 !important">
+                    <div class="col-sm-12" style="padding: 5px 0 !important">
                     <label class="control-label col-sm-3">Cotización Dolar
                         <span class='text-danger' title='{!! trans('crudbooster.this_field_is_required') !!}'>*</span>
                     </label>
                     <div class="input-group col-sm-9">
                         <input type="text" title="{{$form['label']}}" class="form-control cancel-operation"
-                        name="cancel-operation_dollar_value" id="cancel-operation_dollar_value" value=""  style="width:200px" />
+                        name="cancel-operation_dollar_value" id="cancel-operation_dollar_value" value=""  style="width:238px" />
                     </div>
                     </div>
                 </div>
@@ -104,12 +104,12 @@
                 @endpush
 
                 <div class="form-group">
-                    <div class="col-sm-12" style="padding-left:0 !important">
+                    <div class="col-sm-12" style="padding: 5px 0 !important">
                     <label class="control-label col-sm-3">Notas
                     </label>
                     <div class="input-group col-sm-9">
                         <input type="text" title="{{$form['label']}}" class="form-control cancel-operation"
-                        name="cancel-operation_notes" id="cancel-operation_notes" value=""  style="width:200px" />
+                        name="cancel-operation_notes" id="cancel-operation_notes" value=""  style="width:238px" />
                     </div>
                     </div>
                 </div>
