@@ -563,8 +563,8 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		$html = '<table width="100%" style="border-top: solid 1px #E9E9E9"">';
 			$html .= '<tr style="border-bottom: solid 1px #E9E9E9; margin-top:5px">';
 			$html .= '<th style="padding:5px">Detalle</td>';
-			$html .= '<th style="padding:5px">Fecha</td>';
-			$html .= '<th style="padding:5px">Monto</td>';
+			$html .= '<th style="padding:5px; text-align:center">Fecha</td>';
+			$html .= '<th style="padding:5px; text-align:right">Monto</td>';
 			$html .= '</tr>';
 		foreach ($operations as $operation) {
 			$html .= '<tr style="border-bottom: solid 1px #E9E9E9; margin-top:5px">';
