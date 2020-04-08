@@ -544,7 +544,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		$plan->frequency_id = (int) $request->input('child-frequency_id');
 
 		$operations = GenerateOperationsFromPlan::compute_operations($plan);
-		$html = '<table>';
+		$html = '<table width="100%" cellspacing="0" cellpadding="0">';
 
 		foreach ($operations as $operation) {
 			$html .= '<tr>';
