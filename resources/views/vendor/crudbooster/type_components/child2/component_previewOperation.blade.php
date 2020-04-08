@@ -7,11 +7,11 @@
                 </h3>
                 <h4>Adri, poné el nombre de la Entrada aquí </h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align:right">
                 <div id="preview-operation_detail"></div>
             
                 
-                <button class='btn btn-sm btn-success' data-dismiss="modal"  >Aceptar</button>
+                <button class='btn btn-sm btn-success' data-dismiss="modal" style="margin-top:20px">Aceptar</button>
               </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
