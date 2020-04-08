@@ -1,7 +1,7 @@
 <div id='modal-datamodal-preview-operation' class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog large " role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="background:#f4f4f4">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h3 class="modal-title"><i class='fa fa-dollar'></i> Simulación de operaciones por plan <b id="preview-operation_concept"></b>
                 </h3>
