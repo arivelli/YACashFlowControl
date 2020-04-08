@@ -11,7 +11,7 @@
                 <div id="preview-operation_detail"></div>
             
                 
-                <button class='btn btn-sm btn-success' data-dismiss="modal" style="margin-top:20px">Aceptar1</button>
+                <div style="width:100%; text-align:right"><button class='btn btn-sm btn-success' data-dismiss="modal" style="margin-top:20px">Aceptar</button></div>
               </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
