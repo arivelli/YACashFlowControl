@@ -564,10 +564,10 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 
 		foreach ($operations as $operation) {
 			$html .= '<tr style="border-bottom: solid 1px #E9E9E9">';
-			$html .= '<td style="padding:5px">{$operation['detail']}</td>';
+			$html .= "<td style='padding:5px'>{$operation['detail']}</td>";
 
 			$html .= '<td style="padding:5px; text-align:center">' . strftime('%d-%m-%Y', (new Datetime($operation['estimated_date']))->format('U')) . '</td>';
-			$html .= '<td style="padding:5px; text-align:right">{$operation['estimated_amount']}</td>';
+			$html .= "<td style='padding:5px; text-align:right'>{$operation['estimated_amount']}</td>";
 			$html .= '</tr>';
 		}
 		$html .= '</table>';
