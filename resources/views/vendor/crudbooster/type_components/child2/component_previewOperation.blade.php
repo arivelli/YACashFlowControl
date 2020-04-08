@@ -5,7 +5,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h3 class="modal-title"><i class='fa fa-dollar'></i> Simulación de operaciones por plan <b id="preview-operation_concept"></b>
                 </h3>
-                <h4 >Subtitulo: es necesario?</h4>
+                <h4>Adri, poné el nombre de la Entrada aquí </h4>
             </div>
             <div class="modal-body">
                 <div id="preview-operation_detail"></div>
