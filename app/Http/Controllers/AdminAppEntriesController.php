@@ -560,14 +560,14 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		$plan->frequency_id = (int) $request->input('child-frequency_id');
 
 		$operations = GenerateOperationsFromPlan::compute_operations($plan);
-		$html = '<table width="100%" cellspacing="0" cellpadding="0">';
+		$html = '<table width="100%" cellspacing="0" cellpadding="3">';
 
 		foreach ($operations as $operation) {
 			$html .= '<tr>';
 			$html .= "<td>{$operation['detail']}</td>";
 
-			$html .= '<td>' . strftime('%d-%m-%Y', (new Datetime($operation['estimated_date']))->format('U')) . '</td>';
-			$html .= "<td>{$operation['estimated_amount']}</td>";
+			$html .= '<td style="text-align:center">' . strftime('%d-%m-%Y', (new Datetime($operation['estimated_date']))->format('U')) . '</td>';
+			$html .= "<td style='text-align:right'>{$operation['estimated_amount']}</td>";
 			$html .= '</tr>';
 		}
 		$html .= '</table>';
