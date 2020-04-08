@@ -12,4 +12,8 @@ class AppPlan extends Model
     {
         return $this->belongsTo('App\AuxFrequency');
     }
+    public function entry()
+    {
+        return $this->belongsTo('App\AppEntry');
+    }
 }

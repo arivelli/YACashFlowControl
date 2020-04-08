@@ -50,11 +50,11 @@ class GenerateOperationsFromPlan {
 			$installment = $i + 1;
 			$operation['entry_id'] = $data->entry_id;
 			$operation['account_id'] = $data->account_id;
-			$operation['entry_type'] = $data->entry_type;
-			$operation['area_id'] = $data->area_id;
-			$operation['category_id'] = $data->category_id;
-			$operation['plan_id'] = $data->plan_id;
-			$operation['currency'] = $data->currency;
+			$operation['entry_type'] = $data->entry->entry_type;
+			$operation['area_id'] = $data->entry->area_id;
+			$operation['category_id'] = $data->entry->category_id;
+			$operation['plan_id'] = $data->id;
+			$operation['currency'] = $data->currency_plan;
 			$operation['estimated_amount'] = $data->amount;
 
 			//Estimated date based on the begining of the period

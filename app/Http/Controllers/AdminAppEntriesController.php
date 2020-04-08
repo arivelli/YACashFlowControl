@@ -18,13 +18,16 @@ use App\Http\Controllers\Processes\CreditCardSummaries;
 use App\Http\Controllers\Processes\PassiveSummaries;
 use App\Http\Controllers\Processes\GenerateOperationsFromPlan;
 use arivelli\crudbooster\helpers\CRUDBooster as HelpersCRUDBooster;
+use Illuminate\Support\Facades\Log;
+
+
 
 class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBController
 {
 	public function cbInit()
 	{
 		setlocale(LC_ALL, 'es_AR.utf8');
-		
+
 		# START CONFIGURATION DO NOT REMOVE THIS LINE
 		$this->title_field = "id";
 		$this->limit = "20";
@@ -83,28 +86,28 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		$plans[] = ['label' => 'Recordatorio', 'name' => 'notification_to', 'type' => 'checkbox', 'width' => 'col-sm-10', 'dataenum' => '1|Administradores;2|Dueño;3|Cliente'];
 		$plans[] = ['label' => 'Anticipación', 'name' => 'notification_offset', 'type' => 'text', 'width' => 'col-sm-10', 'help' => 'ver DateInterval https://www.php.net/manual/es/class.dateinterval.php'];
 
-		$plans[] = ['label' => 'Completa?', 'name' => 'is_completed', 'type' => 'radio', 'validation' => '', 'disabled'=>true, 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 1];
+		$plans[] = ['label' => 'Completa?', 'name' => 'is_completed', 'type' => 'radio', 'validation' => '', 'disabled' => true, 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no', 'value' => 1];
 		$plans[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
 
 		$plans[] = ['label' => 'Procesar operaciones?', 'name' => 'is_proccesed', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '0|si;1|no', 'value' => 0];
 
 		//Prepare columns to operations child
 		$queryBuilderAccount = DB::table('app_accounts')
-		->select('id', 'name AS title', 'type', 'currency')
-		->orderby('type')
-		->orderby('currency')
-		->where('is_active', '=', '1');
-		$operations[] = ['label'=>'Moneda','name'=>'currency','type'=>'hidden','validation'=>'required'];
-		$operations[] = ['label'=>'Cuenta', 'name' => 'account_id', 'type' => 'select3', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'queryBuilder' => $queryBuilderAccount, 'default' => '-- Cuenta --', 'value' => 1];
-		$operations[] = ['label'=>'Detalle','name'=>'detail','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-		$operations[] = ['label'=>'Fecha Estimada','name'=>'estimated_date','type' => 'date', 'validation' => 'required|date_format:Y-m-d','width'=>'col-sm-10'];
-		$operations[] = ['label'=>'Monto Estimado','name'=>'estimated_amount','type'=>'money2','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
-		$operations[] = ['label'=>'Fecha de Operación','name'=>'operation_date','type' => 'date', 'validation' => 'date_format:Y-m-d','width'=>'col-sm-10'];
-		$operations[] = ['label'=>'Monto de Operación','name'=>'operation_amount','type'=>'money2','validation'=>'integer','width'=>'col-sm-10'];
-		$operations[] = ['label'=>'Cotización Dolar','name'=>'dollar_value','type'=>'money2','validation'=>'integer|min:0','width'=>'col-sm-10'];
-		$operations[] = ['label'=>'Periodo cubierto','name'=>'settlement_date','type'=>'text','validation'=>'integer|min:0','width'=>'col-sm-10'];
-		$operations[] = ['label'=>'Notas','name'=>'notes','type'=>'text','width'=>'col-sm-10'];
-		$operations[] = ['label'=>'Hecho?','name'=>'is_done','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|Sí;0|No'];
+			->select('id', 'name AS title', 'type', 'currency')
+			->orderby('type')
+			->orderby('currency')
+			->where('is_active', '=', '1');
+		$operations[] = ['label' => 'Moneda', 'name' => 'currency', 'type' => 'hidden', 'validation' => 'required'];
+		$operations[] = ['label' => 'Cuenta', 'name' => 'account_id', 'type' => 'select3', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10', 'queryBuilder' => $queryBuilderAccount, 'default' => '-- Cuenta --', 'value' => 1];
+		$operations[] = ['label' => 'Detalle', 'name' => 'detail', 'type' => 'text', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10'];
+		$operations[] = ['label' => 'Fecha Estimada', 'name' => 'estimated_date', 'type' => 'date', 'validation' => 'required|date_format:Y-m-d', 'width' => 'col-sm-10'];
+		$operations[] = ['label' => 'Monto Estimado', 'name' => 'estimated_amount', 'type' => 'money2', 'validation' => 'required|integer|min:0', 'width' => 'col-sm-10'];
+		$operations[] = ['label' => 'Fecha de Operación', 'name' => 'operation_date', 'type' => 'date', 'validation' => 'date_format:Y-m-d', 'width' => 'col-sm-10'];
+		$operations[] = ['label' => 'Monto de Operación', 'name' => 'operation_amount', 'type' => 'money2', 'validation' => 'integer', 'width' => 'col-sm-10'];
+		$operations[] = ['label' => 'Cotización Dolar', 'name' => 'dollar_value', 'type' => 'money2', 'validation' => 'integer|min:0', 'width' => 'col-sm-10'];
+		$operations[] = ['label' => 'Periodo cubierto', 'name' => 'settlement_date', 'type' => 'text', 'validation' => 'integer|min:0', 'width' => 'col-sm-10'];
+		$operations[] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'text', 'width' => 'col-sm-10'];
+		$operations[] = ['label' => 'Hecho?', 'name' => 'is_done', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|Sí;0|No'];
 
 		# START FORM DO NOT REMOVE THIS LINE
 		$this->form = [];
@@ -122,21 +125,21 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 		$this->form[11] = ['label' => 'Hecho?', 'name' => 'is_done', 'type' => 'radio', 'validation' => 'required|integer', 'width' => 'col-sm-10', 'dataenum' => '1|si;0|no'];
 		$this->form[12] = ['label' => 'Notas', 'name' => 'notes', 'type' => 'textarea', 'width' => 'col-sm-5'];
 		$this->form[13] = ['label' => 'Planes', 'name' => 'plan', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_plans', 'foreign_key' => 'entry_id', 'columns' => $plans];
-		$this->form[14] = ['label' => 'Operaciones', 'name' => 'operations', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_operations', 'foreign_key' => 'entry_id', 'columns' => $operations];
-		
+		//$this->form[14] = ['label' => 'Operaciones', 'name' => 'operations', 'type' => 'child2', 'width' => 'col-sm-10', 'table' => 'app_operations', 'foreign_key' => 'entry_id', 'columns' => $operations];
+
 		# END FORM DO NOT REMOVE THIS LINE
 		//$this->form[14] = ['label' => 'Operaciones', 'name' => 'operations', 'type' => 'submodule', 'width' => 'col-sm-10', 'controller' => 'AdminAppOperationsController', 'foreign_key' => 'entry_id'];
-//		$this->form[] = array('label'=>'Operaciones','controller'=>'AdminAppOperationsController', 'foreign_key'=>'entry_id');
-		
+		//		$this->form[] = array('label'=>'Operaciones','controller'=>'AdminAppOperationsController', 'foreign_key'=>'entry_id');
+
 
 
 		$entry_type = \Illuminate\Support\Facades\Request::post('entry_type');
-		if(CRUDBooster::getCurrentMethod() == 'postEditSave' || CRUDBooster::getCurrentMethod() == 'postAddSave' ) {
-			if($entry_type  > '3') {
+		if (CRUDBooster::getCurrentMethod() == 'postEditSave' || CRUDBooster::getCurrentMethod() == 'postAddSave') {
+			if ($entry_type  > '3') {
 				unset($this->form[13]);
 			}
 		}
-		
+
 
 		# OLD START FORM
 		//$this->form = [];
@@ -170,13 +173,14 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 
 		$this->sub_module = array();
 		$this->sub_module[] = [
-			'label'=>'Operaciones',
-			'path'=>'app_operations',
-			'parent_columns'=>'concept,entry_type,area_id,category_id',
+			'label' => 'Operaciones',
+			'path' => 'app_operations',
+			'parent_columns' => 'concept,entry_type,area_id,category_id',
 			'parent_columns_alias' => 'Entrada,Tipo de entrada,Area,Categoría',
-			'foreign_key'=>'entry_id',
-			'button_color'=>'success',
-			'button_icon'=>'fa fa-bars'];
+			'foreign_key' => 'entry_id',
+			'button_color' => 'success',
+			'button_icon' => 'fa fa-bars'
+		];
 
 		/* 
 	        | ---------------------------------------------------------------------- 
@@ -375,62 +379,76 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 	public function hook_before_add(&$postdata)
 	{
 		//Your code here
-	
+
 	}
 
 	public function hook_before_add_child($postdata, &$childPostdata)
 	{
-		for ($i = 0; $i<count($childPostdata); $i++){
+		for ($i = 0; $i < count($childPostdata); $i++) {
 			unset($childPostdata[$i]['notification_to']);
 		}
 	}
 
-	public function hook_before_edit_child($postdata, &$childPostdata) {
+	public function hook_before_edit_child($postdata, &$childPostdata)
+	{
 		$this->hook_before_add_child($postdata, $childPostdata);
 	}
 
 	public function hook_after_add_child($id, array $childrenIds)
 	{
-		
-		
-		$plans = DB::table('app_plans')
-			->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
-			->join('app_entries', 'app_entries.id', '=', 'app_plans.entry_id')
-			->where([
-				['app_entries.id', '=', $id],
-				['app_plans.is_proccesed', '=', 0],
+		Log::debug('1) Entries->hook_after_add_child');
+		if ($id > 0) {
+			Log::debug('2) Entries->hook_after_add_child with id: ' . $id);
+			/*$plans = DB::table('app_plans')
+				->select('*', 'app_plans.id AS plan_id', 'app_plans.plan AS plan')
+				->join('app_entries', 'app_entries.id', '=', 'app_plans.entry_id')
+				->where([
+					['app_entries.id', '=', $id],
+					['app_plans.is_proccesed', '=', 0],
+				])
+				->get();*/
+			$plans = \App\AppPlan::where([
+				['entry_id', '=', $id],
+				['is_proccesed', '=', 0],
 			])
 			->get();
-
-		foreach ($plans as $plan) {
-			//Get the accout
-			$account = \App\AppAccount::find( $plan->account_id );
-			if($account->type == 4 ) {
-				$CCSummary = new CreditCardSummaries($account);
-			} else if($account->type == 5){
-				$PassiveSummary = new PassiveSummaries($account);
-			}
-				
-			$operations = GenerateOperationsFromPlan::compute_operations($plan);
-			//print_r($operations);
-			foreach ($operations as $operation) {
-				//DB::table('app_operations')->insert($operation);
-				$op = \App\AppOperation::create($operation);
-				dd($op);
-				if($account->type == 4 ) {
-					$CPeriod = $CCSummary->getPeriodFromOperation($operation['estimated_date']);
-					$CCSummary->updatePeriod($CPeriod);
-				} else if($account->type == 5){
-					$PassiveSummary->updatePeriod($op);
+			foreach ($plans as $plan) {
+				Log::debug('3) Entries->hook_after_add_child Processing plan: ' . $plan->id);
+				//Get the account
+				$account = \App\AppAccount::find($plan->account_id);
+				Log::debug('4) Entries->hook_after_add_child with account: '. $account->id);
+				if ($account->type == 4) {
+					Log::debug('5)A) Entries->hook_after_add_child processing CreditCardSummaries');
+					$CCSummary = new CreditCardSummaries($account);
+				} else if ($account->type == 5) {
+					Log::debug('5)B) Entries->hook_after_add_child processing PassiveSummaries');
+					$PassiveSummary = new PassiveSummaries($account);
 				}
 
+				$operations = GenerateOperationsFromPlan::compute_operations($plan);
+				//print_r($operations);
+				foreach ($operations as $operation) {
+					//DB::table('app_operations')->insert($operation);
+					$op = \App\AppOperation::create($operation);
+					Log::debug('6) Entries->hook_after_add_child created operation: '. $op->id);
+					if ($account->type == 4) {
+						$CPeriod = $CCSummary->getPeriodFromOperation($operation['estimated_date']);
+						Log::debug('7)A) Entries->hook_after_add_child CCSummary period:');
+						Log::debug(print_r($CPeriod, true));
+						$CCSummary->updatePeriod($CPeriod);
+					} else if ($account->type == 5) {
+						$PassiveSummary->updatePeriod($op);
+					}
+				}
+				$plan->update(['is_proccesed' => 1]);
 			}
-			\App\AppPlan::find($plan->plan_id)->update(['is_proccesed'=>1]);
+			
 		}
-		
 	}
 
-	public function hook_after_edit_child($id, array $childrenIds) {
+	public function hook_after_edit_child($id, array $childrenIds)
+	{
+		Log::debug('hook_after_edit_child');
 		$this->hook_after_add_child($id, $childrenIds);
 	}
 	/* 
@@ -442,8 +460,6 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 	    */
 	public function hook_after_add($id)
 	{
-		
-
 	}
 	/*
 	public function hook_after_add_child($entry_id)

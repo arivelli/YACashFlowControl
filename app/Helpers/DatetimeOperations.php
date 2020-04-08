@@ -67,11 +67,12 @@ class DatetimeOperations
     /**
      * Second Monday of Next Month
      * 
-     * @param Int $st
+     * @param Datetime $date
      */
-    static function secondMondayOfNextMonth(DateTime $date){
-        $date->add(new DateInterval('P1M'));
-        return (new Datetime)->setTimestamp(  strtotime('second monday of '. $date->format('M Y') ) );
+    static function secondMondayOfNextMonth(Datetime $date){
+        $newDate = new Datetime($date->format('Y-m-d'));
+        $newDate->add(new DateInterval('P1M'));
+        return (new Datetime)->setTimestamp(  strtotime('second monday of '. $newDate->format('M Y') ) );
     }
     /**
      * Settlement Date of next period

@@ -62,8 +62,6 @@ class CreditCardSummaries {
             'detail'=> 'Período ' . strtoupper(strftime('%B %Y ', (new Datetime($period['estimated_date']))->sub(new DateInterval('P1M'))->format('U'))).
                 strftime('(se abona en %B %Y)', (new Datetime($period['estimated_date']))->format('U'))
         ]) ;
-
-        //dd($res);
     }
 
     public function getPeriodFromOperation($operation_date){
@@ -80,7 +78,7 @@ class CreditCardSummaries {
         ];
     }
 
-    public function getPeriodFromId($id){
+    public function getPeriodFromId(int $id){
         $to = \App\AppAccountPeriod::find($id);
         //$from = \App\AppAccountPeriod::where([['account_id', '=', $to->account_id], ['settlement_date', '<', $to->settlement_date]])->orderby('settlement_date', 'DESC')->first();
         //Puede que no esté bien... no me gusta, debería basarse en settlement_date
@@ -92,13 +90,12 @@ class CreditCardSummaries {
             'estimated_date' => $to->estimated_date
         ];
     }
-    public function getPeriodOf($operation_date){
-        
+    public function getPeriodOf(Datetime $operation_date){
+        $settlement_date = Format::date2settlement_date($operation_date);
         $closed_pattern = $this->account->close_pattern;
-        $closed_date = DatetimeOperations::$closed_pattern($operation_date->format('Ym'));
-        //dd($closed_date->format('Y-m-d'));
+        $closed_date = DatetimeOperations::$closed_pattern($settlement_date);
         $due_pattern = $this->account->due_pattern;
-        $estimated_date = DatetimeOperations::$due_pattern($closed_date);
+        $estimated_date = DatetimeOperations::$due_pattern($operation_date);
         $settlement_date = Format::date2settlement_date($estimated_date);
         $AP = \App\AppAccountPeriod::firstOrCreate([
             'account_id' => $this->account->id,
@@ -124,7 +121,7 @@ class CreditCardSummaries {
         $closed_pattern = $this->account->close_pattern;
         $closed_date = DatetimeOperations::$closed_pattern($settlement_date);
         $due_pattern = $this->account->due_pattern;
-        $estimated_date = DatetimeOperations::$due_pattern($closed_date);
+        $estimated_date = DatetimeOperations::$due_pattern($settlement_date);
 
         $from = \App\AppAccountPeriod::firstOrCreate([
             'account_id' => $to->account_id,
