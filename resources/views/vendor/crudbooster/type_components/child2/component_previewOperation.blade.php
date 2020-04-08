@@ -7,7 +7,7 @@
                 </h3>
                 <h4>Adri, poné el nombre de la Entrada aquí </h4>
             </div>
-            <div class="modal-body" style="text-align:right">
+            <div class="modal-body" style="border:none">
                 <div id="preview-operation_detail"></div>
             
                 
