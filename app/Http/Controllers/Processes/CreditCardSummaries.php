@@ -63,7 +63,13 @@ class CreditCardSummaries {
                 strftime('(se abona en %B %Y)', (new Datetime($period['estimated_date']))->format('U'))
         ]) ;
     }
-
+    /**
+     * Get period from operation
+     * 
+     * @param String $operation_date
+     * 
+     * @return Array
+     */
     public function getPeriodFromOperation($operation_date){
         
         $to = $this->getPeriodOf(new Datetime($operation_date));
@@ -77,25 +83,43 @@ class CreditCardSummaries {
             'estimated_date' => $to->estimated_date
         ];
     }
-
+    /**
+     * Get Period from Id
+     * 
+     * @param Int $id
+     * 
+     * @return Array
+     */
     public function getPeriodFromId(int $id){
         $to = \App\AppAccountPeriod::find($id);
-        //$from = \App\AppAccountPeriod::where([['account_id', '=', $to->account_id], ['settlement_date', '<', $to->settlement_date]])->orderby('settlement_date', 'DESC')->first();
         //Puede que no esté bien... no me gusta, debería basarse en settlement_date
         $from = $this->getFromPartOfPeriod($to);
-        return [
+        $period = [
             'from' => $from->closed_date,
             'to' => $to->closed_date,
             'settlement_date' => $to->settlement_date,
             'estimated_date' => $to->estimated_date
         ];
+        dd($period);
+        return $period;
     }
+    /**
+     * Get the period of an specific operation date base on the account patterns
+     * 
+     * @param Datetime $operation_date
+     * 
+     * @return AppAccountPeriod
+     */
     public function getPeriodOf(Datetime $operation_date){
         $settlement_date = Format::date2settlement_date($operation_date);
         $closed_pattern = $this->account->close_pattern;
         $closed_date = DatetimeOperations::$closed_pattern($settlement_date);
         $due_pattern = $this->account->due_pattern;
-        $estimated_date = DatetimeOperations::$due_pattern($operation_date);
+
+        //Master card base the due date on closed date
+        $estimated_date = DatetimeOperations::$due_pattern($closed_date);
+
+        //Base the settlement date on the estimated (due) date
         $settlement_date = Format::date2settlement_date($estimated_date);
         $AP = \App\AppAccountPeriod::firstOrCreate([
             'account_id' => $this->account->id,
@@ -112,23 +136,26 @@ class CreditCardSummaries {
         return $AP;
     }
     /**
+     * Get the from part of a period
      * 
+     * @param AppAccountPeriod $to
      */
     public function getFromPartOfPeriod(\App\AppAccountPeriod $to){
+        //Get previous settlement date
         $date = Format::settlement_date2date( $to->settlement_date );
         $settlement_date = Format::date2settlement_date( $date->sub( new DateInterval('P1M') ) );
         
         $closed_pattern = $this->account->close_pattern;
         $closed_date = DatetimeOperations::$closed_pattern($settlement_date);
         $due_pattern = $this->account->due_pattern;
-        $estimated_date = DatetimeOperations::$due_pattern($settlement_date);
+        $estimated_date = DatetimeOperations::$due_pattern($closed_date);
 
         $from = \App\AppAccountPeriod::firstOrCreate([
             'account_id' => $to->account_id,
             'settlement_date' => $settlement_date
         ],[
-            'closed_date' => $closed_date,
-            'estimated_date' => $estimated_date,
+            'closed_date' => $closed_date->format('Y-m-d'),
+            'estimated_date' => $estimated_date->format('Y-m-d'),
             'closed_amount' => 0,
             'is_checked' => 0,
             'is_paid' => 0,

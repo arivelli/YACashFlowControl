@@ -16,6 +16,8 @@ class DatetimeOperations
      * @param Datetime $date
      * @param String $method add|sub
      * @param Int $days 
+     * 
+     * @return Datetime
      */
     static public function moveWorkingDays(Datetime $date, string $method, int $days)
     {

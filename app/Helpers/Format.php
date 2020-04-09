@@ -30,6 +30,8 @@ class Format {
     * Get the number of the week on the month
     *
     * @param Datetime $date
+    *
+    * @return Int
     */
     static function get_week_of_month($date)
 	{
@@ -41,7 +43,7 @@ class Format {
 		if ($first_day_of_month->format("N") > $day_of_week) {
 			$week_of_month++;
 		}
-		return $week_of_month;
+		return (int) $week_of_month;
     }
     /**
      * Convert a settlement_date to Datetime
@@ -57,6 +59,8 @@ class Format {
      * Convert a settlement date to a humman readable version MONTH YEAR
      * 
      * @param Int $st
+     * 
+     * @return String
      */
     static function settlement_date2Period(int $st){
         $year = substr($st,0,4);
@@ -67,9 +71,11 @@ class Format {
      * Convert a date to settlement_date
      * 
      * @param Datetime $date
+     * 
+     * @return Int
      */
     static function date2settlement_date(Datetime $date){
-        return $date->format('Ym');
+        return (int) $date->format('Ym');
     }
 
 }
