@@ -33,10 +33,10 @@ jobs:
     - name: Create Database
       run: mysql -uroot -h127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -plaravelpwd -e 'CREATE DATABASE IF NOT EXISTS laravel;'
     - name: Run Migration
+      env:
+        DB_PORT: ${{ job.services.mysql.ports['3306'] }} 
       run: php artisan migrate:fresh --seed -v
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       env:
-        #DB_CONNECTION: sqlite
-        #DB_DATABASE: database/database.sqlite
         DB_PORT: ${{ job.services.mysql.ports['3306'] }} 
       run: vendor/bin/phpunit
