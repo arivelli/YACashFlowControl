@@ -10,7 +10,16 @@ jobs:
   laravel-tests:
 
     runs-on: ubuntu-latest
-    
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: laravel
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
     - uses: actions/checkout@v2
     - name: Copy .env
@@ -29,6 +38,7 @@ jobs:
       run: php artisan migrate:fresh --seed -v
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       env:
-        DB_CONNECTION: sqlite
-        DB_DATABASE: database/database.sqlite
+        #DB_CONNECTION: sqlite
+        #DB_DATABASE: database/database.sqlite
+        DB_PORT: ${{ job.services.mysql.ports['3306'] }} 
       run: vendor/bin/phpunit
