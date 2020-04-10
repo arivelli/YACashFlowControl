@@ -432,7 +432,7 @@ class AdminAppEntriesController extends \arivelli\crudbooster\controllers\CBCont
 					$op = \App\AppOperation::create($operation);
 					Log::debug('6) Entries->hook_after_add_child created operation: '. $op->id);
 					if ($account->type == 4) {
-						$CPeriod = $CCSummary->getPeriodFromOperation($operation['estimated_date']);
+						$CPeriod = $CCSummary->getPeriodFromOperation($op);
 						Log::debug('7)A) Entries->hook_after_add_child CCSummary period:');
 						Log::debug(print_r($CPeriod, true));
 						$CCSummary->updatePeriod($CPeriod);

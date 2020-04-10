@@ -13,17 +13,17 @@ use App\Helpers\DatetimeOperations;
 class DatetimeOperationsTest extends TestCase
 {
     public function testNextThurdayAfter18(){
-        $response = DatetimeOperations::nextThurdayAfter18(202005);
-        $this->assertSame('2020-05-21', $response->format('Y-m-d'));
+        $response = DatetimeOperations::nextThurdayAfter18(202006);
+        $this->assertSame('2020-06-25', $response->format('Y-m-d'));
     }
     public function testWorkingDaysAfterClose(){
         $date = new Datetime('2020-05-15');
         $response = DatetimeOperations::WorkingDaysAfterClose($date);
-        $this->assertSame('2020-05-29', $response->format('Y-m-d'));
+        $this->assertSame('2020-06-01', $response->format('Y-m-d'));
     }
     public function testLastThursdayOfMonth(){
-        $response = DatetimeOperations::lastThursdayOfMonth(202005);
-        $this->assertSame('2020-05-28', $response->format('Y-m-d'));
+        $response = DatetimeOperations::lastThursdayOfMonth(202006);
+        $this->assertSame('2020-06-25', $response->format('Y-m-d'));
     }
     public function testSecondMondayOfNextMonth(){
         $date = new Datetime('2020-04-15');

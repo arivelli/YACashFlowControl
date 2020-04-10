@@ -21,35 +21,43 @@ class DatetimeOperations
      */
     static public function moveWorkingDays(Datetime $date, string $method, int $days)
     {
+        $newDate = clone $date;
+        //dd($newDate);
         $holidays = \App\AuxHoliday::where([
-            ['date', '>', $date->format('Y')],
-            ['date', '<', $date->format('Y')+2],
+            ['date', '>=', $newDate->format('Y') . '-01-01'],
+            ['date', '<=', $newDate->format('Y')+5 . '-12-31'],
         ])->pluck('date')->all();
         for ($j = 0; $j < $days; $j++) {
-            $date->$method(new DateInterval('P1D'));
-            if ($date->format('N') > 5 || in_array($date->format('Y-m-d'), $holidays)) {
+            $newDate->$method(new DateInterval('P1D'));
+            if ($newDate->format('N') > 5 || in_array($newDate->format('Y-m-d'), $holidays)) {
                 $j--;
             }
         }
-        return $date;
+        return $newDate;
     }
     /**
-     * Look for the first Thursday after 18th of the received settlement date
+     * Look for the first Thursday after 18th of the received settlement date (Mastercard close_pattern)
+     * THE SETTLEMENT_DATE SHOULD BE BASED ON CLOSED DATE
      * 
      * @param int $st
+     * 
+     * @return Datetime
      */
     static function nextThurdayAfter18(int $st)
     {
-        $year = substr($st, 0, 4);
-        $month = substr($st, 4, 2);
-        $date = new DateTime("{$year}-{$month}-19");
+        $date = Format::settlement_date2date($st);
+        //Previous month
+        //$date->sub(new DateInterval('P1M'));
+        //Of day 19th
+        $date->setDate($date->format('Y'), $date->format('m'), 19);
+        //Adding day by day up to the next Thurday
         while ($date->format('N') != 4) {
-            $date = $date->add(new DateInterval('P1D'));
+            $date->add(new DateInterval('P1D'));
         }
         return $date;
     }
     /**
-     * Calculate 10 working days from the received date
+     * Calculate 10 working days from the received date (Mastercard due_pattern)
      * 
      * @param Datetime $date
      */
@@ -57,24 +65,31 @@ class DatetimeOperations
     {
         return DatetimeOperations::moveWorkingDays($date, 'add', 10);
     }
+
     /**
-     * Last Thursday of the month year
+     * Last Thursday of the month year for (VISA close_pattern)
+     * * THE SETTLEMENT_DATE SHOULD BE BASED ON CLOSED DATE
      * 
      * @param Int $st
+     * 
+     * @return Datetime
      */
     static function lastThursdayOfMonth(int $st){
         $date = Format::settlement_date2date($st);
+        //Previous month
+        //$date->sub(new DateInterval('P1M'));
         return (new Datetime)->setTimestamp ( strtotime('last thursday of '. $date->format('M Y') ) );
     }
+
     /**
-     * Second Monday of Next Month
+     * Second Monday of Next Month (VISA due_pattern)
      * 
      * @param Datetime $date
      */
     static function secondMondayOfNextMonth(Datetime $date){
-        $newDate = new Datetime($date->format('Y-m-d'));
+        $newDate = clone $date;
         $newDate->add(new DateInterval('P1M'));
-        return (new Datetime)->setTimestamp(  strtotime('second monday of '. $newDate->format('M Y') ) );
+        return (new Datetime)->setTimestamp( strtotime('second monday of '. $newDate->format('M Y') ) );
     }
     /**
      * Settlement Date of next period
