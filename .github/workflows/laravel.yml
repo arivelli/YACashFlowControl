@@ -15,7 +15,7 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: false
-          MYSQL_ROOT_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: laravelpwd
           MYSQL_DATABASE: laravel
         ports:
           - 3306
@@ -31,7 +31,7 @@ jobs:
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
     - name: Create Database
-      run: mysql -uroot -h127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -proot -e 'CREATE DATABASE IF NOT EXISTS laravel;'
+      run: mysql -uroot -h127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -plaravelpwd -e 'CREATE DATABASE IF NOT EXISTS laravel;'
     - name: Run Migration
       run: php artisan migrate:fresh --seed -v
     - name: Execute tests (Unit and Feature tests) via PHPUnit
