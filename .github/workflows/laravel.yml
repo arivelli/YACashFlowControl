@@ -32,8 +32,7 @@ jobs:
       run: chmod -R 777 storage bootstrap/cache
     - name: Create Database
       run: |
-        mkdir -p database
-        touch database/database.sqlite
+        mysql -uroot -h127.0.0.1 -proot -e 'CREATE DATABASE IF NOT EXISTS laravel;'
     - name: Run Migration
       run: php artisan migrate:fresh --seed -v
     - name: Execute tests (Unit and Feature tests) via PHPUnit
