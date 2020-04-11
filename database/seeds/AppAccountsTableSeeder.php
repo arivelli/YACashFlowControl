@@ -13,7 +13,7 @@ class AppAccountsTableSeeder extends Seeder
     public function run()
     {
         
-
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
         \DB::table('app_accounts')->delete();
         
         \DB::table('app_accounts')->insert(array (
@@ -258,7 +258,7 @@ class AppAccountsTableSeeder extends Seeder
                 'updated_by' => 1,
             ),
         ));
-        
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
         
     }
 }

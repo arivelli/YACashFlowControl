@@ -12,10 +12,12 @@ class AddForeignKeysToAppAccountsPeriodsTable extends Migration {
 	 */
 	public function up()
 	{
+		DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
 		Schema::table('app_accounts_periods', function(Blueprint $table)
 		{
 			$table->foreign('account_id')->references('id')->on('app_accounts')->onUpdate('RESTRICT')->onDelete('RESTRICT');
 		});
+		DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
 	}
 
 
