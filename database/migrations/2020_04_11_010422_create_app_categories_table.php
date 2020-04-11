@@ -14,7 +14,7 @@ class CreateAppCategoriesTable extends Migration {
 	{
 		Schema::create('app_categories', function(Blueprint $table)
 		{
-			$table->boolean('id')->primary();
+			$table->increments('id');
 			$table->string('category', 50);
 			$table->boolean('affect_capital')->nullable()->default(0);
 			$table->boolean('is_extraordinary')->nullable()->default(0);

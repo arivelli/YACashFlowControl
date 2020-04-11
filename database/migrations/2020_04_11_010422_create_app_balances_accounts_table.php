@@ -15,7 +15,7 @@ class CreateAppBalancesAccountsTable extends Migration {
 		Schema::create('app_balances_accounts', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('account_id')->unsigned();
+			$table->integer('account_id')->unsigned()->index('account_id');
 			$table->integer('amount');
 			$table->string('notes', 100);
 			$table->timestamps();

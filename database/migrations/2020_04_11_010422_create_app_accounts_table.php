@@ -24,6 +24,8 @@ class CreateAppAccountsTable extends Migration {
 			$table->string('number', 50)->nullable();
 			$table->string('currency', 3);
 			$table->string('notes', 5000)->nullable();
+			$table->string('close_pattern', 50)->nullable();
+			$table->string('due_pattern', 50)->nullable();
 			$table->boolean('is_active')->default(1);
 			$table->timestamps();
 			$table->integer('created_by')->unsigned()->default(1);

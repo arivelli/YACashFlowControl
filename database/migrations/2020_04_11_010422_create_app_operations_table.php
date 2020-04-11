@@ -15,19 +15,19 @@ class CreateAppOperationsTable extends Migration {
 		Schema::create('app_operations', function(Blueprint $table)
 		{
 			$table->increments('id');
+			$table->integer('parent_id')->unsigned()->nullable()->index('parent_id');
 			$table->integer('entry_id')->unsigned()->index('entries_id');
 			$table->integer('account_id')->unsigned()->index('account_id');
 			$table->integer('entry_type')->unsigned();
-			$table->integer('area_id')->unsigned();
-			$table->integer('category_id')->unsigned();
+			$table->integer('area_id')->unsigned()->nullable()->index('area_id');
+			$table->integer('category_id')->unsigned()->nullable()->index('category_id');
 			$table->integer('estimated_amount');
 			$table->date('estimated_date');
 			$table->integer('settlement_date')->unsigned();
-			$table->string('settlement_week', 20);
-			$table->integer('plan_id')->unsigned();
+			$table->boolean('settlement_week')->default(0);
+			$table->integer('plan_id')->unsigned()->nullable()->index('plan_id');
 			$table->integer('number')->unsigned();
 			$table->string('currency', 3);
-			$table->integer('amount');
 			$table->boolean('is_done')->default(0);
 			$table->string('detail', 250);
 			$table->date('operation_date')->nullable();

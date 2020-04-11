@@ -16,8 +16,8 @@ class CreateAppEntriesTable extends Migration {
 		{
 			$table->increments('id');
 			$table->boolean('entry_type')->index('entry_type');
-			$table->integer('category_id')->unsigned()->index('category_id');
-			$table->integer('area_id')->unsigned()->index('area_id');
+			$table->integer('category_id')->unsigned()->nullable()->index('category_id');
+			$table->integer('area_id')->unsigned()->nullable()->index('area_id');
 			$table->date('date');
 			$table->string('concept', 50);
 			$table->string('currency', 3);
