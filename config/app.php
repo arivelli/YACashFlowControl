@@ -179,6 +179,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         //Laravel\Tinker\TinkerServiceProvider::class,
+        Orangehill\Iseed\IseedServiceProvider::class,
 
     ],
 
