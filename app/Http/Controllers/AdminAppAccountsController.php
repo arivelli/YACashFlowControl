@@ -49,7 +49,7 @@ class AdminAppAccountsController extends \arivelli\crudbooster\controllers\CBCon
 		$this->form[] = ['label'=>'Nombre','name'=>'name','type'=>'text','validation'=>'required|min:5|max:25','width'=>'col-sm-10'];
 		$this->form[] = ['label'=>'Tipo','name'=>'type','type'=>'select','validation'=>'required|integer|min:0','width'=>'col-sm-10','dataenum'=>'1|Caja de ahorro;2|Cuenta corriente;3|Efectivo;4|Tarjeta;5|Pasivo','default'=>'-- Tipo de cuenta --'];
 
-		$this->form[] = ['label'=>'Entrada','name'=>'entry_id','type'=>'select','validation'=>'integer|min:1','width'=>'col-sm-10','datatable'=>'app_entries,concept','datatable_where'=>'category_id=27','default'=>'-- Entrada --'];
+		$this->form[] = ['label'=>'Entrada','name'=>'entry_id','type'=>'select','validation'=>'integer|min:1','width'=>'col-sm-10','datatable'=>'app_entries,concept','datatable_where'=>'category_id=27','default'=>'-- Entrada --','help'=>'Recuerde agregar una entrada con categoría "Tarjetas de Crédito"'];
 		$this->form[] = ['label'=>'Plan','name'=>'plan_id','type'=>'select','validation'=>'integer|min:1','width'=>'col-sm-10','dataenum'=>'','default'=>'-- Plan --'];
 
 		$this->form[] = ['label'=>'Banco','name'=>'bank','type'=>'text','width'=>'col-sm-10'];
@@ -114,7 +114,8 @@ class AdminAppAccountsController extends \arivelli\crudbooster\controllers\CBCon
 		$this->addaction[]=[
 			'label'=>'Períodos',
 			'url' => '/admin/app_accounts_periods?' . $prepared_params,
-			'color' => 'info'
+			'color' => 'info',
+			'showIf' => '[type]==4'
 		];
 
 

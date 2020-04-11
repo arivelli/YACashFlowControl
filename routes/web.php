@@ -34,7 +34,7 @@ Route::group([
     Route::get('/app_plans/getPlanByEntryId/{entry_id}','AdminAppPlansController@getPlanByEntryId')->name('plans_getPlanByEntryId');
 
     //OPERATIONS
-    Route::post('/app_operations/execute/{operation_id}','AdminAppOperationsController@execute_operation')->name('execute_operation');
+    Route::post('/app_operations/execute/{operation_id}','AdminAppOperationsController@executeOperation')->name('executeOperation');
     //Route::get('/compute_operations/{entry_id}','AdminAppEntriesController@hook_after_add_child')->name('compute_operations');
 
     Route::get('/dollarValue/update','ManageDollarValue@update_table')->name('dollarValue_updateTable');

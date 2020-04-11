@@ -12,6 +12,7 @@
 	use Illuminate\Foundation\Validation\ValidatesRequests;
 	use App\AppAccount;
 	use App\AppOperation;
+	use App\Http\Controllers\Processes\ExecuteOperations as EO;
 
 	class AdminAppOperationsController extends \arivelli\crudbooster\controllers\CBController {
 
@@ -380,7 +381,7 @@
 	    public function hook_after_edit($id) {
 	        //Your code here 
 			if(null !== $this->operation){
-				$this->execute_operation($id, $this->operation);
+				$this->executeOperation($id, $this->operation);
 			}
 	    }
 
@@ -492,101 +493,19 @@
 				die();
 			}
 		}
-
-		/**
-		 * Mark the operation as done, update fields and trigger some calculations
-		 * 
-		 * 
-		 */
-		public function execute_operation($id, \Illuminate\Http\Request $request) {
-			
-			$validatedData = $request->validate([
-				'account_id' => 'required|integer',
-                'operation_date' => 'required',
-				'operation_amount' => '',
-				'dollar_value' => 'required|integer',
-				'notes' => ''
-            ]);
-
-            /*if ($validator->fails()) {
-                return redirect('post/create')
-                            ->withErrors($validator)
-                            ->withInput();
-			}*/
-			
-			
-			$operation = \App\AppOperation::find($id);
-			
-			$operation->account_id = $validatedData['account_id'];
-			$operation->operation_date = $validatedData['operation_date'];
-			$operation_date_parts = explode('-', $validatedData['operation_date']);
-			$operation->settlement_date = $operation_date_parts[0] . $operation_date_parts[1];
-			$operation->operation_amount = (null !== $validatedData['operation_amount']) ? $validatedData['operation_amount'] : 0 ;
-			$operation->dollar_value = $validatedData['dollar_value'];
-			$operation->in_dollars = (null !== $validatedData['operation_amount']) ? round($validatedData['operation_amount'] / $validatedData['dollar_value'] * 100) : 0;
-			$operation->is_done = 1;
-			$operation->notes = $validatedData['notes'] ? $validatedData['notes'] : '';
-			$operation->save();
-
-			//dd(DB::getQueryLog());
-			
-			$this->updateBalance($operation);
-			$this->checkAccountBalance($operation);
-
-		}
-		public function updateBalance(AppOperation $operation){
-			$groups = ['settlement_week','account_id', 'entry_type', 'area_id', 'category_id'];
-			foreach($groups as $group) {
-				$new_amount = \App\AppOperation::where([
-					['settlement_date', '=', $operation->settlement_date],
-					[$group, '=', $operation->$group]
-				])->sum('operation_amount');
-				
-				$balance = \App\AppBalanceReal::updateOrCreate([
-					'settlement_date' => $operation->settlement_date,
-					'grouped_by' => $group,
-					'foreign_id' => $operation->$group
-				],[
-					'amount' => $new_amount,
-					'last_operation_id' => $operation->id
-				]);
+		static public function executeOperation($id, \Illuminate\Http\Request $request){
+			DB::beginTransaction();
+			try {
+				$res = EO::run($id, $request);
+				DB::commit();
+			} catch (\Exception $e) {
+			// Rollback Transaction
+				$res = DB::rollback();
 			}
-			
-			
+			return response()->json($res);
+		
 		}
-/**
- * If the operation date in on currently month compare amount to follow differences
- * 
- * @param $operation
- */
-		public function checkAccountBalance(AppOperation $operation){
-			//Get the latest balance of the account
-			$balanceAccount = \App\AppBalanceAccount::where([
-				['account_id', '=', $operation->account_id]
-			])->orderby('id','DESC')->first();
-
-			//if the date of the balance match with the operation date persist both amounts
-			if($balanceAccount->created_at->format('Ym') == $operation->settlement_date) {
-				$balanceReal = \App\AppBalanceReal::where([
-					['settlement_date', '=', $operation->settlement_date],
-					['grouped_by', '=', 'account_id'],
-					['foreign_id', '=', $operation->account_id]
-				])->first();
-					print_r([ $balanceReal->id ]);
-				$balanceInSync = new \App\AppBalanceInSync;
-				$balanceInSync->account_id = $operation->account_id;
-
-				$balanceInSync->operation_id = $operation->id;
-				$balanceInSync->balance_real_id = $balanceReal->id;
-				$balanceInSync->balance_real_amount = $balanceReal->amount;
-
-				$balanceInSync->balance_account_id = $balanceAccount->id;
-				$balanceInSync->balance_account_amount = $balanceAccount->amount;
-
-				$balanceInSync->in_sync = ($balanceAccount->amount/100 == $balanceReal->amount/100);
-				$balanceInSync->save();
-			}
-		}
+		
 	}
 
 	

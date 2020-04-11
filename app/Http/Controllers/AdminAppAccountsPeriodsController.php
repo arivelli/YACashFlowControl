@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Redirect;
 class AdminAppAccountsPeriodsController extends \arivelli\crudbooster\controllers\CBController {
 
 	public function cbInit() {
-
+		
 		# START CONFIGURATION DO NOT REMOVE THIS LINE
 		$this->title_field = "id";
 		$this->limit = "20";
@@ -167,8 +167,12 @@ class AdminAppAccountsPeriodsController extends \arivelli\crudbooster\controller
 		| @color = Default is none. You can use bootstrap success,info,warning,danger,primary.        
 		| 
 		*/
+		$thisMonth = Format::date2settlement_date(new Datetime);
 		$this->table_row_color = array();     	          
-
+		$this->table_row_color[] = [
+			'condition' => "[settlement_date] == '{$thisMonth}'",
+			'color' => 'warning'
+		];
 		
 		/*
 		| ---------------------------------------------------------------------- 
@@ -200,7 +204,7 @@ class AdminAppAccountsPeriodsController extends \arivelli\crudbooster\controller
 		| $this->pre_index_html = "<p>test</p>";
 		|
 		*/
-		$this->pre_index_html = null;
+		$this->pre_index_html = "";
 		
 		
 		
@@ -442,11 +446,9 @@ class AdminAppAccountsPeriodsController extends \arivelli\crudbooster\controller
 		return Format::settlement_date2Period ($settlement_date);
 	}
 	public function updatePeriod($id){
-		
 		$CCSummary = new CreditCardSummaries( \App\AppAccountPeriod::find($id)->account );
-		$period =  $CCSummary->getPeriodFromid($id);
+		$period =  $CCSummary->getPeriodFromId($id);
 		$CCSummary->updatePeriod($period);
-		
 		return Redirect::back()->with('message','Operación Actualizada !');
 	}
 

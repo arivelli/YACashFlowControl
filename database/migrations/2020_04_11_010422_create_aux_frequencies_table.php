@@ -14,7 +14,7 @@ class CreateAuxFrequenciesTable extends Migration {
 	{
 		Schema::create('aux_frequencies', function(Blueprint $table)
 		{
-			$table->boolean('id')->primary();
+			$table->increments('id');
 			$table->string('frequency');
 			$table->boolean('active')->default(1);
 			$table->timestamps();

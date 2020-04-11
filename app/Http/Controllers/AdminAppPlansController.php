@@ -36,7 +36,7 @@
 			$this->col[] = ["label"=>"Monto unitario","name"=>"amount"];
 			$this->col[] = ["label"=>"Entrada","name"=>"entry_id","join"=>"app_entries,concept"];
 			$this->col[] = ["label"=>"Primera ejecución","name"=>"first_execution"];
-			$this->col[] = ["label"=>"Frequencia","name"=>"frequency","callback_php"=>'$this->frequencies[$row->frequency]'];
+			$this->col[] = ["label"=>"Frequencia","name"=>"frequency_id","callback_php"=>'$this->frequencies[$row->frequency_id]'];
 			$this->col[] = ["label"=>"Completado?","name"=>"is_completed", "callback_php" => '($row->is_completed ==1)?"si" : "no"'];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
@@ -46,7 +46,7 @@
 			$this->form[] = ['label'=>'Entrada','name'=>'entry_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'app_entries,concept'];
 			$this->form[] = ['label'=>'Cuenta','name'=>'account_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-10','datatable'=>'app_accounts,name','datatable_where'=>'is_active=1'];
 			$this->form[] = ['label'=>'Plan','name'=>'plan','type'=>'select2','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'-1|\'Recurrente\';1;2;3;4;5;6;7;8;9;10;11;12;18;24;36;60;120;240'];
-			$this->form[] = ['label'=>'Frequencia','name'=>'frequency','type'=>'select2','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Semanal;2|Mensual;3|Bimestral;4|Trimestral;5|Cuatrimestral;6|Semestral;7|Anual'];
+			$this->form[] = ['label'=>'Frequencia','name'=>'frequency_id','type'=>'select2','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'1|Semanal;2|Mensual;3|Bimestral;4|Trimestral;5|Cuatrimestral;6|Semestral;7|Anual'];
 			$this->form[] = ['label'=>'Monto operación','name'=>'amount','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Primera ejecución','name'=>'first_execution','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
 			$this->form[] = ['label'=>'Completa?','name'=>'is_completed','type'=>'radio','validation'=>'required|integer','width'=>'col-sm-10','dataenum'=>'1|si;0|no','value'=>1];
@@ -366,7 +366,6 @@
 					'label' => $plan_types[$plan->plan] . ' (' .$plan->frequency->frequency . ')'
 				];
 			}
-			
 			return response()->json($plans_arr);
 		}
 

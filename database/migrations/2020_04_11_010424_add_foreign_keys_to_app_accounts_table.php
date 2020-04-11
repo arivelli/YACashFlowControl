@@ -15,6 +15,7 @@ class AddForeignKeysToAppAccountsTable extends Migration {
 		Schema::table('app_accounts', function(Blueprint $table)
 		{
 			$table->foreign('entry_id', 'app_accounts_ibfk_1')->references('id')->on('app_entries')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+			$table->foreign('plan_id', 'app_accounts_ibfk_2')->references('id')->on('app_plans')->onUpdate('RESTRICT')->onDelete('RESTRICT');
 		});
 	}
 
@@ -29,6 +30,7 @@ class AddForeignKeysToAppAccountsTable extends Migration {
 		Schema::table('app_accounts', function(Blueprint $table)
 		{
 			$table->dropForeign('app_accounts_ibfk_1');
+			$table->dropForeign('app_accounts_ibfk_2');
 		});
 	}
 

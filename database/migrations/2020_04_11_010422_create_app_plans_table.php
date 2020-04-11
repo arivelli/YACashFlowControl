@@ -19,7 +19,7 @@ class CreateAppPlansTable extends Migration {
 			$table->integer('account_type')->unsigned();
 			$table->integer('account_id')->unsigned()->index('account_id');
 			$table->smallInteger('plan');
-			$table->boolean('frequency_id')->nullable()->index('frequency_id');
+			$table->integer('frequency_id')->unsigned()->nullable()->index('frequency_id');
 			$table->string('currency_plan', 3);
 			$table->boolean('detail_format');
 			$table->integer('amount');
@@ -33,7 +33,7 @@ class CreateAppPlansTable extends Migration {
 			$table->boolean('is_completed');
 			$table->boolean('is_proccesed');
 			$table->string('notes', 1000)->nullable();
-			$table->boolean('compute_operations_flag');
+			$table->timestamps();
 		});
 	}
 
